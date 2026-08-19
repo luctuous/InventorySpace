@@ -1,0 +1,26 @@
+{
+  "name": "inventoryspace",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @inventory/api\" \"npm run dev -w @inventory/web\"",
+    "dev:api": "npm run dev -w @inventory/api",
+    "dev:web": "npm run dev -w @inventory/web",
+    "db:push": "npm run db:push -w @inventory/api",
+    "db:generate": "npm run db:generate -w @inventory/api",
+    "db:seed": "npm run db:seed -w @inventory/api",
+    "docs:manuals": "node docs/build-manuals.mjs",
+    "typecheck": "npm run typecheck --workspaces",
+    "build": "npm run build -w @inventory/api && npm run build -w @inventory/web"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4",
+    "typescript": "^7.0.2"
+  }
+}

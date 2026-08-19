@@ -1,0 +1,27 @@
+node_modules/
+dist/
+.env
+*.db
+*.db-wal
+*.db-shm
+*.log
+.DS_Store
+
+
+# Rust build output for the desktop client (packages/desktop)
+target/
+
+# Generated session key, kept beside the database (see lib/secret.ts)
+auth-secret
+
+# What the verification suites leave behind. They take an output directory as
+# an argument and default to the repository root, so a run started without one
+# drops its screenshots here. Ignored rather than forbidden: the screenshots
+# are genuinely useful while you are looking at them, and worthless afterwards.
+/*.png
+/exported.csv
+/shots/
+# A run once received a URL where it expected an output directory, and made a
+# folder literally called `http:`. Ignored so the same slip cannot commit one.
+/http:/
+

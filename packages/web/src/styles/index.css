@@ -1,0 +1,142 @@
+@import 'tailwindcss';
+
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-sans/700.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/ibm-plex-mono/600.css';
+
+/* ---------------------------------------------------------------------------
+   THE 3-COLOR THEME SYSTEM
+
+   Users pick exactly three colors. Everything else — backgrounds, borders,
+   hovers, tints, focus rings — is DERIVED from them with color-mix(), so
+   changing the three base values reskins the entire app. The ThemeProvider
+   overrides the three *-base properties from localStorage; these CSS defaults
+   render when nothing is stored (no flash, works without JS).
+
+   Semantic status colors are deliberately OUTSIDE the system: red must mean
+   "out of stock" in every theme.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* The only configurable values */
+  --color-primary-base: #2dd4bf; /* teal */
+  --color-secondary-base: #a78bfa; /* violet */
+  --color-accent-base: #fb923c; /* amber */
+
+  /* Foreground on top of each base color — recomputed by ThemeProvider
+     (luminance check) when the user picks custom colors */
+  --primary-foreground: #0c1013;
+  --secondary-foreground: #0c1013;
+  --accent-foreground: #0c1013;
+
+  /* Fixed semantic colors (NOT configurable) */
+  --color-danger-fixed: #f87171;
+  --color-warning-fixed: #fb923c;
+  --color-success-fixed: #4ade80;
+
+  /* Derived: dark surfaces tinted by the primary hue */
+  --derived-bg: color-mix(in oklab, #0b0c10, var(--color-primary-base) 4%);
+  --derived-surface: color-mix(in oklab, #14161c, var(--color-primary-base) 5%);
+  --derived-surface-2: color-mix(in oklab, #1c1f27, var(--color-primary-base) 6%);
+  --derived-border: color-mix(in oklab, #292d38, var(--color-primary-base) 8%);
+  --derived-border-strong: color-mix(in oklab, #363b49, var(--color-primary-base) 10%);
+
+  /* Derived: interaction states and soft tints */
+  --derived-primary-hover: color-mix(in oklab, var(--color-primary-base), white 12%);
+  --derived-primary-tint: color-mix(in oklab, var(--color-primary-base), transparent 86%);
+  --derived-secondary-tint: color-mix(in oklab, var(--color-secondary-base), transparent 86%);
+  --derived-accent-tint: color-mix(in oklab, var(--color-accent-base), transparent 86%);
+  --derived-danger-tint: color-mix(in oklab, var(--color-danger-fixed), transparent 86%);
+  --derived-warning-tint: color-mix(in oklab, var(--color-warning-fixed), transparent 86%);
+  --derived-success-tint: color-mix(in oklab, var(--color-success-fixed), transparent 86%);
+}
+
+/* Expose everything to Tailwind as utilities (bg-surface, text-primary, …).
+   "inline" keeps the var() indirection so runtime changes to the base colors
+   propagate instantly. */
+@theme inline {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --color-primary: var(--color-primary-base);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--derived-primary-hover);
+  --color-primary-tint: var(--derived-primary-tint);
+
+  --color-secondary: var(--color-secondary-base);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-tint: var(--derived-secondary-tint);
+
+  --color-accent: var(--color-accent-base);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-tint: var(--derived-accent-tint);
+
+  --color-danger: var(--color-danger-fixed);
+  --color-danger-tint: var(--derived-danger-tint);
+  --color-warning: var(--color-warning-fixed);
+  --color-warning-tint: var(--derived-warning-tint);
+  --color-success: var(--color-success-fixed);
+  --color-success-tint: var(--derived-success-tint);
+
+  --color-bg: var(--derived-bg);
+  --color-surface: var(--derived-surface);
+  --color-surface-2: var(--derived-surface-2);
+  --color-line: var(--derived-border);
+  --color-line-strong: var(--derived-border-strong);
+  --color-text: #e2e6f0;
+  --color-muted: #8892a4;
+
+  --color-ring: var(--color-primary-base);
+}
+
+body {
+  background: var(--derived-bg);
+  color: #e2e6f0;
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Printing: only the label sheet goes on paper, on white, without the app
+   around it. The sheet lives deep inside the React tree, so hiding by
+   visibility (not display) is what lets a nested node stay visible while all
+   of its ancestors disappear. */
+@media print {
+  body * { visibility: hidden; }
+  .label-sheet, .label-sheet * { visibility: visible; }
+
+  .label-sheet {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    max-height: none !important;
+    overflow: visible !important;
+    border: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  .label-sheet .label {
+    border-color: #999 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .label-sheet .label * { color: black !important; }
+  @page { margin: 10mm; }
+}
+
+/* Human IDs always render in a mono chip */
+.human-id {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  background: var(--derived-surface-2);
+  border: 1px solid var(--derived-border);
+  color: #e2e6f0;
+  white-space: nowrap;
+}

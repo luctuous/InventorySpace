@@ -1,0 +1,1973 @@
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">Architektur-Handbuch · v0.1 · August 2026</span>
+    <h1>Inventar — der Code</h1>
+    <p>
+      Wozu jede Datei da ist und warum sie so geschrieben wurde. Nicht Zeile für
+      Zeile, aber fast: rund 28.000 Zeilen in 130 Dateien, mit den
+      Entscheidungen, die sie geformt haben, und den Fallen, die noch drin sind.
+    </p>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Inhalt">
+      <p>Inhalt</p>
+      <ol>
+        <li><a href="#c1"><span class="n">01</span> Wie man das liest</a></li>
+        <li><a href="#c2"><span class="n">02</span> Die Karte</a></li>
+        <li><a href="#c3"><span class="n">03</span> Die Regeln und wo sie wohnen</a></li>
+        <li><a href="#c4"><span class="n">04</span> <code>@inventory/shared</code> — der Vertrag</a></li>
+        <li><a href="#c5"><span class="n">05</span> Die Datenbank</a></li>
+        <li><a href="#c21"><span class="n">06</span> Das Datenmodell, gezeichnet</a></li>
+        <li><a href="#c6"><span class="n">07</span> Wer du bist</a></li>
+        <li><a href="#c7"><span class="n">08</span> Das HTTP-Skelett</a></li>
+        <li><a href="#c22"><span class="n">09</span> Eine Anfrage, von Anfang bis Ende</a></li>
+        <li><a href="#c8"><span class="n">10</span> Die Services — hier wird gedacht</a></li>
+        <li><a href="#c9"><span class="n">11</span> Die Routen</a></li>
+        <li><a href="#c10"><span class="n">12</span> Das Frontend-Skelett</a></li>
+        <li><a href="#c11"><span class="n">13</span> Mit der API sprechen</a></li>
+        <li><a href="#c12"><span class="n">14</span> Drei Farben</a></li>
+        <li><a href="#c13"><span class="n">15</span> Zwei Sprachebenen</a></li>
+        <li><a href="#c14"><span class="n">16</span> Die Grundbausteine</a></li>
+        <li><a href="#c15"><span class="n">17</span> Die Seiten</a></li>
+        <li><a href="#c16"><span class="n">18</span> Komponenten, die denken</a></li>
+        <li><a href="#c17"><span class="n">19</span> Die Desktop-Anwendung</a></li>
+        <li><a href="#c18"><span class="n">20</span> Bauen und ausliefern</a></li>
+        <li><a href="#c23"><span class="n">21</span> Damit arbeiten, Tag für Tag</a></li>
+        <li><a href="#c19"><span class="n">22</span> Die Testsuiten</a></li>
+        <li><a href="#c20"><span class="n">23</span> Wo die Leichen liegen</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ============================================================== 01 -->
+    <section id="c1">
+      <h2><span class="n"></span>Wie man das liest</h2>
+
+      <p>
+        Es gibt zwei Dokumente zu dieser Anwendung, und sie beantworten
+        verschiedene Fragen. Das <a href="manual.de.html">Benutzerhandbuch</a>
+        sagt, was sie tut. Dieses sagt, <strong>wie sie gebaut ist und warum sie
+        so gebaut wurde</strong>.
+      </p>
+      <p>
+        Es ist so geordnet wie der Code: von innen nach außen, beginnend mit
+        dem, wovon alles andere abhängt. Zuerst die gemeinsamen Typen, dann die
+        Datenbank, der Server, der Browser, und zuletzt die Desktop-Hülle und
+        die Kiste, in der das Ganze ausgeliefert wird. Einmal am Stück lesen,
+        danach die Inhaltsleiste benutzen.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Vorsicht</span>
+        <p>
+          <strong>Dieses Dokument veraltet am schnellsten</strong>, und genau
+          deshalb wurde es zuletzt geschrieben. Wenn es dem Code widerspricht,
+          hat der Code recht. Jede Aussage hier hängt an einem Pfad, das
+          Nachprüfen dauert also Sekunden — und die Kommentare in den Dateien
+          gelten als Teil des Quelltexts, nicht als Dekoration, die Kurzfassung
+          steht also meist oben in der Datei selbst.
+        </p>
+      </div>
+
+      <h3>Der Hausstil</h3>
+      <p>
+        Zwei Gewohnheiten kehren überall wieder und sind vorab zu nennen, weil
+        sie vieles erklären, was ungewöhnlich aussieht.
+      </p>
+      <ul>
+        <li><strong>Kommentare sagen das <em>Warum</em>, nie das
+          <em>Was</em>.</strong> Wenn ein Kommentar sich durch Lesen der Zeile
+          darunter erübrigt, gehört er gelöscht. Übrig bleibt die Begründung,
+          die nicht im Code steht: der Fall, der im echten Betrieb auftrat, die
+          einfachere Fassung, die sich als falsch herausstellte.</li>
+        <li><strong>Ein Ort pro Gedanke.</strong> Der Bestand wird in einer
+          Datei berechnet. Menschenlesbare IDs entstehen in einer Datei. Die
+          Historie wird in einer Datei geschrieben. Der Wert ist nicht die
+          Ordnung — es ist, dass eine Regel ändern eine Sache ändern heißt, und
+          dass eine Regel überhaupt <em>prüfbar</em> wird.</li>
+      </ul>
+
+      <h3>Die Zahlen</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Paket</th><th>Was es ist</th><th>Dateien</th><th>Zeilen</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>@inventory/shared</code></td><td>Typen und Validierung, auf die sich beide Seiten einigen</td><td>18</td><td>~1.700</td></tr>
+            <tr><td><code>@inventory/api</code></td><td>Hono + Drizzle + SQLite</td><td>45</td><td>~12.500</td></tr>
+            <tr><td><code>@inventory/web</code></td><td>React + Vite + Tailwind</td><td>60</td><td>~13.000</td></tr>
+            <tr><td><code>@inventory/desktop</code></td><td>Tauri-Client, in Rust</td><td>5</td><td>~450</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Dass das Frontend so groß ist wie das Backend, ist keine
+        Schlamperei. Der größte Teil der Schwierigkeit dieses Produkts liegt
+        darin, <em>einem Menschen im richtigen Moment die richtige Frage zu
+        stellen</em> — die Abgleichsabfrage, die Anforderungsliste im
+        Bestellentwurf, die Nachzählung — und diese Schwierigkeit lebt im
+        Browser.
+      </p>
+    </section>
+
+    <!-- ============================================================== 02 -->
+    <section id="c2">
+      <h2><span class="n"></span>Die Karte</h2>
+
+      <p>
+        Ein Repository, npm workspaces, vier Pakete. Kein pnpm, kein turborepo,
+        kein nx: wer das hier am Ende besitzt, soll genau ein Werkzeug brauchen,
+        das er ohnehin hat.
+      </p>
+
+<pre><code>packages/
+  shared/    @inventory/shared    Zod-Schemas + Typen, von beiden Seiten importiert
+  api/       @inventory/api       Hono + Drizzle + SQLite, REST unter /api/v1
+  web/       @inventory/web       React + Vite + Tailwind
+  desktop/   @inventory/desktop   Tauri-Client (Rust), ein Fenster auf einen Server
+docs/                       die Handbücher und ihre Generatoren
+</code></pre>
+
+      <h3>Warum das gemeinsame Paket keinen Build hat</h3>
+      <p>
+        <code>@inventory/shared</code> exportiert rohes TypeScript. Es gibt kein
+        <code>dist/</code>, kein <code>tsc -b</code>, keinen Watcher, den man zu
+        starten vergessen könnte. Vite kompiliert es als Quelltext,
+        <code>tsx</code> tut auf dem Server dasselbe. Der Preis ist eine Zeile
+        in <code>packages/api/tsup.config.ts</code> —
+        <code>noExternal: ['@inventory/shared']</code> — die es in das
+        Produktions-Bundle einzieht. Ein guter Tausch: eine Zeile
+        Build-Konfiguration gegen eine ganze Klasse von „warum kommt meine
+        Änderung nicht an“, die sonst täglich zuschlagen würde.
+      </p>
+
+      <h3>Warum die Ebenen keine Ordner sind</h3>
+      <p>
+        Die Domäne hat vier Ebenen — Konzept, Analog, Variante, Artikel — und es
+        wäre naheliegend, jeder einen Ordner mit Schema, Route, Service und
+        Seite zu geben. Der Code macht das Gegenteil: er gruppiert nach
+        <em>Mechanismus</em> (alle Routen zusammen, alle Services zusammen, alle
+        Seiten zusammen), weil das, was sich gemeinsam ändert, die Mechanismen
+        sind und nicht die Ebenen. Eine Änderung an der Seitennummerierung
+        berührt jede Route; eine Änderung an Varianten berührt vier Dateien, die
+        bereits so heißen.
+      </p>
+
+      <div class="note">
+        <span class="lbl">Konvention</span>
+        <p>
+          Alles in <code>lib/</code> ist Infrastruktur und weiß nichts von der
+          Domäne. Alles in <code>services/</code> kennt die Domäne und darf die
+          Datenbank anfassen, aber niemals HTTP. Alles in <code>routes/</code>
+          kennt HTTP und ruft Services auf. Wenn eine Route anfängt zu rechnen,
+          liegt sie in der falschen Datei.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 03 -->
+    <section id="c3">
+      <h2><span class="n"></span>Die Regeln und wo sie wohnen</h2>
+
+      <p>
+        Fünfzehn Regeln sind nicht verhandelbar
+        sind. Eine Regel, auf die niemand zeigen kann, ist ein Wunsch — hier
+        also jede mit der Datei, die sie tatsächlich durchsetzt.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Regel</th><th>Durchgesetzt in</th></tr></thead>
+          <tbody>
+            <tr><td>Geld ist ganzzahlig in Cent</td><td><code>shared/src/schemas/common.ts</code> (<span class="sig">parseMoneyInput</span>), Spalten <code>*_cents</code></td></tr>
+            <tr><td>Bestand wird an einer Stelle berechnet</td><td><code>api/src/services/stock.ts</code> — nichts sonst summiert Mengen</td></tr>
+            <tr><td>Jede Mutation schreibt Historie, in derselben Transaktion</td><td><code>api/src/services/history.ts</code>, aufgerufen in jeder <code>db.transaction</code></td></tr>
+            <tr><td>Alle Ein- und Ausgaben über gemeinsame Schemas validiert</td><td><code>api/src/lib/router.ts</code> + jedes <code>createRoute</code></td></tr>
+            <tr><td>Sanftes Löschen; Historie nur anfügbar</td><td><code>deletedAt</code>-Spalten; nirgends ein <code>DELETE</code> auf <code>history</code></td></tr>
+            <tr><td>Denormalisierungs-Abgleich ist transaktional</td><td><code>api/src/routes/variants.ts</code>, <code>analogous.ts</code></td></tr>
+            <tr><td>Menschenlesbare IDs nur serverseitig</td><td><code>api/src/services/ids.ts</code>, innerhalb der Einfüge-Transaktion</td></tr>
+            <tr><td>Statuswechsel nur über Aktions-Endpunkte</td><td><code>shared/src/schemas/item.ts</code> — <code>itemUpdateSchema</code> hat schlicht kein <code>status</code>, ein <code>PATCH</code> kann also keines tragen</td></tr>
+            <tr><td>Keine Abhängigkeit ohne geschriebene Begründung</td><td>Abhängigkeitsprotokoll in <code>package.json</code></td></tr>
+            <tr><td>Migrationen liegen im Repository</td><td><code>api/drizzle/*.sql</code>, beim Start angewandt von <code>api/src/index.ts</code></td></tr>
+            <tr><td>Die Hierarchie muss ignorierbar sein</td><td><code>api/src/routes/items.ts</code> Quick Add, <code>web/src/components/QuickAddModal.tsx</code></td></tr>
+            <tr><td>Eine Tätigkeit zu erfassen bewegt Bestand; nur ein Mensch leert ein Gebinde</td><td><code>api/src/services/actions.ts</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note tip">
+        <span class="lbl">Wenn du eine Sache änderst</span>
+        <p>
+          Die Regel, die am ehesten versehentlich bricht, ist die zweite.
+          <code>quantityRemaining</code> in einer Route zu summieren ist
+          einfach, sieht harmlos aus und spaltet still die Definition von „was
+          haben wir“ — also genau die Zahl, für die es dieses Produkt gibt.
+          Wenn du den Bestand brauchst, importiere ihn.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 04 -->
+    <section id="c4">
+      <h2><span class="n"></span><code>@inventory/shared</code> — der Vertrag</h2>
+
+      <p>
+        Dieses Paket gibt es, damit Server und Browser sich nicht darüber
+        uneinig werden können, was eine Variante ist. Es enthält keine Logik,
+        die eine Datenbank berührt, und keine Komponente, die einen Bildschirm
+        berührt — nur die Formen und die reinen Funktionen darauf.
+      </p>
+
+      <div class="file">
+        <p class="path">shared/src/constants.ts <span class="n">178 Zeilen</span></p>
+        <p>
+          Alle geschlossenen Mengen des Produkts: Artikelstatus, Rollen,
+          Ortsebenen, Feldarten, Verfolgungsstufen, Gebindezustände,
+          Log-Effekte. Alle als <code>as const</code> deklariert und zu Unions
+          gemacht, sodass ein neuer Status eine Zeile ist und der Compiler
+          danach jede Stelle aufzählt, die ihn behandeln muss. Außerdem
+          <span class="sig">roleAtLeast(rolle, minimum)</span>, die einzige
+          Definition von „hoch genug“, die sowohl die API-Middleware als auch
+          die Navigation benutzen.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/common.ts <span class="n">~120 Zeilen</span></p>
+        <p>
+          Die Bausteine, auf denen alle anderen Schemas stehen:
+          <span class="sig">translatedTextSchema</span> (ein Name in EN/DE/CA,
+          Englisch verpflichtend), Seitennummerierung und Geld.
+          <span class="sig">parseMoneyInput("12,50")</span> ergibt
+          <code>1250</code> und akzeptiert beide Dezimaltrenner, weil eine
+          Deutsche und ein Katalane denselben Preis verschieden tippen und
+          keiner von beiden falsch liegt.
+          <span class="sig">resolveText(name, sprache)</span> fällt auf Englisch
+          zurück und dann auf den ersten nicht leeren Wert — ein Name wird nie
+          als <code>undefined</code> gezeichnet.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/type.ts <span class="n">~150 Zeilen</span></p>
+        <p>
+          Die interessanteste Datei des Pakets, weil sie Validatoren zur
+          Laufzeit baut.
+          <span class="sig">buildCustomFieldsValidator(definitionen)</span>
+          nimmt die Felddefinitionen, die sich jemand im Typen-Bildschirm
+          ausgedacht hat, und gibt ein Zod-Objekt zurück, das Artikel dieses
+          Typs validiert. Das macht benutzerdefinierte Felder erst echt statt
+          zu einem JSON-Klumpen, den niemand prüft: ein <code>number</code>-Feld
+          weist Text zurück, ein <code>select</code> weist einen Wert außerhalb
+          seiner Optionen zurück — und zwar auf dem Server, wo es zählt.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">shared/src/schemas/{concept,analogous,variant,item,location,history}.ts</p>
+        <p>
+          Eine Datei pro MVP-1-Entität, jede mit denselben drei Formen:
+          <code>…Schema</code> (was herauskommt), <code>…CreateSchema</code> und
+          <code>…UpdateSchema</code> (was hinein darf). Anlegen und Ändern sind
+          getrennte Typen statt eines partiellen, weil sich die Felder, die man
+          beim Anlegen setzen darf, und die, die man später ändern darf,
+          wirklich unterscheiden — der Preis eines Artikels ist ab Geburt
+          eingefroren.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">shared/src/schemas/{request,lot,action,pool,forecast,log,equipment}.ts</p>
+        <p>
+          Dasselbe Muster für alles nach der ersten Fassung.
+          <code>log.ts</code> ist die größte, weil die Log-Brücke das meiste
+          Vokabular hat: Quellen, Parser, Wörterbucheinträge, Effekte und der
+          Einlesebericht.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/responses.ts <span class="n">251 Zeilen</span></p>
+        <p>
+          Formen, die keine Entitäten sind: Schnellsuche, Papierkorb, Benutzer,
+          Passwörter und Tastengriffe. Hier wohnen auch
+          <span class="sig">usernameProblem(wert)</span> und die Platzhalter-
+          E-Mail-Helfer, die API und Browser beide aufrufen, damit ein
+          Benutzername auf beiden Seiten nach derselben Regel beurteilt wird.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 05 -->
+    <section id="c5">
+      <h2><span class="n"></span>Die Datenbank</h2>
+
+      <p>
+        SQLite, eine Datei, WAL-Modus, Fremdschlüssel an. Drizzle für Schema und
+        Abfragen. Die ganze Sicherungsgeschichte lautet „kopiere die Datei“, und
+        jede Entscheidung unten folgt daraus, dass das so bleiben soll.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/db/schema.ts <span class="n">708 Zeilen</span></p>
+        <p>
+          Gut dreißig Tabellen, und das Nützlichste, was man zuerst liest.
+          Konventionen, die man vorher kennen sollte:
+        </p>
+        <ul>
+          <li><strong>Jede Tabelle bekommt <code>auditColumns</code></strong> —
+            <code>createdAt</code>, <code>updatedAt</code>,
+            <code>deletedAt</code>. Zeitstempel sind in der Datenbank
+            Unix-Ganzzahlen und an der API-Grenze ISO-Zeichenketten; die
+            Umwandlung passiert an einer Stelle.</li>
+          <li><strong>Geldspalten enden auf <code>_cents</code></strong> und
+            sind ganzzahlig. In der Nähe eines Preises steht keine
+            Fließkommazahl.</li>
+          <li><strong>Übersetzte Namen sind JSON-Spalten</strong> vom Typ
+            <code>TranslatedText</code>. Eine vierte Sprache braucht keine
+            Migration — genau dafür ist das da.</li>
+          <li><strong>Denormalisierte Eltern sind Absicht.</strong> Eine
+            Variante trägt <code>conceptId</code> zusätzlich zu
+            <code>analogousId</code>, ein Artikel trägt beides. Das ist
+            redundant, kann auseinanderlaufen, und ist es wert: der
+            Artikel-Browser filtert nach Konzept ohne zwei Joins. Gegen das
+            Auseinanderlaufen steht Regel 6 — Umhängen aktualisiert die
+            Nachkommen in einer Transaktion.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/client.ts <span class="n">18 Zeilen</span></p>
+        <p>
+          Öffnet die Datenbank und setzt zwei Pragmas, die SQLite
+          <em>nicht</em> von selbst setzt: <code>foreign_keys = ON</code>
+          (standardmäßig aus, also ein Schema voller Referenzen, die nichts
+          erzwingen) und <code>journal_mode = WAL</code> (damit ein Leser nie
+          einen Schreiber blockiert). Beide gelten pro Verbindung, deshalb ist
+          das die einzige Stelle, an der eine Verbindung entstehen darf. Es legt
+          auch das Datenverzeichnis an, damit eine frische Installation nichts
+          vorzubereiten hat.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/drizzle/*.sql <span class="n">9 Migrationen</span></p>
+        <p>
+          Von <code>drizzle-kit</code> erzeugt und eingecheckt, denn eine
+          Migration, die nur auf dem Rechner der Entwicklerin existiert, ist
+          keine Migration. Sie werden beim Start von
+          <code>api/src/index.ts</code> angewandt — deshalb funktioniert
+          <code>docker run</code> auf einem leeren Volume ohne
+          Einrichtungsschritt. Ihre Namen zu lesen ist eine ordentliche
+          Produktgeschichte: <code>0004_supplier_entity</code> ist der Tag, an
+          dem Lieferanten aufhörten, eine Zeichenkette zu sein,
+          <code>0007_equipment</code> sind die Geräte,
+          <code>0008_fast_keys</code> ist der Tastengriff.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/seed.ts <span class="n">584 Zeilen</span></p>
+        <p>
+          Demodaten, und sie sind entworfen, nicht hingekippt. Bewusst dabei:
+          ein Konzept mit wenig Bestand und eines bei null, damit die Warnungen
+          des Startbildschirms sofort etwas zu warnen haben; ein Gerät und ein
+          Dokument, damit die nicht verbrauchbaren Lebenszyklen überhaupt
+          vorführbar sind; und ein Gebindepool mit echter Geschichte, damit die
+          Nachzählung etwas bedeutet. Auf einer nicht leeren Datenbank weigert
+          es sich zu laufen.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/reset.ts <span class="n">~60 Zeilen</span></p>
+        <p>
+          Leert die 26 Domänentabellen und <strong>behält die
+          Auth-Tabellen</strong>. Diese Ausnahme ist mit Blut geschrieben: die
+          Datenbankdatei zu löschen, um „sauber anzufangen“, hat den Besitzer
+          zweimal aus seiner eigenen Anwendung ausgesperrt, weil die Konten
+          mitgingen. Die Daten zurückzusetzen darf nie den Zugang kosten.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/auth-schema.ts <span class="n">~45 Zeilen</span></p>
+        <p>
+          Die vier eigenen Tabellen von better-auth (<code>user</code>,
+          <code>session</code>, <code>account</code>,
+          <code>verification</code>), in Drizzle deklariert, damit sie in
+          derselben Datei und denselben Migrationen leben wie alles andere. Die
+          Spalte <code>role</code> ist unsere, über
+          <code>additionalFields</code> ergänzt und mit <code>input: false</code>
+          versehen, damit ein Client sich niemals selbst eine Rolle zuweisen
+          kann.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== data model -->
+    <section id="c21">
+      <h2><span class="n"></span>Das Datenmodell, gezeichnet</h2>
+
+      <p>
+        Dreißig Tabellen sind zu viele für den Kopf, aber die Form ist klein.
+        Alles hängt an einem Zeilentyp — <code>items</code> — und alles andere
+        ist entweder eine Art, über Artikel zu sprechen, oder die Aufzeichnung
+        von etwas, das ihnen zugestoßen ist.
+      </p>
+
+      <h3>Das Rückgrat</h3>
+<pre><code>  types ──────┐                    locations ──┐   (self-parented tree)
+  (user-defined│                     code, level │
+   fields)     │                                 │
+               ▼                                 ▼
+  concepts ─→ analogous ─→ variants ─────→ <span class="c">items</span> ←── the only physical thing
+   "wood glue"   "1 L amber"  "Sigma 34873"   supplyAA042
+      ▲            ▲             ▲            │  status · quantity_remaining
+      └────────────┴─────────────┘            │  estimated_used · price_cents
+        denormalised onto items and           │
+        variants (concept_id, analogous_id)   │
+                                              ├─→ item_links     (manual, spare)
+                                              ├─→ maintenance_plans
+                                              └─→ history        (append-only)</code></pre>
+      <p>
+        Von oben nach unten lesen. Die drei Ebenen über <code>items</code> sind
+        Beschreibungen abnehmender Allgemeinheit: was du brauchst
+        (<em>Holzleim</em>), welche Produkte es täten (<em>1-L-Braunglasflasche</em>),
+        das genaue Produkt (<em>Sigma 34873</em>). Nur die unterste Zeile
+        existiert körperlich. Der Bestand wird aus dieser Zeile berechnet und
+        aus nichts sonst — deshalb lassen sich die Ebenen vollständig
+        überspringen (Quick Add baut die ganze Kette im Hintergrund), ohne dass
+        eine Zahl ihre Bedeutung ändert.
+      </p>
+      <p>
+        Die beiden gepunkteten Eltern sind die bewusste Redundanz aus: ein
+        Artikel trägt <code>conceptId</code> und <code>analogousId</code>
+        zusätzlich zu <code>variantId</code>. Das kann auseinanderlaufen;
+        ehrlich gehalten wird es von den Massenaktualisierungen in
+        <code>routes/variants.ts</code>.
+      </p>
+
+      <h3>Was mit ihnen geschieht</h3>
+<pre><code>requests ──(triage)──→ lot_lines ──(receive)──→ <span class="c">items</span>   created automatically
+   concept              variant                       humanId, price, expiry
+
+actions ──(record)──→ charges the open item of each concept in its map
+   ▲                        │
+   │                        ├─→ quantity_remaining  clamped at 0 → stock
+   └── log_lines            └─→ estimated_used      uncapped → the gap
+
+pools ──(events)──→ pool_units          commissioned FROM an item
+   "20 mL vials"      available/in_use/dirty        (cupboard → rotation)</code></pre>
+      <p>
+        Das sind die vier Betriebskreisläufe aus, und auch sie treffen
+        sich bei <code>items</code>. Einkaufen legt Artikel an; Tätigkeiten
+        verbrauchen sie; Pools holen sie aus dem Schrank in den Umlauf; das Log
+        tut in großem Maßstab, was ein Mensch von Hand täte. Nichts davon ist
+        ein eigenes Inventar.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Die eine Asymmetrie, die man sich merkt</span>
+        <p>
+          <strong>Eine Kit hat keinen eigenen Ort.</strong> Verfolgt wird das
+          Material, in dem sie sitzt — das Schale, das Becher — ein Schale zu
+          bewegen bewegt also vierzig Kits, ohne eine einzige Zeile zu
+          ändern. Dafür gibt es <code>occupancies</code>, und deshalb sind
+          Kits keine Artikel.
+        </p>
+      </div>
+
+      <h3>Wem gehört wer</h3>
+      <p>
+        Löschen folgt dem Besitz, mit einer Ausnahme, die zählt:
+      </p>
+      <ul>
+        <li>Ein Konzept besitzt seine Analog-Gruppen, diese ihre Varianten,
+          diese ihre Artikel. Nach oben löschen kaskadiert, mit vorheriger
+          Vorschau (, <code>cascade.ts</code>).</li>
+        <li><strong>Ein Ort besitzt nichts.</strong> Ein Regal besitzt nicht
+          die Flasche darauf, einen Ort zu löschen löscht also nie, was darauf
+          stand — es verweigert schlicht, solange etwas da ist.</li>
+        <li>Die Historie besitzt nichts und gehört niemandem. Sie überlebt das
+          endgültige Entfernen der Zeile, die sie beschreibt — deshalb
+          speichert sie die menschenlesbare Kennung.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================== 06 -->
+    <section id="c6">
+      <h2><span class="n"></span>Wer du bist</h2>
+
+      <p>
+        Die Anmeldung ist better-auth auf derselben SQLite-Datei. Vier Dateien
+        sorgen dafür, dass sie sich so verhält, wie ein Werkstatt es braucht, und
+        nicht wie ein Abodienst.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/auth.ts <span class="n">~90 Zeilen</span></p>
+        <p>Die Konfiguration, und drei Entscheidungen darin:</p>
+        <ul>
+          <li><strong>Die Registrierung schließt nach dem ersten Konto.</strong>
+            Der Hook <code>databaseHooks.user.create.before</code> macht den
+            ersten Benutzer zum Administrator und wirft für alle danach. Die
+            Benutzerverwaltung muss Konten über dieselbe API anlegen, also
+            schaltet sie <code>adminCreateBypass</code> um ihren Aufruf herum —
+            sicher, weil Node den Handler bis zum <code>await</code> synchron
+            ausführt.</li>
+          <li><strong>Der Benutzernamen-Validator ist ersetzt.</strong>
+            better-auth erlaubt nur <code>[a-zA-Z0-9_.]</code> und lehnt damit
+            <code>Müller</code> ab. Unserer ist
+            <span class="sig">usernameProblem</span> aus dem gemeinsamen Paket
+            und verbietet nur, was wirklich kaputtgeht.</li>
+          <li><strong><code>trustedOrigins</code> zählt nur in der
+            Entwicklung</strong>, wo der Browser auf <code>:5173</code> und die
+            API auf <code>:3001</code> sitzt. In Produktion bedient ein Port
+            beides, jede Anfrage ist also gleichen Ursprungs — auch über das
+            lokale Netz per IP.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/secret.ts <span class="n">38 Zeilen</span></p>
+        <p>
+          Erzeugt den Schlüssel zum Signieren der Cookies einmal und legt ihn
+          neben die Datenbank. Diese Datei existiert wegen eines Fehlers, der
+          erst in einem echten Container auftauchte: better-auth verweigert den
+          Standardschlüssel bei <code>NODE_ENV=production</code>, das Image
+          baute also, startete, gab eine Warnung aus und <strong>starb bei der
+          ersten angemeldeten Anfrage</strong>. Die Benutzerin um eine
+          Umgebungsvariable zu bitten wäre die einfache und die falsche Lösung
+          gewesen — das Versprechen lautet „herunterladen, einen Befehl
+          ausführen, Browser öffnen“. <code>BETTER_AUTH_SECRET</code> gewinnt
+          weiterhin, wenn gesetzt.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/middleware/auth.ts <span class="n">~70 Zeilen</span></p>
+        <p>
+          <span class="sig">requireRole('manager')</span>, als Route-Middleware.
+          Es löst die Sitzung aus dem Cookie auf, legt den Benutzer in den
+          Kontext und vergleicht mit <code>roleAtLeast</code> — derselben
+          Funktion, mit der die Seitenleiste entscheidet, was sie zeigt.
+          Bildschirm und Server können sich also nicht darüber uneinig werden,
+          was eine Leitung darf. Der Bildschirm ist Höflichkeit; das hier ist
+          die Durchsetzung.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/fast-login-plugin.ts <span class="n">~110 Zeilen</span></p>
+        <p>
+          Anmelden mit einem Tastengriff, als better-auth-Plugin und nicht als
+          eigene Route. Der Grund ist eng und entscheidend: nur better-auth kann
+          ein gültiges Sitzungs-Cookie prägen, und eines daneben zu fälschen
+          wäre eine zweite Umsetzung genau der Sache, die man genau einmal haben
+          will. Der Endpunkt ist
+          <code>POST /api/auth/sign-in/fast-key</code>.
+        </p>
+        <p>
+          Ein Tastengriff bedeutet dreierlei, je nachdem wer schon angemeldet
+          ist — anmelden, wechseln, abmelden — und deshalb gibt es keinen
+          zweiten zu merken. Beim Wechseln wird die vorige Sitzung gelöscht,
+          statt auf einem gemeinsam genutzten Rechner herumzuliegen. Versuche
+          sind auf zwölf pro Minute begrenzt, denn der Raum umfasst nur rund
+          4.700 Griffe.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/fastkeys.ts <span class="n">~150 Zeilen</span></p>
+        <p>
+          Einen Tastengriff erzeugen, den eine Hand wirklich machen kann. Die
+          Tasten stammen nicht aus dem Alphabet, sondern aus der Geometrie der
+          Tastatur: eine Taste pro Spalte, drei benachbarte Spalten einer Hand,
+          nie zwei Finger mehr als eine Reihe auseinander. Diese eine
+          Einschränkung schließt <code>a y ñ</code> aus und erzeugt
+          <code>z x d</code>. Die beiden Gruppen bevorzugen unterschiedliche
+          Hände, weil Abwechseln schneller zu drücken und als Rhythmus leichter
+          zu merken ist.
+        </p>
+        <p>
+          Der Griff wird <strong>im Klartext gespeichert, nicht gehasht</strong>,
+          und das ist eine Entscheidung, kein Versäumnis: Anmelden heißt, den
+          Besitzer <em>aus</em> dem Griff zu finden, was ein gesalzener Hash
+          nicht kann, und der Besitzer muss ihn nach dem Urlaub wieder
+          nachschlagen können. Es war immer so gemeint
+          — eine Identifikation, kein Passwort. Passwörter bleiben gehasht und
+          funktionieren weiter.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">api/src/routes/public.ts <span class="n">~200 lines</span></p>
+        <p>Die einzigen unauthentifizierten Daten im Produkt, und bewusst mit eigenem Router statt einem gelockerten <code>requireRole</code> auf den echten. Er liefert zwei Dinge: das Erscheinungsbild des der Werkstatt, das die Anmeldeseite braucht, bevor sich jemand angemeldet hat, und eine handgeschriebene Nur-Lese-Sicht auf den Bestand für die abgemeldete Startseite.</p>
+        <p>Was diese Datei verlässt, ist eine feste Liste — Konzeptnamen, Mengen, Einheiten, Mindestbestände, der Ortsbaum. Keine Artikelzeilen, also keine Seriennummern, keine Preise, keine Notizen, keine Personennamen. Ein Endpunkt statt öffentlicher Varianten von <code>/concepts</code>, <code>/items/metrics</code> und <code>/locations</code>: vier gelockerte Endpunkte sind vier Dinge, die man später falsch machen kann, und jeder nimmt Filter entgegen, die diese Sicht nicht beantworten soll. Hier ein Feld zu ergänzen heißt, es allen im Netz zu veröffentlichen.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/lib/device.ts <span class="n">~90 lines</span></p>
+        <p>Der Anspruch aus „Diesen Rechner merken“: eine Notiz im <code>localStorage</code>, welches Konto diesen Browser adoptiert hat. Er ist keine Anmeldeinformation — angemeldet hält dich das Sitzungs-Cookie — sondern die Aufzeichnung, <em>warum</em> dieses Cookie ein dauerhaftes wurde und für wen.</p>
+        <p>Zwei Stellen lesen ihn. Die Anmeldung fordert <code>rememberMe</code> nur an, wenn die anmeldende Person auch die anspruchsstellende ist — deshalb bekommt ein Kollege, der an deinem Platz seinen Tastengriff drückt, eine gewöhnliche Sitzung. Und der Leerlauf-Timer tritt vollständig zurück. Wird der Browserspeicher geleert, ist der Anspruch weg: die richtige Fehlerrichtung, nämlich die vorsichtige statt der großzügigen.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/IdleTimer.tsx <span class="n">~100 lines</span></p>
+        <p>Zwanzig Minuten Stille beenden eine Sitzung auf einem geteilten Rechner. Das Problem ist die Zuordnung, nicht der Diebstahl: ein angemeldet stehengelassener Browser lässt jedes Aufbrauchen wie die Arbeit derjenigen aussehen, die zuletzt gegangen ist — und die Historie ist das Einzige hier, das verlässlich sein muss.</p>
+        <p>Geprüft wird gegen die <em>Uhr</em>, nie gegen einen Countdown — Timer laufen im Ruhezustand nicht zuverlässig, und ein herunterzählender Wert käme aus dem zugeklappten Deckel in der Überzeugung zurück, es sei keine Zeit vergangen. Das Sekundenintervall liest nur <code>Date.now()</code> und vergleicht. Mit Playwrights gefälschter Uhr in <code>scripts/verify-ui.mjs</code> geprüft, weil der echte Test zwanzig Minuten dauert.</p>
+      </div>
+
+    <!-- ============================================================== 07 -->
+    <section id="c7">
+      <h2><span class="n"></span>Das HTTP-Skelett</h2>
+
+      <div class="file">
+        <p class="path">api/src/index.ts <span class="n">~45 Zeilen</span></p>
+        <p>
+          Der Einstieg: Migrationen anwenden, dann lauschen. Es druckt neben
+          <code>localhost</code> auch die Adressen im lokalen Netz — eine
+          Kleinigkeit, die ein echtes Gespräch erspart: der Server soll von
+          jedem Rechner im Werkstatt erreichbar sein, und seine Adresse zu raten ist
+          das Erste, was schiefgeht.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/app.ts <span class="n">~140 Zeilen</span></p>
+        <p>
+          Setzt die Router zusammen, hängt better-auth unter
+          <code>/api/auth/*</code> ein, liefert die OpenAPI-Spezifikation und
+          die Swagger-UI aus und — bei <code>SERVE_WEB=1</code> — auch das
+          gebaute Frontend samt SPA-Rückfall, damit tiefe Links funktionieren.
+          Dieses Flag verwandelt zwei Entwicklungsserver in einen
+          Produktionsport, und darin besteht der ganze Unterschied zwischen den
+          beiden Aufbauten.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/router.ts <span class="n">~30 Zeilen</span></p>
+        <p>
+          Eine dünne Schicht über <code>OpenAPIHono</code>, die den
+          Standard-Validierungsfehler in die einheitliche Fehlerform der
+          Anwendung übersetzt. Jeder Router entsteht durch sie — so bleibt „alle
+          Ein- und Ausgaben sind validiert“ wahr, ohne dass jemand daran denken
+          muss.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/openapi.ts <span class="n">~60 Zeilen</span></p>
+        <p>
+          Helfer, damit Routendefinitionen lesbar bleiben:
+          <span class="sig">jsonBody(schema)</span>,
+          <span class="sig">jsonContent(schema)</span>,
+          <span class="sig">errorResponse('Not found')</span>. Ohne sie schleppt
+          jede Route fünfzehn Zeilen OpenAPI-Bürokratie mit und niemand liest
+          den interessanten Teil.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/middleware/error.ts <span class="n">~80 Zeilen</span></p>
+        <p>
+          Eine Fehlerform für die gesamte API:
+          <code>{ error: { code, message, details? } }</code>.
+          <code>ApiError</code> plus die benannten Konstruktoren
+          <span class="sig">notFoundError</span> und
+          <span class="sig">conflictError</span>. Das Feld
+          <code>details</code> macht eine Ablehnung nützlich statt endgültig —
+          ein blockiertes Löschen legt dort die Kaskadenvorschau bei, und der
+          Browser macht aus der Ablehnung ein Angebot („das löscht auch 2
+          Varianten und 3 Artikel“).
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/serialize.ts <span class="n">~50 Zeilen</span></p>
+        <p>
+          Die Grenze zwischen Datenbanktypen und JSON: Zeitstempel zu
+          ISO-Zeichenketten, Cent zu Dezimalzeichenkette, Nullwerte erhalten. Es
+          gibt das, damit keine Route je ein eigenes Datumsformat erfindet — und
+          genau so werden sich zwei Endpunkte uneinig darüber, wie ein Datum
+          aussieht.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/csv.ts <span class="n">~120 Zeilen</span></p>
+        <p>
+          Ein handgeschriebener RFC-4180-Leser und -Schreiber — ohne
+          Abhängigkeit, denn das Format sind hundert Zeilen und eine
+          Abhängigkeit ist für immer. Der Import ist erst ein Trockenlauf und
+          dann alles-oder-nichts in einer Transaktion, damit eine schlechte
+          Zeile bei 400 nicht 399 importierte Zeilen hinterlässt.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== trace -->
+    <section id="c22">
+      <h2><span class="n"></span>Eine Anfrage, von Anfang bis Ende</h2>
+
+      <p>
+        Der schnellste Weg in einen fremden Code ist, einer Sache ganz zu
+        folgen. Das hier ist <em>„Geleert“ auf dem Startbildschirm drücken</em>
+        — die kleinste interessante Aktion des Produkts, denn es ist der Moment,
+        in dem ein Mensch ein Gebinde für leer erklärt, und dieser Erklärung
+        traut die gesamte Vorhersage als Einziger.
+      </p>
+
+<pre><code><span class="c">1.</span> HomePage.tsx          the button calls useDepleteItem()
+<span class="c">2.</span> api/entities.ts       useMutation → api('/items/&lt;id&gt;/deplete', { method: 'POST' })
+<span class="c">3.</span> api/client.ts         fetch, credentials: 'include', JSON headers
+<span class="c">   ·</span> vite proxy            /api → :3001   (development only; one port in production)
+<span class="c">4.</span> app.ts                routes it to itemsRouter
+<span class="c">5.</span> middleware/auth.ts    requireRole('operator') → session from cookie → c.set('user')
+<span class="c">6.</span> lib/router.ts         validates the params against idParam
+<span class="c">7.</span> routes/items.ts       the handler — twelve lines, and it delegates
+<span class="c">8.</span>   └─ statusChange()   db.transaction(() =&gt; {
+<span class="c">9.</span>        getActiveItem      404 if it is gone
+<span class="c">10.</span>       assertValidStatus  the Type must allow 'depleted'
+<span class="c">11.</span>       requireCurrent     409 unless it was in_stock or open
+<span class="c">12.</span>       reconcileOnClose   the signed gap, written here and nowhere else
+<span class="c">13.</span>       db.update(items)   status='depleted', quantity_remaining=0
+<span class="c">14.</span>       logEvent()         same connection ⇒ same transaction
+<span class="c">15.</span>     })
+<span class="c">16.</span> lib/serialize.ts      timestamps → ISO, cents → decimal
+<span class="c">17.</span> api/entities.ts       onSuccess → invalidate ['items'] and ['history']
+<span class="c">18.</span> HomePage.tsx          stock re-renders; a toast offers Undo</code></pre>
+
+      <p>
+        Achtzehn Schritte, und zwei davon denken. Alles von 1 bis 6 ist
+        Transport, alles von 16 bis 18 ist Transport zurück. Das Produkt lebt in
+        den Schritten 8 bis 14, in einer Transaktion, in einer Datei.
+      </p>
+      <h3>Was jede Schicht darf</h3>
+      <ul>
+        <li><strong>Die Seite</strong> darf nicht wissen, dass ein Status eine
+          Zeichenkette ist. Sie ruft einen Hook auf.</li>
+        <li><strong>Der Hook</strong> darf nicht wissen, dass eine URL eine URL
+          ist. Er ruft <code>api()</code> auf und erklärt, was danach
+          invalidiert wird.</li>
+        <li><strong>Die Route</strong> darf nicht rechnen. Sieh Schritt 7: sie
+          liest die Kennung, benennt den neuen Status und gibt ab. Zwölf
+          Zeilen.</li>
+        <li><strong>Die Transaktion</strong> ist, wo die Korrektheit wohnt —
+          und beachte die Reihenfolge: jede Ablehnung (9, 10, 11) geschieht
+          <em>vor</em> dem ersten Schreibvorgang.</li>
+      </ul>
+      <h3>Wenn es schiefgeht</h3>
+
+<pre><code>throw notFoundError('item', id)        →  middleware/error.ts
+                                       →  { error: { code: 'not_found', … } }  404
+                                       →  api/client.ts throws ApiRequestError
+                                       →  the component catches it and says so</code></pre>
+
+      <p>
+        Eine Form, bis ganz nach draußen. Das erlaubt einer Komponente, aus
+        einer Ablehnung ein Angebot zu machen statt eines roten Kastens — der
+        Löschablauf fängt genau das ab und liest <code>details.cascade</code>
+        heraus.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Die zweite Spur, zum Selbermachen</span>
+        <p>
+          Verfolge <code>POST /api/v1/actions/record</code> genauso, durch
+          <code>services/actions.ts</code>. Dasselbe Skelett mit schwererer
+          Mitte: eine Tätigkeit fächert auf mehrere Konzepte auf, jedes sucht
+          sein offenes Gebinde, und die beiden Zahlen pro Gebinde trennen sich.
+          Wer das versteht, versteht das Produkt.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 08 -->
+    <section id="c8">
+      <h2><span class="n"></span>Die Services — hier wird gedacht</h2>
+
+      <p>
+        Wenn du ein einziges Verzeichnis liest, dann dieses. Routen sind
+        Rohrleitungen; die eigentlichen Meinungen des Produkts wohnen hier.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/services/ids.ts <span class="n">~90 Zeilen</span></p>
+        <p>
+          Prägt die lesbaren Kennungen: <code>CON006</code>,
+          <code>supplyAA042</code>. Eine Registertabelle hält den Zähler je
+          Präfix, und das Hochzählen passiert <em>innerhalb</em> derselben
+          Transaktion wie das Einfügen — ein fehlgeschlagenes Einfügen kann also
+          keine Kennung verbrennen, und zwei gleichzeitige Anlagen können nicht
+          dieselbe bekommen. Die Buchstabenform rollt von <code>AA999</code> auf
+          <code>AB001</code>, was getestet ist, weil es einmal in drei Jahren
+          passiert und dann verwirrt.
+        </p>
+        <p>
+        Der Überlauf, drei Zeilen, die einmal in drei Jahren jemanden verwirren
+        werden:
+      </p>
+<pre><code>if (!row) {
+  letterPart = style === 'lettered' ? 'AA' : '';
+  numberPart = 1;
+} else {
+  letterPart = row.letterPart;
+  numberPart = row.numberPart + 1;
+  if (style === 'lettered' &amp;&amp; numberPart &gt; 999) {
+    letterPart = nextLetters(letterPart);   <span class="c">// AA999 → AB001</span>
+    numberPart = 1;
+  }
+}</code></pre>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/history.ts <span class="n">~80 Zeilen</span></p>
+        <p>
+          <span class="sig">logEvent(event)</span> — eine Zeile pro Mutation. Es
+          speichert die menschenlesbare Kennung neben der UUID, damit eine
+          gelöschte Zeile weiterhin als Satz lesbar bleibt.
+        </p>
+        <p>
+          Das Interessante ist, was es <em>nicht</em> nimmt: eine Transaktion.
+          Es schreibt über denselben globalen <code>db</code>-Griff wie alles
+          andere und rollt trotzdem mit der Mutation zurück, die es aufzeichnet
+          — weil <code>better-sqlite3</code> synchron ist, es genau eine
+          Verbindung gibt, geöffnet in <code>db/client.ts</code>, und eine
+          SQLite-Transaktion zu ihrer Verbindung gehört. Der Aufruf innerhalb
+          eines <code>db.transaction()</code>-Callbacks genügt also.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Zerbrechlich</span>
+          <p>
+            Das ist eine echte Zusicherung auf einer stillschweigenden
+            Bedingung. Führt jemand einen Verbindungspool ein oder macht etwas
+            davon asynchron, wäre die Historie still nicht mehr Teil der
+            Transaktion stünde weiter geschrieben und wäre nicht
+            mehr wahr. Sollte sich das je ändern, muss <code>logEvent</code> die
+            Transaktion ausdrücklich bekommen.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/stock.ts <span class="n">52 Zeilen</span></p>
+        <p>
+          Die einzige Definition von „wie viel haben wir“, und sie lohnt sich
+          ganz zu sehen, weil sie kleiner ist, als man erwartet. Nichts sonst im
+          Code summiert eine Menge.
+        </p>
+<pre><code>const ACTIVE_STOCK_STATUSES: ItemStatus[] = ['in_stock', 'open'];
+
+export function stockByConcept(locationIds?: string[]): Record&lt;string, number&gt; {
+  const rows = db
+    .select({ conceptId: items.conceptId, stock: sum(items.quantityRemaining) })
+    .from(items)
+    .where(
+      and(
+        inArray(items.status, ACTIVE_STOCK_STATUSES),
+        isNull(items.deletedAt),
+        isNotNull(items.conceptId),
+        locationIds ? inArray(items.locationId, locationIds) : undefined,
+      ),
+    )
+    .groupBy(items.conceptId)
+    .all();
+  …
+}</code></pre>
+        <p>
+          In diesem einen <code>where</code> werden drei Dinge entschieden. Nur
+          <code>in_stock</code> und <code>open</code> zählen. Es summiert
+          <code>quantityRemaining</code> statt der ursprünglichen Menge, eine
+          halb verbrauchte Flasche zählt also als halbe. Und das optionale
+          <code>locationIds</code> — ein Teilbaum aus <code>subtreeIds()</code>
+          — macht den Ortsbaum auf dem Startbildschirm zu einem
+          <em>Filter</em> statt zu Navigation: dieselbe Aggregation, eine
+          Bedingung mehr.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Korrigiert am 2026-08-08</span>
+          <p>
+            Ein früherer Entwurf dieses Handbuchs schrieb dieser Datei zwei
+            Dinge zu, die sie nicht tut. Typen mit
+            <code>countsAsStock = false</code> auszuschließen passiert in
+            <code>routes/concepts.ts</code> (der <code>stockOnly</code>-Filter)
+            und in <code>services/forecast.ts</code>; die Zahlen eines Pools aus
+            <code>pool_units</code> abzuleiten passiert in
+            <code>routes/pools.ts</code>. Beides fiel auf, weil der Code zum
+            Zitieren geholt wurde — genau das ist das Argument fürs Zitieren.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/actions.ts <span class="n">370 Zeilen</span></p>
+        <p>
+          Eine Tätigkeit erfassen — und die Datei, in der das Produkt seine
+          Meinung geändert hat. sagte einmal, Schätzungen bewegten
+          nie den Bestand. Das war falsch, und warum es falsch war, ist es wert,
+          behalten zu werden: es verwechselte das <em>Rezept</em> („eine
+          pH-Messung braucht 5 mL“ — eine Vorhersage) mit dem <em>Akt, eine zu
+          erfassen</em> („ich habe eine pH-Messung gemacht“ — eine Tatsache).
+          Von Hand hätte man den Bestand siebenmal bewegt, also bewegt ihn auch
+          das Erfassen.
+        </p>
+        <p>
+          Was sich <em>nicht</em> geändert hat, ist die andere Hälfte:
+          <strong>nur ein Mensch erklärt ein Gebinde für leer.</strong> Pro
+          Gebinde werden zwei Zahlen geführt — <code>quantityRemaining</code>,
+          bei null gekappt und in den Bestand summiert, und
+          <code>estimatedUsed</code>, ungedeckelt. Ihre Differenz beim
+          Schließen ist der vorzeichenbehaftete Abstand zwischen dem, was das
+          Rezept behauptete, und dem, was in der Flasche war — und dieser
+          Abstand ist die wertvollste Zahl, die das System hervorbringt.
+        </p>
+        <p>
+          <span class="sig">openContainerFor(conceptId)</span> wohnt hier und
+          wird von der Log-Brücke mitbenutzt. Es wurde nach zwei Fehlern neu
+          geschrieben, die erst im echten Betrieb auftraten: ein Gebinde, das
+          null anzeigte, aber offen blieb, saugte jede Belastung auf, während
+          eine volle Flasche daneben stand; und ein Gebinde ohne Menge gewann,
+          weil es das älteste war, und verschluckte den Verbrauch unsichtbar.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/cascade.ts <span class="n">253 Zeilen</span></p>
+        <p>
+          Rechnet aus, was ein Löschen mitnehmen würde, und tut es in einer
+          Transaktion, wenn du zustimmst. Die interessante Regel ist die
+          Ausnahme: <strong>einen Ort zu löschen löscht nie die Artikel
+          darauf.</strong> Überall sonst besitzt ein Elternteil seine Kinder;
+          ein Regal besitzt nicht die Flasche, die darauf steht, und eine
+          Oberfläche, die still das Inventar löscht, weil jemand den Ortsbaum
+          aufgeräumt hat, wäre nicht zu verteidigen.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/purchasing.ts <span class="n">290 Zeilen</span></p>
+        <p>
+          Anforderungen und Bestellungen. Eine Bestellzeile anzunehmen ist die
+          größte Arbeitsersparnis des Produkts: sie legt die Artikel automatisch
+          an — Kennungen, Preis, Ort, Haltbarkeit — sodass zwölf Flaschen
+          eintreffen, ohne zwölf Artikel zu tippen.
+        </p>
+        <p>
+          Eine Zeile hat zwei Seiten, und keine wird je überschrieben. Bestellt
+          5 × A, erhalten 4 × B: die Zeile auf „4 × B“ zu ändern würde genau die
+          interessante Information zerstören. Artikel entstehen für die Variante,
+          die tatsächlich ankam, und die Abweichung bleibt erhalten —
+          gesammelt ergeben sie „liefert 8 % der Zeilen zu kurz“ und „11 Tage im
+          Mittel“, und diese zweite Zahl ist genau das, was die Vorhersage
+          braucht. Die Vorhersage wird besser, allein weil man den Einkauf
+          benutzt, ohne dass etwas zu konfigurieren wäre.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/forecast.ts <span class="n">245 Zeilen</span></p>
+        <p>
+          „Was geht aus, bevor ich es nachbestellen kann.“ Der Verbrauch wird
+          aus <strong>echten Leer-Ereignissen</strong> gemessen, nicht aus
+          erfassten Tätigkeiten, und das ist Absicht: die Vorhersage
+          funktioniert für ein Werkstatt, das nie eine Tätigkeit erfasst, und wird
+          besser, wenn doch. Die Lieferzeit wird je Lieferant gelernt, von
+          Bestell- bis Empfangsdatum.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Korrektur</span>
+          <p>
+            Eine frühere Fassung dieses Handbuchs behauptete, die nicht zugeordnete Tagesrate fließe in
+            <code>daysRemaining</code> ein. Tut sie nicht und tat sie nie —
+            siehe <code>forecast.ts</code>, wo <code>daysRemaining</code>
+            ausschließlich <code>rate.monthlyRate</code> benutzt. Die Tageszahl
+            ist Anzeige und speist die echten Kosten.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/logbridge.ts <span class="n">503 Zeilen</span></p>
+        <p>
+          Liest die zeilenweise Ausgabe des Maschinensteuerung. Vier Entscheidungen tragen
+          sie:
+        </p>
+        <ul>
+          <li><strong>Mengen wohnen in einem datierten Wörterbuch, nie im
+            Log.</strong> Das Log sagt, <em>was passiert ist</em>; was das
+            kostet, ist unsere Sache, und die Versionierung nach Datum bedeutet,
+            dass die Historie neu verarbeitet werden kann, wenn eine Zuordnung
+            korrigiert wird.</li>
+          <li><strong>Unbekannte Ereignisse sind ein
+            Konfigurationsbildschirm, keine Fehlerliste.</strong> Ein neuer Name
+            taucht auf, du sagst, was er bedeutet, und er taucht nie wieder auf
+            — Einrichtung als Rückkopplung statt als leere Seite.</li>
+          <li><strong>Unbekannte Objekte, asymmetrisch.</strong> Ein
+            unbekanntes Betriebsmittel wird geparkt und nachgefragt;
+            automatisches Anlegen ist der Weg zu 400 Phantomregalen aus einem
+            Tippfehler. Eine unbekannte Kit wird still angelegt — es werden
+            Tausende sein und sie sind flüchtig.</li>
+          <li><strong>Schattenbetrieb vor Aktivierung.</strong> Eine neue Regel
+            protokolliert einen Tag lang, was sie <em>täte</em>; du siehst es
+            durch; dann schaltest du sie ein.</li>
+        </ul>
+        <p>
+          Das Einlesen ist idempotent — jede Zeile wirkt genau einmal, geprüft
+          dadurch, dass die Testsuite dieselbe Datei erneut liest. Der
+          Stille-Melder bemerkt, wenn während der Arbeitszeit stundenlang keine
+          Zeile kommt, denn ein Log, das aufhört, schreit nicht; die Zahlen
+          hören nur still auf, wahr zu sein.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/maintenance.ts <span class="n">176 Zeilen</span></p>
+        <p>
+          Pläne zählen Tage, Nutzungen oder beides, und <strong>fällig heißt,
+          was zuerst abläuft</strong> — was „alle 6 Monate oder 500
+          Injektionen“ tatsächlich bedeutet. <code>nextDueAt</code> wird bei
+          jeder Änderung neu berechnet, damit „was ist fällig“ eine einzige
+          indizierte Abfrage ist. Nie gewartet lässt die Uhr bei der Anlage des
+          Plans beginnen: die einzige ehrliche Schätzung, und sichtbar falsch auf
+          eine Art, die jemand korrigieren wird.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 09 -->
+    <section id="c9">
+      <h2><span class="n"></span>Die Routen</h2>
+
+      <p>
+        Sechzehn Dateien, ein Muster. Jede deklariert ihre Routen mit
+        <code>createRoute</code> (Methode, Pfad, Middleware, Anfrageschema und
+        jede Antwort, die sie erzeugen kann) und registriert dann einen Handler.
+        Die Schemas kommen aus <code>@inventory/shared</code>, nie inline
+        geschrieben — die OpenAPI-Spezifikation unter <code>/api/docs</code>
+        entsteht also aus denselben Objekten, die validieren, und kann nicht von
+        der Wirklichkeit abweichen.
+      </p>
+
+      <p>
+        Eine Route, vollständig, denn die anderen hundert sehen so aus:
+      </p>
+<pre><code>const listRoute = createRoute({
+  method: 'get',
+  path: '/concepts',
+  tags: ['concepts'],
+  middleware: [requireRole('viewer')] as const,
+  request: {
+    query: paginationQuerySchema.extend({
+      search: z.string().optional(),
+      <span class="c">/** Home passes this: instruments and documents are not stock. */</span>
+      stockOnly: z.enum(['true', 'false']).optional(),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Paginated concepts with computed stock',
+      ...jsonContent(listResponseSchema(conceptWithStockSchema)),
+    },
+    401: errorResponse('Not signed in'),
+  },
+});</code></pre>
+      <p>
+        Alles, was ein Aufrufer braucht, ist deklariert und nicht angedeutet:
+        die Rolle, die Form der Abfrage und <em>jede</em> Antwort, die sie
+        erzeugen kann. Die OpenAPI-Seite unter <code>/api/docs</code> entsteht
+        aus diesem Objekt — demselben, das validiert — die Dokumentation kann
+        also nicht vom Verhalten abweichen. Der Handler darunter hat meist fünf
+        Zeilen.
+      </p>
+      <p>
+        Beachte den Kommentar an <code>stockOnly</code>. Dieses eine Flag ist
+        die Stelle, an der Geräte und Dokumente den Startbildschirm verlassen,
+        und die Regel ist feiner als sie aussieht: ein Konzept zählt als
+        Bestand, wenn <em>irgendein</em> lebender Artikel von einem zählenden
+        Typ ist — <strong>und ein Konzept ganz ohne Artikel bleibt
+        drin</strong>, weil es schlicht noch nicht benutzt wurde und es zu
+        verstecken neue Konzepte kaputt aussehen ließe.
+      </p>
+      <p>
+        Und das Spiegelbild auf der anderen Seite. Der Query-Schlüssel ist
+        <code>['concepts', 'list', params]</code> — eine Mutation, die
+        <code>['concepts']</code> invalidiert, frischt also jede Variante jeder
+        Liste auf, ohne eine davon zu benennen.
+      </p>
+<pre><code>export function useConcepts(params: ConceptListParams) {
+  return useQuery({
+    queryKey: ['concepts', 'list', params],
+    queryFn: () =&gt;
+      api&lt;{ data: ConceptWithStock[]; meta: PaginationMeta }&gt;('/concepts', {
+        query: { page: params.page ?? 1, search: params.search || undefined, … },
+      }),
+    placeholderData: keepPreviousData, <span class="c">// old page stays while the next loads</span>
+  });
+}</code></pre>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Datei</th><th>Zeilen</th><th>Wissenswert</th></tr></thead>
+          <tbody>
+            <tr><td><code>items.ts</code></td><td>835</td><td>Die betriebsame. Gefilterter Browser, die Aktions-Endpunkte (öffnen, leeren, umlagern, korrigieren), N-Kopien-Anlage und die Finde-oder-lege-an-Kette von Quick Add. Sein <code>PATCH</code> kann <code>status</code> nicht ändern, weil das gemeinsame Update-Schema dieses Feld gar nicht hat.</td></tr>
+            <tr><td><code>lots.ts</code></td><td>1138</td><td>Die größte Datei im Repository: Entwurf, Anforderungsliste, Zeilen, Bestellung, Empfang, Abweichungen.</td></tr>
+            <tr><td><code>pools.ts</code></td><td>1115</td><td>Gezählte und einzeln geführte Pools, Ereignisse, Nachzählungen, Inbetriebnahme aus dem Bestand.</td></tr>
+            <tr><td><code>equipment.ts</code></td><td>672</td><td>Artikelverknüpfungen und Wartung. <code>linkQuery</code> löst das ferne Ende in beide Richtungen auf.</td></tr>
+            <tr><td><code>logbridge.ts</code></td><td>613</td><td>Quellen, Parser, Wörterbuch, Einlesen, die Warteschlange unbekannter Ereignisse.</td></tr>
+            <tr><td><code>actions.ts</code></td><td>567</td><td>Tätigkeitsdefinitionen und Erfassung, dazu der Abgleich.</td></tr>
+            <tr><td><code>requests.ts</code></td><td>463</td><td>Bedarf auf Konzeptebene; Doppelte werden ein +1, keine zweite Zeile.</td></tr>
+            <tr><td><code>concepts.ts</code></td><td>415</td><td>CRUD plus <code>/concepts/stock</code>, der Endpunkt, auf dem der Startbildschirm steht.</td></tr>
+            <tr><td><code>trash.ts</code></td><td>341</td><td>Alles Löschbare, Wiederherstellen von oben nach unten, und endgültiges Entfernen für Leitungen.</td></tr>
+            <tr><td><code>variants.ts</code> · <code>analogous.ts</code></td><td>322 · 289</td><td>Die Massenaktualisierungen der Denormalisierung, mit zurückgegebener Anzahl, damit die Oberfläche vorher warnen kann.</td></tr>
+            <tr><td><code>users.ts</code></td><td>286</td><td>Kontoanlage, Passwörter, Rollen, Verwaltung der Tastengriffe.</td></tr>
+            <tr><td><code>transfer.ts</code></td><td>270</td><td>CSV-Import und -Export.</td></tr>
+            <tr><td><code>locations.ts</code></td><td>263</td><td>Der Baum, mit Teilbaum-Schutz und vorgeschlagenen Kindercodes.</td></tr>
+            <tr><td><code>types.ts</code></td><td>220</td><td>Benutzerdefinierte Typen, samt Umbenennen eines Feldschlüssels mit Datenmigration.</td></tr>
+            <tr><td><code>forecast.ts</code></td><td>207</td><td>Dünn — die Rechnerei steckt im Service.</td></tr>
+            <tr><td><code>history.ts</code></td><td>180</td><td>Nur lesend, gefiltert, seitenweise. Hier schreibt nichts.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note tip">
+        <span class="lbl">Einen Endpunkt hinzufügen</span>
+        <p>
+          Schema in <code>@inventory/shared</code> → <code>createRoute</code> mit
+          allen Antworten → Handler, der einen Service aufruft → Hook in
+          <code>web/src/api/</code>. Wenn der Handler anfängt zu rechnen statt
+          zu delegieren, gehört die Logik nach <code>services/</code>.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">api/src/routes/items.ts — ordering <span class="n">~40 lines</span></p>
+        <p>Sortieren ist ein Query-Parameter, die Arbeit macht SQLite über alle passenden Zeilen. Die 25 Zeilen zu sortieren, die schon im Browser liegen, wäre gelogen: „der billigste Artikel“ hieße „der billigste der 25 zuletzt eingetroffenen“. Jeder Router deklariert seine eigene Schlüsselliste, damit ein unbekannter Schlüssel am Rand ein 400 ist und kein stiller Rückfall auf eine Reihenfolge, die niemand wollte.</p>
+        <p>Zwei Details tragen Last. Übersetzte Namen sind JSON-Spalten und sortieren deshalb über <code>json_extract</code> in der Sprache der lesenden Person, mit Englisch als Rückfall — dieselbe Regel, die <code>resolveText()</code> im Browser anwendet. Und NULL wird in beide Richtungen nach hinten gezwungen: SQLite sortiert NULL zuerst, sonst öffnete eine Seite von Artikeln ohne Preis mit einer Spalte voller Striche.</p>
+      </div>
+
+    <!-- ============================================================== 10 -->
+    <section id="c10">
+      <h2><span class="n"></span>Das Frontend-Skelett</h2>
+
+      <div class="file">
+        <p class="path">web/src/main.tsx <span class="n">34 Zeilen</span></p>
+        <p>
+          Der Stapel der Provider, und seine Reihenfolge ist nicht beliebig:
+          Query-Client → Theme → Sprache → Hinweise → Router. Das Theme steht
+          außerhalb der Sprache, weil eine Farbe nicht übersetzt wird; die
+          Hinweise stehen innerhalb, weil ihr Text es wird; der Router steht
+          ganz innen, weil alles darüber die Navigation überleben muss.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/App.tsx <span class="n">~70 Zeilen</span></p>
+        <p>
+          Die Routentabelle, und eine Sache, die bewusst außerhalb steht: der
+          <code>FastLoginListener</code>. Ein Tastengriff muss auf dem
+          Anmeldebildschirm <em>und</em> mitten in der Artikeltabelle
+          funktionieren, er kann also nicht im angemeldeten Layout wohnen.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/RequireAuth.tsx <span class="n">~35 Zeilen</span></p>
+        <p>
+          Leitet nach <code>/login</code> um, wenn keine Sitzung besteht, und —
+          der wichtige Teil — zeichnet nichts, solange die Sitzung noch geladen
+          wird. Ohne das blitzt bei jedem Neuladen der Anmeldebildschirm für
+          jemanden auf, der längst angemeldet ist.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/Layout.tsx <span class="n">225 Zeilen</span></p>
+        <p>
+          Die Hülle: Seitenleiste, Navigation, Sprachumschalter, Theme-Menü und
+          die Dialoge für Passwort und Tastengriff. Die Navigation ist ein
+          einziges Array von Objekten, nach Rolle gefiltert mit demselben
+          <code>roleAtLeast</code>, das der Server benutzt, und in drei Bänder
+          geteilt — was du besitzt, was damit geschieht, Einstellungen und das
+          Protokoll. Auf dem Telefon wird dasselbe Markup zur Schublade; deshalb
+          wird es zweimal gezeichnet, und deshalb muss die Tour-Maschine die
+          <em>sichtbare</em> Kopie wählen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 -->
+    <section id="c11">
+      <h2><span class="n"></span>Mit der API sprechen</h2>
+
+      <div class="file">
+        <p class="path">web/src/api/client.ts <span class="n">~70 Zeilen</span></p>
+        <p>
+          Eine Hülle um <code>fetch</code>. Sie schickt Cookies mit, setzt die
+          JSON-Header und — der nützliche Teil — verwandelt die einheitliche
+          Fehlerform der API zurück in einen <code>ApiRequestError</code> mit
+          <code>code</code>, <code>message</code> und <code>details</code>.
+          Deshalb lässt sich ein blockiertes Löschen in einer Komponente fangen
+          und in „das löscht auch 3 Artikel — weitermachen?“ verwandeln statt in
+          einen roten Kasten.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/api/{concepts,entities,history,operations}.ts <span class="n">~1.500 Zeilen</span></p>
+        <p>
+          Jede Interaktion mit dem Server, als TanStack-Query-Hooks, nach
+          Bereich gruppiert statt nach Entität — <code>operations.ts</code> ist
+          das gesamte, weil diese Funktionen gemeinsam benutzt werden.
+          Zwei Konventionen gelten durchgängig:
+        </p>
+        <ul>
+          <li><strong>Query-Schlüssel sind
+            <code>[entität, 'list', filter]</code></strong>, sodass das
+            Invalidieren von <code>['items']</code> jede Liste und jede
+            Detailansicht eines Artikels auffrischt, ohne sie zu benennen.</li>
+          <li><strong>Jede Mutation invalidiert ihre Entität <em>und</em> die
+            Historie</strong>, über einen kleinen
+            <code>useInvalidator</code>-Helfer — denn jede Mutation schreibt
+            Historie, eine veraltete Historienseite wäre sonst garantiert.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/api/auth.ts <span class="n">21 Zeilen</span></p>
+        <p>
+          Der React-Client von better-auth mit dem Benutzernamen-Plugin, dazu
+          <span class="sig">asSessionUser</span> — eine Typumwandlung, die es
+          gibt, um eine echte Lücke zu dokumentieren: der Server ergänzt
+          <code>role</code> als zusätzliches Feld, und der generierte Typ des
+          Clients weiß nichts davon. Eine Umwandlung an einer Stelle ist besser
+          als verstreutes <code>as any</code>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 12 -->
+    <section id="c12">
+      <h2><span class="n"></span>Drei Farben</h2>
+
+      <div class="file">
+        <p class="path">web/src/styles/index.css <span class="n">~200 Zeilen</span></p>
+        <p>
+          Das gesamte Theme leitet sich aus <strong>drei</strong>
+          Custom Properties ab — primär, sekundär, Akzent — über
+          <code>color-mix(in oklab, …)</code>. Flächen, Ränder, gedämpfter Text
+          und Tönungen sind alle Mischungen des Primärtons mit dem Hintergrund;
+          deshalb färbt das Ändern einer Variablen in den Entwicklerwerkzeugen
+          die ganze Anwendung um und nicht die Hälfte.
+        </p>
+        <p>
+          <code>oklab</code> statt sRGB ist das Detail, das es funktionieren
+          lässt: in einem wahrnehmungsgerechten Raum zu mischen hält eine
+          14-%-Tönung bei jedem Farbton wie eine 14-%-Tönung aussehend, während
+          sRGB das Violett schlammig und das Bernstein grell machen würde. Die
+          Statusfarben — Rot, Bernstein, Grün — leiten sich bewusst
+          <em>nicht</em> ab. „Wenig Bestand“ muss dasselbe Rot sein, egal was
+          jemand als Primärfarbe gewählt hat.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/theme/ThemeProvider.tsx <span class="n">~120 Zeilen</span></p>
+        <p>
+          Liest die drei Farben aus dem <code>localStorage</code> und schreibt
+          sie auf <code>documentElement</code>. Die Vorgaben stehen im CSS und
+          nicht hier, damit beim ersten Laden nicht kurz die falsche Palette
+          aufblitzt. Hier steckt auch der Kontrasthelfer: aus einer gewählten
+          Primärfarbe berechnet er die relative Leuchtdichte und wählt Schwarz
+          oder Weiß für den Text darauf — wer ein blasses Gelb wählt, bekommt
+          also lesbare Schaltflächen statt der Annahme eines Designers.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">web/src/lib/palette.ts <span class="n">~250 lines</span></p>
+        <p>Ein Theme aus einem Logo lesen. Niemand will drei Hex-Werte aussuchen, und fast jeder hat schon ein Logo — das eine Farbentscheidung ist, die jemand mit Absicht getroffen hat. Die ehrliche Abkürzung ist, sie wieder herauszulesen.</p>
+        <p>Pixel werden nach Farbton einsortiert, 24 Töpfe zu 15°, statt sie richtig zu clustern: Ein Logo hat drei oder vier flache Farben, nicht den Verlauf einer Fotografie, und k-means wäre mehr Code für eine Antwort, die nicht besser ist. Durchsichtige, graue, fast schwarze und fast weiße Pixel fallen weg — sie sind das Papier, nicht die Marke, und mit ihnen bekäme jedes Logo der Welt dasselbe graue Theme.</p>
+        <p>Was vom Bild übrig bleibt, ist der <strong>Farbton</strong>; Sättigung und Helligkeit werden dreifach neu gesetzt (<em>Ruhig</em>, <em>Kräftig</em>, <em>Tief</em>). Das ist keine Freiheit: Die Oberflächen der App sind dunkel und vom Primärton eingefärbt, ein roh übernommenes Marken-Marineblau verschwände im Hintergrund und ein Marken-Pastell würde ihn ausbleichen. Ein einfarbiges Logo bekommt die anderen beiden Töne durch Drehung im Farbkreis — eine Triade, keine Entschuldigung.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/settings.ts <span class="n">~35 lines</span></p>
+        <p>Eine Schlüssel-Wert-Tabelle statt einer Zeile mit einer Spalte pro Einstellung: sonst wäre jede neue Einstellung eine Migration, und Einstellungen sind genau das, was an einem Dienstagnachmittag dazukommt. Der Wert ist JSON, an der Route per Zod-Schema validiert — die Form lebt im Typsystem, nicht im DDL.</p>
+        <p>Das Logo reist als <code>data:</code>-URI in diesem JSON, gedeckelt bei etwa 300 KB. Es liegt mit Absicht in der Datenbank: Die Sicherung dieses Produkts ist eine Datei, und ein uploads/-Ordner daneben wäre das Erste, was fehlt. Gespeichertes JSON, das nicht mehr parst, fällt auf das eingebaute Aussehen zurück statt zu werfen — ein kaputtes Logo darf nicht die ganze App mitnehmen.</p>
+      </div>
+
+    <!-- ============================================================== 13 -->
+    <section id="c13">
+      <h2><span class="n"></span>Zwei Sprachebenen</h2>
+
+      <p>
+        Oberflächentext und Benutzerdaten werden über verschiedene Mechanismen
+        übersetzt, und sie zu verwechseln ist der klassische Fehler.
+      </p>
+
+      <div class="file">
+        <p class="path">web/src/i18n/index.tsx <span class="n">~90 Zeilen</span></p>
+        <p>
+          <span class="sig">t('items.title')</span> über drei
+          JSON-Wörterbücher, mit Rückfall auf Englisch und dann auf den
+          Schlüssel selbst — eine fehlende Übersetzung zeigt also
+          <code>items.title</code>, was absichtlich hässlich ist und dadurch
+          repariert wird. Es interpoliert
+          (<code>t('lots.itemsCreated', { n: 6 })</code>) und lässt unbekannte
+          Platzhalter unangetastet, damit bestehende Texte mit geschweiften
+          Klammern an dem Tag nicht zerbrachen, als Interpolation dazukam.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/i18n/{en,ca,de}.json <span class="n">je 691 Schlüssel</span></p>
+        <p>
+          Eine Sprache hinzuzufügen heißt, eine Datei hinzuzufügen. Kein
+          Schlüssel in einer fehlt in einer anderen — das wird geprüft, nicht
+          gehofft.
+        </p>
+      </div>
+
+      <p>
+        Die zweite Ebene sind die Daten: der Name eines Konzepts ist eine
+        JSON-Spalte <code>{"en": …, "de": …, "ca": …}</code>, gezeichnet über
+        <span class="sig">resolveText(name, sprache)</span> aus dem gemeinsamen
+        Paket. Deshalb braucht eine vierte Sprache keine Migration, und deshalb
+        gibt es <code>MultilangInput.tsx</code> — ein Feld mit drei Reitern, bei
+        dem Englisch Pflicht ist.
+      </p>
+    </section>
+
+    <!-- ============================================================== 14 -->
+    <section id="c14">
+      <h2><span class="n"></span>Die Grundbausteine</h2>
+
+      <div class="file">
+        <p class="path">web/src/components/ui.tsx <span class="n">283 Zeilen</span></p>
+        <p>
+          Schaltfläche, Eingabefeld, Beschriftung, Auswahl, Textfeld,
+          Ladeanzeige, Schublade, Dialog, Seitennummerierung, Status- und
+          Rollenabzeichen. Im shadcn-Stil, gebaut mit
+          <code>class-variance-authority</code>, und sie benutzen ausschließlich
+          Theme-Marken — <code>bg-primary</code>, <code>text-muted</code>,
+          <code>border-line</code> — nie eine wörtliche Farbe. Diese Regel sorgt
+          dafür, dass das Drei-Farben-System wirklich in jede Ecke reicht.
+        </p>
+        <p>
+          <code>Drawer</code> und <code>Modal</code> teilen sich einen
+          <span class="sig">useEscape</span>-Hook und tragen beide
+          <code>role="dialog"</code>, <code>aria-modal</code> und ein
+          <code>data-ui</code>-Attribut. Das Attribut ist kein Stil: damit
+          sprechen die Browser-Testsuiten einen Dialog an, ohne von Klassennamen
+          abzuhängen, die sich ändern.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/toast.tsx <span class="n">~90 Zeilen</span></p>
+        <p>
+          Hinweise mit optionaler Aktion, und genau das macht die optimistischen
+          Schnellaktionen auf dem Startbildschirm ehrlich: „supplyAA042 →
+          geleert · Rückgängig?“. Ohne das Rückgängig wäre ein versehentlicher
+          Tipper auf dem Telefon unwiederbringlich, und die Schaltflächen
+          müssten kleiner und langsamer sein.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/lib/{cn,format}.ts</p>
+        <p>
+          <code>cn()</code> führt Tailwind-Klassen so zusammen, dass das
+          <code>className</code> des Aufrufers die Vorgabe der Komponente
+          schlägt, statt sich damit zu streiten. <code>format.ts</code> zeichnet
+          Daten, Mengen und Geld je Sprache — das Spiegelbild von
+          <code>parseMoneyInput</code>, und der Grund, warum ein Preis nie durch
+          Aneinanderhängen von Text entsteht.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 15 -->
+    <section id="c15">
+      <h2><span class="n"></span>Die Seiten</h2>
+
+      <p>
+        Achtzehn Seiten. Die meisten haben dieselbe Form — Filter, eine
+        Tabelle, eine Schublade — und lesen sich ohne Hilfe. Fünf sind einen
+        Absatz wert.
+      </p>
+
+      <div class="file">
+        <p class="path">web/src/pages/HomePage.tsx <span class="n">472 Zeilen</span></p>
+        <p>
+          Der Bildschirm, an dem die Anwendung gemessen wird. Eine Kennzahlen-
+          leiste, ein Ortsbaum, der als <em>Filter</em> statt als Navigation
+          wirkt, Konzeptkarten mit aufklappbarer Hierarchie, überfällige Wartung
+          über dem Bestand (eine unkalibrierte Maschine hält die Arbeit an, wie
+          es eine fast leere Flasche nicht tut) und optimistische Schnellaktionen
+          mit Rückgängig. Einzelartikel — solche ohne Variante — bekommen eine
+          eigene Karte, denn der Startbildschirm spricht in Konzepten und sie
+          wären sonst unsichtbar.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/ItemsPage.tsx <span class="n">476 Zeilen</span></p>
+        <p>
+          Filter für mehrere Status, Typ, Konzept, Ortsteilbaum und Text. Der
+          leere Zustand ist die Erwähnung wert: er unterscheidet „du hast keine
+          Artikel“ von „nichts passt zu diesen Filtern“ und bietet einen Klick
+          zum Zurücksetzen. Diese Unterscheidung war ein echter Fehler — die
+          Standardfilter sind <code>in_stock</code>+<code>open</code>, ein Gerät
+          ist <code>in_service</code>, und die Suche nach der eigenen Messschieber
+          teilte voller Überzeugung mit, dass es sie nicht gebe.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/LogPage.tsx <span class="n">797 Zeilen</span></p>
+        <p>
+          Die größte Seite, weil die Log-Brücke am meisten zu konfigurieren
+          hat: Quellen, der Parser-Baukasten, das Wörterbuch, unbekannte
+          Ereignisse und der Einlesebericht. Der Baukasten ist der interessante
+          Teil — du fügst eine echte Zeile ein, die Anwendung beschriftet die
+          Bestandteile, und du sagst, welcher der Zeitstempel, welcher das
+          Objekt und welcher das Ereignis ist. Niemand tippt einen regulären
+          Ausdruck.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/PoolsPage.tsx <span class="n">651 Zeilen</span></p>
+        <p>
+          Becher im Umlauf, ihre Zustände, die Nachzählung und die
+          Inbetriebnahme aus dem Schrank. Der Nachzählbildschirm ist das
+          Messgerät für den Schwund: niemand meldet je einen Bruch, man zählt
+          nur, was da ist, und die Differenz <em>ist</em> die Verlustrate.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/LocationsPage.tsx <span class="n">417 Zeilen</span></p>
+        <p>
+          Der Baum konnte Orte beschreiben, die es gibt, aber nie die Frage
+          beantworten „was ist in diesem Schrank“ — die Frage, die jemand
+          vor dem Schrank tatsächlich hat. Einen Knoten zu wählen listet
+          jetzt seinen Inhalt, mit Teilbaum-Schalter, Typfilter und Suche.
+        </p>
+      </div>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Der Rest</th><th>In einer Zeile</th></tr></thead>
+          <tbody>
+            <tr><td><code>ConceptsPage</code> · <code>AnalogousPage</code> · <code>VariantsPage</code></td><td>Die drei oberen Ebenen, mit der Warnung vor einer Massenaktualisierung.</td></tr>
+            <tr><td><code>TypesPage</code></td><td>Der Feldbaukasten mit Live-Vorschau — du siehst das Formular deiner Nutzer, während du es baust.</td></tr>
+            <tr><td><code>RequestsPage</code> · <code>LotsPage</code></td><td>Erst anfordern, dann kaufen. Die Anforderungsliste sitzt im Bestellentwurf, dort wo entschieden wird.</td></tr>
+            <tr><td><code>ForecastPage</code></td><td>Eine Liste, kein Diagramm: „diese 6 gehen aus, bevor du sie nachbestellen kannst“ und eine Schaltfläche für alle.</td></tr>
+            <tr><td><code>ActionsPage</code></td><td>Tätigkeitsdefinitionen und Erfassung; Verbrauchszuordnungen sind datiert, damit die Historie neu verarbeitet werden kann.</td></tr>
+            <tr><td><code>HistoryPage</code> · <code>TrashPage</code> · <code>UsersPage</code></td><td>Das Protokoll, der Papierkorb, die Konten.</td></tr>
+            <tr><td><code>LoginPage</code></td><td>Benutzername und Passwort, dazu der Hinweis, dass ein Tastengriff funktioniert.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============================================================== 16 -->
+    <section id="c16">
+      <h2><span class="n"></span>Komponenten, die denken</h2>
+
+      <div class="file">
+        <p class="path">web/src/components/QuickAddModal.tsx <span class="n">295 Zeilen</span></p>
+        <p>
+          Die Funktion, die die vierstufige Hierarchie ignorierbar macht, also
+. Namen tippen, Typ und Menge wählen, Eingabetaste: die
+          Finde-oder-lege-an-Kette des Servers baut Konzept → Analog → Variante
+          im Hintergrund, in einer Transaktion. Der Dialog bleibt offen und
+          merkt sich den letzten Typ und Ort, denn der echte Einsatz sind zwanzig
+          Artikel hintereinander nach einer Lieferung. Auf <code>q</code> gelegt.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/ItemDrawer.tsx <span class="n">489 Zeilen</span></p>
+        <p>
+          Alles zu einem Artikel: die eigenen Felder, gezeichnet aus seinem Typ,
+          die Aktionsschaltflächen, sein eigener Historienreiter und die
+          Geräteansicht. Am wichtigsten ist eine Kleinigkeit — den
+          <em>letzten</em> Artikel eines Konzepts zu leeren bietet direkt im
+          Hinweis „mehr anfordern“ an. Das ist der Einstieg in den gesamten
+          Einkaufskreislauf, festgehalten in der Sekunde, in der der Mensch es
+          weiß, statt auf einem Bildschirm, den er sich zu besuchen merken
+          müsste.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/Tour.tsx <span class="n">421 Zeilen</span> · web/src/tours.ts</p>
+        <p>
+          Das interaktive Handbuch: vier geführte Touren, die auf den echten
+          Bildschirm zeigen. Ein Schritt benennt sein Ziel über ein
+          <code>data-tour</code>-Attribut, <strong>nie über eine
+          Klasse</strong> — eine Tour, die zerbricht, wenn jemand eine
+          Schaltfläche umgestaltet, ist eine Tour, die niemand pflegt.
+        </p>
+        <p>
+          Zwei Korrekturen hier kamen aus Tests auf dem Telefon. Die
+          Seitenleiste wird zweimal gezeichnet (Desktop und Schublade), also
+          griff <code>querySelector</code> fröhlich die versteckte Kopie und
+          zeigte auf nichts; die Maschine sucht jetzt das erste Ziel mit einer
+          Bounding-Box ungleich null. Und eine Tour zu starten schloss genau die
+          Schublade, um die es im Schritt ging — ein Schritt kann daher
+          <code>needsNav</code> erklären, und die Maschine öffnet sie vorher.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/lib/chord.ts <span class="n">220 Zeilen</span></p>
+        <p>
+          Einen Tastengriff von der Tastatur lesen. Tasten werden über
+          <code>event.code</code> erkannt — Position, nicht Zeichen — und genau
+          das lässt dieselbe Geste auf einer katalanischen, deutschen oder
+          englischen Belegung funktionieren.
+        </p>
+        <p>
+          Zwei Regeln verdienen ihren Platz. <strong>Eine Gruppe endet, wenn die
+          Finger sich heben, nicht wenn der Timer feuert</strong>: jede neue
+          Taste startet die Halteuhr neu, und die Gruppe ist das, was noch
+          gedrückt ist, wenn die Hand stillsteht — eine langsame Hand wird also
+          nicht als zwei Gruppen gelesen. Und <strong>der Erkenner schweigt,
+          solange getippt wird</strong> — außer ein Feld meldet sich mit
+          <code>data-chord-ok</code> zurück, was das Anmeldeformular tut, denn
+          genau dort landet der Cursor von selbst, und ein dort stillschweigend
+          ignorierter Griff würde den einen Bildschirm zerstören, für den es die
+          Funktion gibt.
+        </p>
+        <p>
+          <span class="sig">suspendChords()</span> ist ein Zähler und kein
+          Schalter, damit das Übungsfenster den anwendungsweiten Erkenner
+          abschalten kann, ohne dass ein zweiter ihn wieder scharf macht. Ohne
+          das würde dich das Einüben deines eigenen Griffs jedes Mal abmelden,
+          wenn er saß.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/EquipmentPanel.tsx <span class="n">648 Zeilen</span></p>
+        <p>
+          Verknüpfte Artikel und Wartungspläne, beides generisch und nicht
+          hinter einem Typ namens „Gerät“ eingesperrt — dasselbe Argument, das
+          die Typen benutzerdefiniert gemacht hat. Ein Schrank hat ein
+          Wartungsintervall; eine Drehmomentschlüssel hat ein Kalibrierzertifikat; die Liste
+          dessen, was ein Werkstatt an eine Maschine hängt, ist nicht im Voraus
+          bekannt.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/components/{LotLineForm,ReceiveModal,SupplierPicker,LocationPicker,CustomFields,DeleteDialog,CsvModal,LabelSheet,MultilangInput,PasswordModal,RequestModal,FastKeyModal,FastLogin,ThemeMenu,LocationTree}.tsx</p>
+        <p>
+          Die Nebenrollen. Drei sind je einen Satz wert:
+          <code>LotLineForm</code> zeigt die Gebinderechnung, statt sie still
+          anzuwenden („du brauchst 500 mL · die Flasche hat 1 L · Menge 1“);
+          <code>CustomFields</code> zeichnet und validiert Felder, die es beim
+          Schreiben des Codes noch nicht gab, gesteuert vom Typ; und
+          <code>LabelSheet</code> erzeugt QR-Etiketten im Browser mit einem
+          Druck-Stylesheet, also ohne Serverweg und ohne gespeicherte Bilder.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">web/src/components/Combobox.tsx <span class="n">~230 lines</span></p>
+        <p>Ein <code>&lt;select&gt;</code>, in das man tippen kann. Die Filterleisten waren einfache Auswahllisten: bei acht Optionen in Ordnung, bei zweihundert nutzlos — und die Liste war ohnehin auf eine Ergebnisseite gedeckelt, sodass ein Konzept auf Seite 2 wie ein nicht existierendes aussah.</p>
+        <p>Zwei Details tragen das Ganze. Das Eingabefeld enthält <em>was du gerade tippst</em>, solange die Liste offen ist, und <em>was du gewählt hast</em>, wenn sie zu ist; die beiden zu vermischen ist der Grund, warum sich die meisten selbstgebauten Comboboxen kaputt anfühlen. Und der Vergleich ignoriert Akzente über <code>NFD</code>-Normalisierung, denn in Eile tippt niemand den Akzent, und <code>Heptà</code> muss als <code>hepta</code> auffindbar sein.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/ResizablePanel.tsx <span class="n">~120 lines</span></p>
+        <p>Die Breite des Ortsbaums, gezogen und gemerkt. Die Listener hängen am Fenster und nicht am 6px-Griff — sobald ein Ziehen beginnt, verlässt der Zeiger den Griff ständig, und ein auf den Griff beschränktes <code>mousemove</code> würde sofort abbrechen. Die Breite wird am Ende des Ziehens gespeichert, nicht in jedem Frame, und die Pfeiltasten verändern sie ebenfalls: ein Bedienelement, das nur die Maus annimmt, kann das halbe Haus nicht benutzen.</p>
+      </div>
+
+    <!-- ============================================================== 17 -->
+    <section id="c17">
+      <h2><span class="n"></span>Die Desktop-Anwendung</h2>
+
+      <div class="file">
+        <p class="path">desktop/src-tauri/src/main.rs <span class="n">220 Zeilen</span></p>
+        <p>
+          Ein Fenster auf einen Server — <strong>keine</strong> zweite Kopie der
+          Anwendung. Das ist die Entwurfsentscheidung, und sie gehört klar
+          gesagt, weil das Gegenteil naheliegt: dieses Produkt ist ein Server
+          mit einer Datei, die das ganze Werkstatt teilt. Ein Installationspaket mit
+          eigener API und eigener Datenbank gäbe also still jeder Werkbank ein
+          privates Inventar — genau das, was die Anwendung verhindern soll.
+        </p>
+        <p>
+          Was es gegenüber einem Browser-Tab bringt: ein Fenster ohne
+          Adressleiste, aus der man hinauswandern kann, ohne Tab, den man
+          versehentlich schließt, und mit einer Tastatur, die das Betriebssystem
+          direkt hineinreicht — und das macht den Tastengriff an einer
+          gemeinsam genutzten Werkbank erst praktikabel.
+        </p>
+        <p>
+          Drei Startwege: ohne gespeicherten Server öffnet sich der
+          Verbindungsbildschirm; mit einem guten die Anwendung; und ein
+          gespeicherter Server, der inzwischen umgezogen ist, fällt
+          <em>zurück</em> auf den Verbindungsbildschirm und zeigt, was er
+          versucht hat, statt eines leeren Rechtecks. Er fragt
+          <code>/api/v1/health</code> aus Rust ab und nicht aus der Seite, was
+          das CORS-Problem vollständig umgeht.
+          <span class="sig">normalize()</span> akzeptiert, was ein Mensch
+          tatsächlich tippt — <code>workshop-pc:3000</code>,
+          <code>192.168.1.20:3000</code>, mit oder ohne Schema — und seine
+          Unit-Tests fanden beim ersten Lauf einen echten Fehler: abschließende
+          Schrägstriche vor der Schema-Prüfung zu entfernen machte aus einem
+          nackten <code>http://</code> ein <code>http://http:</code>, eine
+          völlig gültige URL für einen Host, den niemand hat.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">desktop/ui/index.html <span class="n">~180 Zeilen</span></p>
+        <p>
+          Der Verbindungsbildschirm, und die einzige Oberfläche, die der
+          Desktop-Anwendung selbst gehört. Eine statische Datei ohne Bundler und
+          ohne Abhängigkeiten, die <code>window.__TAURI__</code> direkt aufruft
+          — alles andere, was sie zeigt, kommt vom Server.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 18 -->
+    <section id="c18">
+      <h2><span class="n"></span>Bauen und ausliefern</h2>
+
+      <div class="file group">
+        <p class="path">web/vite.config.ts · api/tsup.config.ts</p>
+        <p>
+          Vite leitet <code>/api</code> in der Entwicklung auf
+          <code>:3001</code> weiter — der einzige Grund, warum sich zwei
+          Entwicklungsserver wie eine Anwendung anfühlen. tsup bündelt die API
+          zu einer einzigen <code>dist/index.js</code> und zieht
+          <code>@inventory/shared</code> mit hinein, weil dieses Paket keine eigene
+          Bauausgabe hat.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">Dockerfile <span class="n">52 Zeilen</span></p>
+        <p>
+          Mehrstufig. Die Baustufe installiert eine C-Werkzeugkette, weil
+          <code>better-sqlite3</code> ein natives Modul ist; die Laufzeitstufe
+          kopiert nur das Nötige und startet <code>node dist/index.js</code> mit
+          <code>SERVE_WEB=1</code>, sodass ein Port die SPA, die API, die
+          Dokumentation und die Handbücher ausliefert.
+        </p>
+        <p>
+          <strong>Das Workspace-Layout bleibt erhalten statt flachgeklopft zu
+          werden</strong>, was verschwenderisch aussieht und es nicht ist: npm
+          hebt <code>better-auth</code> nicht in das
+          <code>node_modules</code> der Wurzel, und Flachklopfen bricht die
+          Modulauflösung zur Laufzeit — ein Fehler, der nur im Container
+          auftritt.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Die Lehre aus dem ersten echten Lauf</span>
+          <p>
+            <code>NODE_ENV=production</code> ist in diesem Repository an genau
+            einer Stelle gesetzt — hier — und nichts sonst läuft damit. Alles,
+            was sich in Produktion anders verhält, war also nie ausgeführt
+            worden. Das erste <code>docker run</code> fand es: der Container
+            startete, gab eine Warnung aus und starb bei der ersten angemeldeten
+            Anfrage (, <code>lib/secret.ts</code>).
+          </p>
+        </div>
+      </div>
+
+      <div class="file group">
+        <p class="path">docs/build-manuals.mjs · docs/build-artifacts.mjs</p>
+        <p>
+          Machen aus <code>docs/manual.css</code> und
+          <code>docs/content/*.html</code> eigenständige Dokumente — auch das,
+          das du gerade liest. Die Schriften sind als Daten-URIs eingebettet, ein
+          Handbuch funktioniert also ganz ohne Netz: man kann es mailen, auf
+          einen USB-Stick kopieren oder von der Anwendung selbst unter
+          <code>/api/v1/manual/:locale</code> ausliefern lassen — das öffnet das
+          <code>?</code> in der Seitenleiste.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== day to day -->
+    <section id="c23">
+      <h2><span class="n"></span>Damit arbeiten, Tag für Tag</h2>
+
+      <h3>Die Schleife</h3>
+<pre><code>npm install
+npm run db:seed                  <span class="c"># demo data; refuses on a non-empty database</span>
+npm run dev                      <span class="c"># API :3001, web :5173</span>
+npm run typecheck                <span class="c"># every workspace, including the Rust no-op</span></code></pre>
+      <p>
+        Zwei Server in der Entwicklung, ein Port in Produktion — der einzige
+        Unterschied ist <code>SERVE_WEB=1</code>. Migrationen laufen beim Start,
+        es gibt also keinen eigenen Schritt zum Vergessen.
+      </p>
+
+      <h3>Das Schema ändern</h3>
+<pre><code><span class="c"># 1. edit packages/api/src/db/schema.ts</span>
+cd packages/api
+npx drizzle-kit generate --name what_it_does
+<span class="c"># 2. read drizzle/00NN_what_it_does.sql before you trust it</span>
+<span class="c"># 3. restart — index.ts applies it at boot. Commit the .sql file.</span></code></pre>
+      <p>
+        Schreibe nie eine Migration von Hand und ändere nie eine, die schon
+        angewandt wurde. Lies das erzeugte SQL, bevor du ihm traust:
+        <code>drizzle-kit</code> ist gut, aber SQLite kann keine Spalte
+        entfernen, ohne die Tabelle neu zu bauen — und das sollte man gesehen
+        haben.
+      </p>
+
+      <h3>Eine Entität hinzufügen, in der Reihenfolge, die funktioniert</h3>
+<pre><code>shared/src/schemas/thing.ts       schema + create + update, exported from index.ts
+api/src/db/schema.ts              the table, with auditColumns
+api/drizzle/                      generated migration, committed
+api/src/services/thing.ts         only if it needs to think
+api/src/routes/thing.ts           createRoute × N, registered in app.ts
+web/src/api/entities.ts           useThings / useCreateThing / useUpdateThing
+web/src/pages/ThingsPage.tsx      the screen, + a route in App.tsx
+web/src/i18n/{en,ca,de}.json      all three, or the key shows through</code></pre>
+      <p>
+        Acht Dateien, und die Reihenfolge zählt, weil jede gegen die darüber
+        typisiert ist. Fang woanders an, und du streitest eine Stunde mit dem
+        Compiler.
+      </p>
+
+      <h3>Wenn etwas nicht stimmt</h3>
+<pre><code>curl -s localhost:3001/api/v1/concepts/stock | python3 -m json.tool
+open localhost:3001/api/docs                  <span class="c"># every endpoint, try it live</span>
+sqlite3 packages/api/data/inventory.db 'select * from history order by created_at desc limit 20'</code></pre>
+      <p>
+        In dieser Reihenfolge. Frag zuerst die API, denn die meisten
+        „der Bildschirm ist falsch“-Fehler sind ein Bildschirm, der über falsche
+        Daten recht hat. Die Swagger-UI unter <code>/api/docs</code> lässt dich
+        jeden Endpunkt mit echter Sitzung auslösen. Und die Historientabelle ist
+        das Nächste an einem Flugschreiber: jede Mutation steht drin, der Reihe
+        nach, mit dem Urheber.
+      </p>
+
+      <h3>Drei Gewohnheiten, die dich retten</h3>
+      <ul>
+        <li><strong>Lass eine Suite laufen, bevor du anfängst</strong>, damit
+          du weißt, was schon kaputt war. <code>verify-rules.mjs</code> braucht
+          neunzig Sekunden und keinen Browser.</li>
+        <li><strong>Zeig sie auf eine Kopie.</strong> Jede Suite schreibt.
+          Siehe — und nimm das Backup von sqlite, nicht <code>cp</code>.</li>
+        <li><strong>Wenn du einen Text ergänzt, ergänze ihn dreimal.</strong>
+          Ein fehlender Schlüssel erscheint als <code>items.title</code> auf
+          irgendeinem Bildschirm.</li>
+      </ul>
+
+      <div class="file group">
+        <p class="path">api/drizzle.config.ts · api/scripts/create-user.mts · web/src/pages/Placeholder.tsx</p>
+        <p>
+          Die drei Dateien, zu denen sonst nichts zu sagen war — aufgeführt,
+          damit „jede Datei“ stimmt. Die Drizzle-Konfiguration richtet den
+          Generator auf beide Schema-Dateien; <code>create-user.mts</code> legt
+          ein Konto vom Terminal aus an und umgeht die geschlossene
+          Registrierung genauso wie die Benutzerseite;
+          <code>Placeholder.tsx</code> ist ein Platzhalter für skizzierte, aber
+          nicht gebaute Routen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 19 -->
+    <section id="c19">
+      <h2><span class="n"></span>Die Testsuiten</h2>
+
+      <p>
+        Neun Skripte in <code>packages/web/scripts/</code>. Es sind keine
+        Unit-Tests: sie steuern die echte Anwendung in einem echten Browser oder
+        klopfen an die echte API, denn fast jeder Fehler, den dieses Projekt
+        gefunden hat, saß zwischen korrekten Bausteinen und nicht in einem.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Skript</th><th>Was es steuert</th><th>Prüfungen</th></tr></thead>
+          <tbody>
+            <tr><td><code>acceptance.mjs</code></td><td>Die „fertig“-Definition aus, von Anfang bis Ende</td><td>8</td></tr>
+            <tr><td><code>verify-gaps.mjs</code></td><td>Papierkorb, Kaskade, CSV, Etiketten, Passwörter</td><td>12</td></tr>
+            <tr><td><code>verify-operations.mjs</code></td><td>Das gesamte</td><td>28</td></tr>
+            <tr><td><code>verify-equipment.mjs</code></td><td>Geräte, Wartung, Orte</td><td>9</td></tr>
+            <tr><td><code>verify-tour.mjs</code></td><td>Die geführten Touren, in drei Sprachen</td><td>8</td></tr>
+            <tr><td><code>verify-rules.mjs</code></td><td>Die Invarianten, direkt an der API — ohne Browser</td><td>50</td></tr>
+            <tr><td><code>verify-limits.mjs</code></td><td>Rollen, Einkauf, Nebenläufigkeit, CSV</td><td>18</td></tr>
+            <tr><td><code>verify-fastkey.mjs</code></td><td>Schnellanmeldung, mit echter Tastatur</td><td>12</td></tr>
+            <tr><td><code>verify-ui.mjs</code></td><td>Raster, tippbare Filter, Spaltensortierung, Branding, Sitzungsregeln</td><td>39</td></tr>
+            <tr><td><code>verify-sessions.mjs</code></td><td>Konten, Rollen, Abmelden, Tastengriffe und beanspruchte Rechner — mit zwei Personen zugleich</td><td>51</td></tr>
+            <tr><td><code>verify-docker.mjs</code></td><td>Die Auslieferung, gegen einen echten Container</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note stop">
+        <span class="lbl">Bevor du eines startest</span>
+        <p>
+          <strong>Sie schreiben in die Datenbank, auf die die API zeigt</strong>,
+          und das Argument, das sagt <em>welche</em>, steht nicht in jedem
+          Skript an derselben Stelle — <code>verify-equipment</code> und
+          <code>verify-tour</code> nehmen zuerst das Ausgabeverzeichnis und die
+          URL zuletzt. Lies den Kopf. Kopiere die Datenbank mit dem
+          Backup von sqlite selbst und nicht mit <code>cp</code>: sie läuft im
+          WAL-Modus, und eine Kopie nur der <code>.db</code> kann zerrissen sein.
+        </p>
+      </div>
+
+      <p>
+        Zwei Gewohnheiten machen sie wertvoll. Sie <strong>enden mit einem
+        Exit-Code ungleich null</strong>, man kann ihnen also glauben, ohne die
+        Ausgabe zu lesen. Und sie sind <strong>wiederholbar</strong> — was
+        selbstverständlich klingt und es nicht war: eine frühe Fassung von
+        <code>verify-rules</code> setzte ein offenes, gefülltes Gebinde voraus,
+        lief einmal durch und scheiterte bei jedem weiteren Lauf. Eine Suite,
+        die nur auf jungfräulichen Daten funktioniert, wird kein zweites Mal
+        gestartet.
+      </p>
+    </section>
+
+    <!-- ============================================================== 20 -->
+    <section id="c20">
+      <h2><span class="n"></span>Wo die Leichen liegen</h2>
+
+      <p>
+        Die Dinge, die dich beißen werden, an einer Stelle gesammelt. Die
+        meisten wurden durch Benutzen gefunden, nicht durch Lesen.
+      </p>
+
+      <h3>Fallen im Code</h3>
+      <ul>
+        <li><strong>Beide Enden einer Bewegung müssen sich um denselben Betrag
+          bewegen.</strong> <code>pools.ts</code> kappte einst die Quelle bei
+          null und schrieb dem Ziel den vollen Betrag gut — ein zu großes
+          <em>Entnehmen</em> erfand also Becher aus dem Nichts: 692 aus einem
+          Klick, und zwar in genau der Zahl, gegen die die Nachzählung den
+          Schwund misst. Jede Übertragung zwischen zwei Zählern ist verdächtig,
+          bis du beide Seiten geprüft hast.</li>
+        <li><strong>Abgeleitete Spalten können auf dem Bildschirm richtig und in
+          der Datenbank falsch sein.</strong> Die Zahlen eines einzeln geführten
+          Pools werden beim Lesen aus seinen Einheiten berechnet, ein
+          Massenereignis schrieb also Unsinn in die gespeicherten Spalten und
+          niemand konnte es sehen. Wird ein Wert beim Lesen abgeleitet, weigere
+          dich, ihn zu schreiben.</li>
+        <li><strong>Ein Standardfilter ist eine Behauptung.</strong> Die
+          Artikelseite kam mit <code>in_stock</code>+<code>open</code> und sagte
+          „Noch nichts da“ — und teilte dir damit mit, dein Gerät existiere
+          nicht. Ein leerer Zustand muss „nichts“ von „nichts Passendes“
+          unterscheiden.</li>
+        <li><strong>Dasselbe zweimal zu zeichnen bricht
+          <code>querySelector</code>.</strong> Die Seitenleiste existiert als
+          Desktop-Spalte und als Telefon-Schublade; wer dort ein Element sucht,
+          muss das sichtbare wählen.</li>
+        <li><strong><code>localhost</code> ist ein privilegierter Ursprung, und
+          diese Anwendung läuft dort im echten Leben nie.</strong> Zwei
+          Blocker versteckten sich monatelang dahinter:
+          <code>crypto.randomUUID()</code> existiert außerhalb eines sicheren
+          Kontexts nicht, das erste Konto ließ sich also von keiner anderen
+          Maschine anlegen; und better-auth markiert sein Cookie in Produktion
+          als <code>Secure</code>, was ein Browser über einfaches HTTP
+          verwirft, sodass niemand über ein Neuladen hinaus angemeldet blieb.
+          Jede Änderung am Browser will einen Durchlauf gegen
+          <code>http://&lt;LAN-IP&gt;:3000</code>.</li>
+        <li><strong>Die Historie liegt durch einen Zufall der Architektur in
+          der Transaktion, nicht durch bewusste Entscheidung.</strong>
+          <code>logEvent()</code> nimmt keine Transaktion und schreibt über den
+          globalen Griff; es rollt nur deshalb mit seiner Mutation zurück, weil
+          <code>better-sqlite3</code> synchron ist und es genau eine Verbindung
+          gibt. Ein Pool oder ein asynchroner Pfad bräche still,
+          während sie weiter geschrieben stünde.</li>
+        <li><strong>Die denormalisierten Eltern-IDs können auseinanderlaufen.</strong>
+          Richtig gehalten werden sie durch die Massenaktualisierungen in
+          <code>variants.ts</code> und <code>analogous.ts</code>. Eine
+          <code>conceptId</code> irgendwo anders zu schreiben ist der Weg dahin,
+          dass sie aufhören zu stimmen.</li>
+      </ul>
+
+      <h3>Versionswahl, die man kennen sollte</h3>
+      <ul>
+        <li>Zod v4 statt v3 — <code>@hono/zod-openapi</code> verlangt es. Die
+          eigentliche Regel (eine Version im ganzen Workspace) gilt weiter.</li>
+        <li>React Router v8 statt v7; TypeScript 7 (natives <code>tsgo</code>).</li>
+        <li><code>items.createdBy</code> ist einfacher Text und kein
+          Fremdschlüssel: einen Benutzer zu löschen darf nie einen Artikel
+          zerstören.</li>
+        <li>Docker behält das Workspace-Layout, statt es flachzuklopfen.</li>
+      </ul>
+
+      <h3>Absichtlich nicht gebaut</h3>
+      <ul>
+        <li><strong>Automatische Log-Überwachung.</strong> Alles andere an der
+          Brücke existiert; das Einlesen wird per Schaltfläche oder Einfügen
+          ausgelöst. Der Stille-Melder wartet schon auf einen Wächter.</li>
+        <li><strong>Ein Log-Effekt, der Maschinenläufe zählt.</strong>
+          <code>POST /items/:id/uses</code> gibt es; der Wörterbucheintrag, mit
+          dem eine Steuerungszeile den Zähler erhöhen könnte, nicht.</li>
+        <li><strong>Freigabe vor dem Einkauf.</strong> Zurückgestellt, weil es
+          davon abhängt, ob das Werkstatt überhaupt einen Freigabeschritt will.</li>
+        <li><strong>Eine Desktop-Anwendung mit eigenem Server.</strong> Die
+          Client-Hälfte ist gebaut; die Sidecar-Hälfte braucht ein
+          <code>node</code> und ein <code>better-sqlite3</code> je Plattform und
+          ist eher eine Produktentscheidung als mehr von derselben Arbeit.</li>
+      </ul>
+
+      <h3>Nie gegen die Wirklichkeit geprüft</h3>
+      <p>
+        Die Log-Brücke war noch nie an ein echtes Maschinensteuerung angeschlossen. Sie
+        funktioniert mit eingefügten Zeilen und mit der Quelle, die die Testsuite
+        anlegt, und der Entwurf wurde im Detail geklärt — aber der Tag, an dem
+        sie auf die echte Ausgabe eines Geräts zeigt, wird der erste Tag sein,
+        und der erste Tag ist immer anders.
+      </p>
+
+      <div class="note tip">
+        <span class="lbl">Wenn du das hier übernimmst</span>
+        <p>
+          Lies zuerst <code>db/schema.ts</code>, dann
+          <code>services/stock.ts</code> und
+          <code>services/actions.ts</code>. Diese vier Dinge sind das Produkt;
+          alles andere ist der Weg auf einen Bildschirm.
+        </p>
+      </div>
+    
+      <h3>Ein beanspruchter Rechner läuft nie von selbst ab</h3>
+      <p><code>session.expiresIn</code> steht auf einem Jahr, und das ist keine Faulheit. Wie lange eine Sitzung lebt, entscheidet das <em>Cookie</em>: Ein geteilter Rechner bekommt ein Browser-Sitzungscookie plus die Zwanzig-Minuten-Regel, ein beanspruchter ein dauerhaftes und soll Herunterfahren überstehen. Bei dreißig Tagen Serverablauf würde der beanspruchte Rechner jemanden nach einem langen Urlaub hinauswerfen, aus einem Grund, den kein Benutzer je erklären könnte. Eine beanspruchte Sitzung endet deshalb immer absichtlich: durch Abmelden oder <code>POST /users/sessions/revoke-all</code>.</p>
+      <h3>Eine Bestellposition darf die Variante anlegen, die sie bestellt</h3>
+      <p><code>POST /lots/:id/lines</code> nimmt <em>entweder</em> eine <code>orderedVariantId</code> <em>oder</em> einen <code>newVariantName</code>, erzwungen durch eine Zod-Verfeinerung. Der zweite Weg fährt dieselbe Finde-oder-erzeuge-Kette wie Quick Add, innerhalb der Transaktion der Position, sodass eine gescheiterte Position kein verwaistes Produkt hinterlassen kann. Es gibt ihn, weil Anfragen konstruktionsbedingt auf Konzeptebene liegen — die erste Bestellung eines neuen Konzepts hat also gar keine Variante zur Auswahl, und vorher lief das Formular schlicht in eine leere Liste.</p>
+</section>
+
+  </main>
+
+  <footer class="footer">
+    Architektur-Handbuch, Stand August 2026, gegen rund 28.000 Zeilen. Die
+    Was die Anwendung für ihre Nutzer tut, steht im
+    <a href="manual.de.html">Benutzerhandbuch</a>.
+  </footer>
+
+</div>

@@ -1,0 +1,83 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1785798082861,
+      "tag": "0000_sturdy_sir_ram",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785798356925,
+      "tag": "0001_pink_ezekiel",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785800587868,
+      "tag": "0002_furry_silver_surfer",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1785974168955,
+      "tag": "0003_adorable_trauma",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1786048063584,
+      "tag": "0004_supplier_entity",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1786048088105,
+      "tag": "0005_drop_lot_supplier_text",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1786049461592,
+      "tag": "0006_counts_as_stock",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1786053702550,
+      "tag": "0007_equipment",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1786128254090,
+      "tag": "0008_fast_keys",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1786564800000,
+      "tag": "0009_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1787097600000,
+      "tag": "0010_location_level_site",
+      "breakpoints": true
+    }
+  ]
+}

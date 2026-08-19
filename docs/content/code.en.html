@@ -1,0 +1,1880 @@
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">Architecture manual · v0.1 · August 2026</span>
+    <h1>Inventory — the code</h1>
+    <p>
+      What every file is for and why it was written that way. Not line by line,
+      but close: roughly 28,000 lines across 130 files, with the decisions that
+      shaped them and the traps that are still in there.
+    </p>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Contents">
+      <p>Contents</p>
+      <ol>
+        <li><a href="#c1"><span class="n">01</span> How to read this</a></li>
+        <li><a href="#c2"><span class="n">02</span> The map</a></li>
+        <li><a href="#c3"><span class="n">03</span> The rules, and where they live</a></li>
+        <li><a href="#c4"><span class="n">04</span> <code>@inventory/shared</code> — the contract</a></li>
+        <li><a href="#c5"><span class="n">05</span> The database</a></li>
+        <li><a href="#c21"><span class="n">06</span> The data model, drawn</a></li>
+        <li><a href="#c6"><span class="n">07</span> Who you are</a></li>
+        <li><a href="#c7"><span class="n">08</span> The HTTP skeleton</a></li>
+        <li><a href="#c22"><span class="n">09</span> A request, end to end</a></li>
+        <li><a href="#c8"><span class="n">10</span> The services — where the thinking is</a></li>
+        <li><a href="#c9"><span class="n">11</span> The routes</a></li>
+        <li><a href="#c10"><span class="n">12</span> The frontend skeleton</a></li>
+        <li><a href="#c11"><span class="n">13</span> Talking to the API</a></li>
+        <li><a href="#c12"><span class="n">14</span> Three colours</a></li>
+        <li><a href="#c13"><span class="n">15</span> Two layers of language</a></li>
+        <li><a href="#c14"><span class="n">16</span> The primitives</a></li>
+        <li><a href="#c15"><span class="n">17</span> The pages</a></li>
+        <li><a href="#c16"><span class="n">18</span> Components that think</a></li>
+        <li><a href="#c17"><span class="n">19</span> The desktop client</a></li>
+        <li><a href="#c18"><span class="n">20</span> Building and shipping</a></li>
+        <li><a href="#c23"><span class="n">21</span> Working on it, day to day</a></li>
+        <li><a href="#c19"><span class="n">22</span> The suites</a></li>
+        <li><a href="#c20"><span class="n">23</span> Where the bodies are buried</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ============================================================== 01 -->
+    <section id="c1">
+      <h2><span class="n"></span>How to read this</h2>
+
+      <p>
+        There are two documents about this app and they answer different
+        questions. The <a href="manual.en.html">user manual</a> says what it
+        does. This one says <strong>how it is built and why it was built that
+        way</strong>.
+      </p>
+      <p>
+        It is organised the way the code is: outward from the things everything
+        else depends on. Shared types first, then the database, then the server,
+        then the browser, then the desktop shell and the box it all ships in.
+        Read it in order once, then use the contents rail.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Careful</span>
+        <p>
+          <strong>This is the document that goes stale fastest</strong>, which
+          is exactly why it was written last. When it disagrees with the code,
+          the code is right. Every claim here is anchored to a path, so
+          checking takes seconds — and the file comments are treated as part of
+          the source, not as decoration, so the short version is usually at the
+          top of the file itself.
+        </p>
+      </div>
+
+      <h3>The house style</h3>
+      <p>
+        Two habits recur everywhere and are worth naming up front, because they
+        explain a lot of what looks unusual.
+      </p>
+      <ul>
+        <li><strong>Comments say <em>why</em>, never <em>what</em>.</strong> If
+          a comment could be deleted by reading the line under it, it should be.
+          What survives is the reasoning that is not in the code: the case that
+          was hit in production, the simpler version that turned out wrong.</li>
+        <li><strong>One place per idea.</strong> Stock is computed in one file.
+          Human ids are minted in one file. History is written in one file. The
+          value is not tidiness — it is that changing the rule means changing
+          one thing, and that a rule can be <em>tested</em> at all.</li>
+      </ul>
+
+      <h3>The numbers</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Package</th><th>What it is</th><th>Files</th><th>Lines</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>@inventory/shared</code></td><td>Types and validation both sides agree on</td><td>18</td><td>~1,700</td></tr>
+            <tr><td><code>@inventory/api</code></td><td>Hono + Drizzle + SQLite</td><td>45</td><td>~12,500</td></tr>
+            <tr><td><code>@inventory/web</code></td><td>React + Vite + Tailwind</td><td>60</td><td>~13,000</td></tr>
+            <tr><td><code>@inventory/desktop</code></td><td>Tauri client, in Rust</td><td>5</td><td>~450</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The frontend being as large as the backend is not an accident of
+        sloppiness. Most of the product's difficulty is in <em>asking a human
+        the right question at the right moment</em> — the reconciliation prompt,
+        the request queue inside a draft lot, the recount — and that difficulty
+        lives in the browser.
+      </p>
+    </section>
+
+    <!-- ============================================================== 02 -->
+    <section id="c2">
+      <h2><span class="n"></span>The map</h2>
+
+      <p>
+        One repository, npm workspaces, four packages. No pnpm, no turborepo, no
+        nx: the person who ends up owning this should need exactly one tool they
+        already have.
+      </p>
+
+<pre><code>packages/
+  shared/    @inventory/shared    Zod schemas + types, imported by both sides
+  api/       @inventory/api       Hono + Drizzle + SQLite, REST at /api/v1
+  web/       @inventory/web       React + Vite + Tailwind
+  desktop/   @inventory/desktop   Tauri client (Rust), a window onto a server
+docs/                       the manuals and their builders
+</code></pre>
+
+      <h3>Why the shared package has no build step</h3>
+      <p>
+        <code>@inventory/shared</code> exports raw TypeScript. There is no
+        <code>dist/</code>, no <code>tsc -b</code>, no watcher to forget to
+        start. Vite compiles it as source; <code>tsx</code> does the same on the
+        server. The cost is one line in
+        <code>packages/api/tsup.config.ts</code> —
+        <code>noExternal: ['@inventory/shared']</code> — which inlines it into the
+        production bundle. That is a good trade: one line of build config
+        against a class of "why is my change not showing up" that would
+        otherwise hit every day.
+      </p>
+
+      <h3>Why the levels are not folders</h3>
+      <p>
+        The domain has four levels — Concept, Analogous, Variant, Item — and it
+        would be natural to give each one a folder holding its schema, route,
+        service and page. The code does the opposite: it groups by
+        <em>mechanism</em> (all routes together, all services together, all
+        pages together), because the things that change together are the
+        mechanisms, not the levels. A change to how pagination works touches
+        every route; a change to Variants touches four files that are already
+        named after it.
+      </p>
+
+      <div class="note">
+        <span class="lbl">Convention</span>
+        <p>
+          Anything in <code>lib/</code> is infrastructure with no knowledge of
+          the domain. Anything in <code>services/</code> knows the domain and
+          may touch the database, but never HTTP. Anything in
+          <code>routes/</code> knows HTTP and calls services. When a route
+          starts doing arithmetic, it is in the wrong file.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 03 -->
+    <section id="c3">
+      <h2><span class="n"></span>The rules, and where they live</h2>
+
+      <p>
+        Fifteen rules do not bend. A rule nobody can point at is a wish, so
+        here is each one with the file that actually enforces it.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Rule</th><th>Enforced in</th></tr></thead>
+          <tbody>
+            <tr><td>Money is integer minor units</td><td><code>shared/src/schemas/common.ts</code> (<span class="sig">parseMoneyInput</span>), stored as <code>*_cents</code> columns</td></tr>
+            <tr><td>Stock is computed in one place</td><td><code>api/src/services/stock.ts</code> — nothing else sums quantities</td></tr>
+            <tr><td>Every mutation logs History, same transaction</td><td><code>api/src/services/history.ts</code>, called inside each <code>db.transaction</code></td></tr>
+            <tr><td>All I/O validated by shared schemas</td><td><code>api/src/lib/router.ts</code> + every <code>createRoute</code></td></tr>
+            <tr><td>Soft delete; History append-only</td><td><code>deletedAt</code> columns; no <code>DELETE</code> on <code>history</code> anywhere</td></tr>
+            <tr><td>Denormalization sync is transactional</td><td><code>api/src/routes/variants.ts</code>, <code>analogous.ts</code></td></tr>
+            <tr><td>humanIds are server-side only</td><td><code>api/src/services/ids.ts</code>, inside the insert transaction</td></tr>
+            <tr><td>Status changes only via action endpoints</td><td><code>shared/src/schemas/item.ts</code> — <code>itemUpdateSchema</code> simply has no <code>status</code>, so <code>PATCH</code> cannot carry one</td></tr>
+            <tr><td>No dependency without a written reason</td><td><code>package.json</code> dependency log</td></tr>
+            <tr><td>Migrations are committed</td><td><code>api/drizzle/*.sql</code>, applied at boot by <code>api/src/index.ts</code></td></tr>
+            <tr><td>The hierarchy must be ignorable</td><td><code>api/src/routes/items.ts</code> quick-add, <code>web/src/components/QuickAddModal.tsx</code></td></tr>
+            <tr><td>Recording an activity moves stock; only a person empties a container</td><td><code>api/src/services/actions.ts</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note tip">
+        <span class="lbl">If you change one thing</span>
+        <p>
+          The rule most likely to be broken by accident is the second one.
+          Summing <code>quantityRemaining</code> in a route is easy, looks
+          harmless, and silently forks the definition of "in stock" — which is
+          the number the whole product exists to produce. If you need stock,
+          import it.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 04 -->
+    <section id="c4">
+      <h2><span class="n"></span><code>@inventory/shared</code> — the contract</h2>
+
+      <p>
+        This package exists so that the server and the browser cannot disagree
+        about what a Variant is. It holds no logic that touches a database and
+        no component that touches a screen — only the shapes, and the pure
+        functions that operate on them.
+      </p>
+
+      <div class="file">
+        <p class="path">shared/src/constants.ts <span class="n">178 lines</span></p>
+        <p>
+          Every closed set in the product: item statuses, user roles, location
+          levels, field kinds, tracking levels, pool states, log effects. All
+          declared <code>as const</code> and turned into unions, so adding a
+          status is one line and the compiler then lists every place that has
+          to handle it. Also <span class="sig">roleAtLeast(role, minimum)</span>,
+          which is the single definition of "senior enough" used by both the
+          API middleware and the navigation.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/common.ts <span class="n">~120 lines</span></p>
+        <p>
+          The pieces every other schema builds on: <span class="sig">translatedTextSchema</span>
+          (a name in EN/DE/CA, English required), pagination, and money.
+          <span class="sig">parseMoneyInput("12,50")</span> returns
+          <code>1250</code> and accepts both decimal separators, because a
+          German and a Catalan user type the same price differently and neither
+          is wrong. <span class="sig">resolveText(name, locale)</span> falls
+          back to English, then to the first non-empty value — a name is never
+          rendered as <code>undefined</code>.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/type.ts <span class="n">~150 lines</span></p>
+        <p>
+          The most interesting file in the package, because it builds
+          validators at runtime.
+          <span class="sig">buildCustomFieldsValidator(definitions)</span>
+          takes the field definitions a user invented in the Types screen and
+          returns a Zod object that validates items of that Type. This is what
+          makes user-defined fields real rather than a JSON blob nobody checks:
+          a <code>number</code> field rejects text, a <code>select</code>
+          rejects a value outside its options, and it does so on the server,
+          where it counts.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">shared/src/schemas/{concept,analogous,variant,item,location,history}.ts</p>
+        <p>
+          One file per MVP-1 entity, each with the same three shapes:
+          <code>…Schema</code> (what comes out), <code>…CreateSchema</code> and
+          <code>…UpdateSchema</code> (what may go in). Create and update are
+          separate types rather than one partial, because the fields you may
+          set at creation and the fields you may change later genuinely differ
+          — an item's price is locked once it exists.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">shared/src/schemas/{request,lot,action,pool,forecast,log,equipment}.ts</p>
+        <p>
+          The same pattern for everything after the first release.
+          <code>log.ts</code> is the largest because the log bridge has
+          the most vocabulary: sources, parsers, dictionary entries, effects,
+          and the ingestion report.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/responses.ts <span class="n">251 lines</span></p>
+        <p>
+          Shapes that are not entities: quick-search results, the trash listing,
+          users, passwords, and fast-login chords. It also holds
+          <span class="sig">usernameProblem(value)</span> and the placeholder
+          e-mail helpers, which the API and the browser both call so a username
+          is judged by the same rule in both places.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 05 -->
+    <section id="c5">
+      <h2><span class="n"></span>The database</h2>
+
+      <p>
+        SQLite, one file, WAL mode, foreign keys on. Drizzle for the schema and
+        the queries. The whole backup story is "copy the file", and every
+        decision below is downstream of wanting to keep it that way.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/db/schema.ts <span class="n">708 lines</span></p>
+        <p>
+          Thirty-odd tables, and the single most useful thing to read first.
+          Conventions worth knowing before you scan it:
+        </p>
+        <ul>
+          <li><strong>Every table gets <code>auditColumns</code></strong> —
+            <code>createdAt</code>, <code>updatedAt</code>, <code>deletedAt</code>.
+            Timestamps are Unix integers in the database and ISO strings at the
+            API boundary; the conversion happens in one place.</li>
+          <li><strong>Money columns end in <code>_cents</code></strong> and are
+            integers. There is no float anywhere near a price.</li>
+          <li><strong>Translated names are JSON columns</strong> typed as
+            <code>TranslatedText</code>. Adding a fourth language needs no
+            migration — that is the entire reason.</li>
+          <li><strong>Denormalized parents are deliberate.</strong> A variant
+            carries <code>conceptId</code> as well as <code>analogousId</code>,
+            and an item carries both. It is redundant, it can drift, and it is
+            worth it: the Items browser filters by concept without two joins.
+            The drift is prevented by rule 6 — re-linking mass-updates
+            descendants in one transaction.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/client.ts <span class="n">18 lines</span></p>
+        <p>
+          Opens the database and sets two pragmas that SQLite does
+          <em>not</em> set for you: <code>foreign_keys = ON</code> (off by
+          default, which means a schema full of references that enforce
+          nothing) and <code>journal_mode = WAL</code> (so a reader never
+          blocks a writer). Both are per-connection, so this is the only place
+          a connection may be made. It also creates the data directory, so a
+          fresh install has nothing to prepare.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/drizzle/*.sql <span class="n">9 migrations</span></p>
+        <p>
+          Generated by <code>drizzle-kit</code> and committed, because a
+          migration that only exists on the developer's machine is not a
+          migration. They are applied at boot by <code>api/src/index.ts</code>,
+          which is what makes <code>docker run</code> on an empty volume work
+          with no setup step. Reading their names is a decent history of the
+          product: <code>0004_supplier_entity</code> is the day suppliers
+          stopped being a string, <code>0007_equipment</code> is instruments,
+          <code>0008_fast_keys</code> is the key chord.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/seed.ts <span class="n">584 lines</span></p>
+        <p>
+          Demo data, and it is designed rather than dumped. It deliberately
+          includes a concept that is low on stock and one that is at zero, so
+          the Home screen's warnings have something to warn about the moment
+          you open it; an instrument and a document, so the non-consumable
+          lifecycles are demonstrable at all; and a pool with a real history,
+          so the recount means something. It refuses to run on a non-empty
+          database.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/reset.ts <span class="n">~60 lines</span></p>
+        <p>
+          Clears the 26 domain tables and <strong>keeps the auth tables</strong>.
+          That exception is written in blood: deleting the database file to
+          "start clean" locked the owner out of his own app twice, because the
+          accounts went with it. Resetting the data should never cost you your
+          login.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/auth-schema.ts <span class="n">~45 lines</span></p>
+        <p>
+          better-auth's own four tables (<code>user</code>, <code>session</code>,
+          <code>account</code>, <code>verification</code>), declared in Drizzle
+          so they live in the same file and the same migrations as everything
+          else. The <code>role</code> column is ours, added through
+          better-auth's <code>additionalFields</code> with
+          <code>input: false</code> so a client can never assign itself one.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== data model -->
+    <section id="c21">
+      <h2><span class="n"></span>The data model, drawn</h2>
+
+      <p>
+        Thirty tables is too many to hold in your head, but the shape is
+        small. Everything hangs off one row type — <code>items</code> — and
+        everything else is either a way of talking about items or a record of
+        something that happened to them.
+      </p>
+
+      <h3>The spine</h3>
+<pre><code>  types ──────┐                    locations ──┐   (self-parented tree)
+  (user-defined│                     code, level │
+   fields)     │                                 │
+               ▼                                 ▼
+  concepts ─→ analogous ─→ variants ─────→ <span class="c">items</span> ←── the only physical thing
+   "wood glue"   "1 L amber"  "Sigma 34873"   supplyAA042
+      ▲            ▲             ▲            │  status · quantity_remaining
+      └────────────┴─────────────┘            │  estimated_used · price_cents
+        denormalised onto items and           │
+        variants (concept_id, analogous_id)   │
+                                              ├─→ item_links     (manual, spare)
+                                              ├─→ maintenance_plans
+                                              └─→ history        (append-only)</code></pre>
+      <p>
+        Read it downward. The three levels above <code>items</code> are
+        descriptions of decreasing generality: what you need (<em>wood glue</em>),
+        which products would do (<em>1 L amber bottle</em>), the exact product
+        (<em>Sigma 34873</em>). Only the bottom row exists physically. Stock is
+        computed from that row and nothing else, which is why the levels can be
+        skipped entirely (Quick Add builds the whole chain behind you) without
+        any number changing meaning.
+      </p>
+      <p>
+        The two dotted parents are the deliberate redundancy of: an item
+        carries <code>conceptId</code> and <code>analogousId</code> as well as
+        <code>variantId</code>. It can drift; it is kept honest by the
+        mass-update transactions in <code>routes/variants.ts</code>.
+      </p>
+
+      <h3>What happens to them</h3>
+<pre><code>requests ──(triage)──→ lot_lines ──(receive)──→ <span class="c">items</span>   created automatically
+   concept              variant                       humanId, price, expiry
+
+actions ──(record)──→ charges the open item of each concept in its map
+   ▲                        │
+   │                        ├─→ quantity_remaining  clamped at 0 → stock
+   └── log_lines            └─→ estimated_used      uncapped → the gap
+
+pools ──(events)──→ pool_units          commissioned FROM an item
+   "20 mL vials"      available/in_use/dirty        (cupboard → rotation)</code></pre>
+      <p>
+        These are the four operational loops of, and they meet at
+        <code>items</code> too. Buying creates items; activities consume them;
+        pools take them out of the cupboard and put them into rotation; the log
+        does at scale what a person would do by hand. Nothing here is a
+        separate inventory.
+      </p>
+      <div class="note tip">
+        <span class="lbl">The one asymmetry worth remembering</span>
+        <p>
+          <strong>A kit has no location of its own.</strong> You track the
+          material it sits in — the tray, the vial — so moving a tray moves
+          forty kits with zero rows updated. That is why
+          <code>occupancies</code> exists and why kits are not items.
+        </p>
+      </div>
+
+      <h3>Who owns whom</h3>
+      <p>
+        Deleting follows ownership, with one exception that matters:
+      </p>
+      <ul>
+        <li>A concept owns its analogous groups, which own their variants,
+          which own their items. Deleting upward cascades, with a preview
+          first (, <code>cascade.ts</code>).</li>
+        <li><strong>A location owns nothing.</strong> A shelf does not own the
+          bottle standing on it, so deleting a place never deletes what was on
+          it — it simply refuses while anything is there.</li>
+        <li>History owns nothing and is owned by nothing. It survives the purge
+          of the row it describes, which is why it stores the human id.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================== 06 -->
+    <section id="c6">
+      <h2><span class="n"></span>Who you are</h2>
+
+      <p>
+        Authentication is better-auth on the same SQLite file. Four files make
+        it behave the way a workshop needs rather than the way a SaaS needs.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/auth.ts <span class="n">~90 lines</span></p>
+        <p>
+          The configuration, and three decisions inside it:
+        </p>
+        <ul>
+          <li><strong>Registration closes after the first account.</strong> The
+            <code>databaseHooks.user.create.before</code> hook makes the first
+            user an admin and throws for everybody after. The Users admin page
+            needs to create accounts through the same API, so it flips
+            <code>adminCreateBypass</code> around its call — safe because Node
+            runs the handler synchronously up to the await.</li>
+          <li><strong>The username validator is replaced.</strong> better-auth
+            allows only <code>[a-zA-Z0-9_.]</code>, which rejects
+            <code>Müller</code>. Ours is <span class="sig">usernameProblem</span>
+            from the shared package, which forbids only what genuinely breaks.</li>
+          <li><strong><code>trustedOrigins</code> matters only in development</strong>,
+            where the browser is on <code>:5173</code> and the API on
+            <code>:3001</code>. In production one port serves both, so every
+            request is same-origin — including over the LAN by IP.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/secret.ts <span class="n">38 lines</span></p>
+        <p>
+          Generates the cookie-signing secret once and keeps it beside the
+          database. This file exists because of a bug that only appeared in a
+          real container: better-auth refuses the default secret when
+          <code>NODE_ENV=production</code>, so the image built, started,
+          printed a warning, and then <strong>died on its first authenticated
+          request</strong>. Asking the user to set an environment variable
+          would have been the easy fix and the wrong one — the promise is
+          "download, run one command, open your browser".
+          <code>BETTER_AUTH_SECRET</code> still wins when set.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/middleware/auth.ts <span class="n">~70 lines</span></p>
+        <p>
+          <span class="sig">requireRole('manager')</span>, used as route
+          middleware. It resolves the session from the cookie, puts the user on
+          the context, and compares with <code>roleAtLeast</code> — the same
+          function the sidebar uses to decide what to show, so the screen and
+          the server can never disagree about what a manager may do. The screen
+          is politeness; this is the enforcement.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/fast-login-plugin.ts <span class="n">~110 lines</span></p>
+        <p>
+          Signing in with a key chord, as a better-auth plugin rather than a
+          route of our own. The reason is narrow and decisive: only better-auth
+          can mint a valid session cookie, and forging one next door would be a
+          second implementation of the one thing worth having exactly one of.
+          The endpoint is <code>POST /api/auth/sign-in/fast-key</code>.
+        </p>
+        <p>
+          One chord means three things depending on who is already signed in —
+          sign in, switch user, sign out — which is why there is no second
+          chord to remember. Switching deletes the previous session rather than
+          leaving it lying around on a shared machine. Attempts are throttled
+          to twelve a minute, because the space is only about 4,700 chords.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/fastkeys.ts <span class="n">~150 lines</span></p>
+        <p>
+          Generating a chord that a hand can actually make. The keys are not
+          drawn from the alphabet but from the keyboard's geometry: one key per
+          column, three adjacent columns of one hand, no two fingers more than
+          one row apart. That single constraint is what rules out
+          <code>a y ñ</code> and produces <code>z x d</code>. The two groups
+          prefer opposite hands, because alternating is faster to press and
+          easier to remember as a rhythm.
+        </p>
+        <p>
+          The chord is stored <strong>as written, not hashed</strong>, and that
+          is a decision, not an oversight: signing in means finding the owner
+          <em>from</em> the chord, which a salted hash cannot do, and the owner
+          must be able to look it up again after a holiday. It is what it was always
+          meant to be — an identification, not a password. Passwords stay hashed and keep working.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">api/src/routes/public.ts <span class="n">~200 lines</span></p>
+        <p>The only unauthenticated data in the product, and deliberately its own router rather than a relaxed <code>requireRole</code> on the real ones. It serves two things: the workshop's branding, which the sign-in screen needs before anybody has signed in, and one hand-written read-only view of stock for the signed-out Home.</p>
+        <p>What leaves this file is a fixed list — concept names, quantities, units, thresholds, the location tree. No item rows, so no serial numbers, no prices, no notes, no names of people. One endpoint rather than public variants of <code>/concepts</code>, <code>/items/metrics</code> and <code>/locations</code>, because four relaxed endpoints are four things to get wrong later and each takes filters this view is not meant to answer. Adding a field here is a decision to publish it to everyone on the network.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/lib/device.ts <span class="n">~90 lines</span></p>
+        <p>The "remember this computer" claim: a note in <code>localStorage</code> saying which account has adopted this browser. It is not a credential — the session cookie is what keeps you signed in — it records <em>why</em> that cookie was made a lasting one, and for whom.</p>
+        <p>Two things read it. Sign-in asks better-auth for <code>rememberMe</code> only when the person signing in is the claimant, which is why a colleague pressing their chord at your desk gets an ordinary session. And the idle timer stands down entirely. Clearing browser storage un-claims the machine, which is the right direction to fail in: you get the cautious behaviour, not the permissive one.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/IdleTimer.tsx <span class="n">~100 lines</span></p>
+        <p>Twenty minutes of silence ends a session on a shared computer. The problem it solves is attribution, not theft: a browser left signed in makes every depletion look like the work of whoever walked away last, and History is the one thing here that has to be trustworthy.</p>
+        <p>The check is against the <em>clock</em>, never against a countdown — timers do not run reliably while a laptop is suspended, so a decrementing counter would come back from a closed lid convinced no time had passed. The one-second interval only reads <code>Date.now()</code> and compares. Verified with Playwright's fake clock in <code>scripts/verify-ui.mjs</code>, because the real test takes twenty minutes.</p>
+      </div>
+
+    <!-- ============================================================== 07 -->
+    <section id="c7">
+      <h2><span class="n"></span>The HTTP skeleton</h2>
+
+      <div class="file">
+        <p class="path">api/src/index.ts <span class="n">~45 lines</span></p>
+        <p>
+          The entry point: apply migrations, then listen. It prints the LAN
+          addresses as well as <code>localhost</code>, which is a small thing
+          that saves a real conversation — the server is meant to be reached
+          from every machine in the workshop, and guessing its address is the first
+          thing that goes wrong.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/app.ts <span class="n">~140 lines</span></p>
+        <p>
+          Assembles the routers, mounts better-auth at
+          <code>/api/auth/*</code>, serves the OpenAPI spec and Swagger UI, and
+          — when <code>SERVE_WEB=1</code> — serves the built frontend with an
+          SPA fallback so deep links work. That flag is what turns two dev
+          servers into one production port, and it is the whole of the
+          difference between the two layouts.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/router.ts <span class="n">~30 lines</span></p>
+        <p>
+          A thin wrapper over <code>OpenAPIHono</code> that fixes the default
+          validation error into the app's uniform error shape. Every router is
+          created through it, which is how "all I/O is validated" stays true
+          without anybody remembering to do it.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/openapi.ts <span class="n">~60 lines</span></p>
+        <p>
+          Helpers so route definitions stay readable:
+          <span class="sig">jsonBody(schema)</span>,
+          <span class="sig">jsonContent(schema)</span>,
+          <span class="sig">errorResponse('Not found')</span>. Without them
+          every route carries fifteen lines of OpenAPI boilerplate and nobody
+          reads the interesting part.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/middleware/error.ts <span class="n">~80 lines</span></p>
+        <p>
+          One error shape for the entire API:
+          <code>{ error: { code, message, details? } }</code>. <code>ApiError</code>
+          plus the named constructors <span class="sig">notFoundError</span> and
+          <span class="sig">conflictError</span>. The <code>details</code> field
+          is what makes a refusal useful rather than final — a blocked delete
+          returns the cascade preview in it, and the browser turns that refusal
+          into an offer ("this will also delete 2 variants, 3 items").
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/serialize.ts <span class="n">~50 lines</span></p>
+        <p>
+          The boundary between database types and JSON: timestamps to ISO
+          strings, cents to a decimal string, nulls preserved. It exists so
+          that no route ever hand-rolls a date format, which is exactly how two
+          endpoints end up disagreeing about what a date looks like.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/csv.ts <span class="n">~120 lines</span></p>
+        <p>
+          A hand-written RFC-4180 reader and writer — no dependency, because
+          the format is a hundred lines and a dependency is forever. Import is
+          a dry run first, then all-or-nothing in one transaction, so a bad row
+          at line 400 cannot leave 399 rows imported.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== trace -->
+    <section id="c22">
+      <h2><span class="n"></span>A request, end to end</h2>
+
+      <p>
+        The fastest way into an unfamiliar codebase is to follow one thing all
+        the way through. This is <em>pressing “Deplete” on the Home screen</em>
+        — the smallest interesting action in the product, because it is the
+        moment a human declares a container finished, and that declaration is
+        the only thing the whole forecast trusts.
+      </p>
+
+<pre><code><span class="c">1.</span> HomePage.tsx          the button calls useDepleteItem()
+<span class="c">2.</span> api/entities.ts       useMutation → api('/items/&lt;id&gt;/deplete', { method: 'POST' })
+<span class="c">3.</span> api/client.ts         fetch, credentials: 'include', JSON headers
+<span class="c">   ·</span> vite proxy            /api → :3001   (development only; one port in production)
+<span class="c">4.</span> app.ts                routes it to itemsRouter
+<span class="c">5.</span> middleware/auth.ts    requireRole('operator') → session from cookie → c.set('user')
+<span class="c">6.</span> lib/router.ts         validates the params against idParam
+<span class="c">7.</span> routes/items.ts       the handler — twelve lines, and it delegates
+<span class="c">8.</span>   └─ statusChange()   db.transaction(() =&gt; {
+<span class="c">9.</span>        getActiveItem      404 if it is gone
+<span class="c">10.</span>       assertValidStatus  the Type must allow 'depleted'
+<span class="c">11.</span>       requireCurrent     409 unless it was in_stock or open
+<span class="c">12.</span>       reconcileOnClose   the signed gap, written here and nowhere else
+<span class="c">13.</span>       db.update(items)   status='depleted', quantity_remaining=0
+<span class="c">14.</span>       logEvent()         same connection ⇒ same transaction
+<span class="c">15.</span>     })
+<span class="c">16.</span> lib/serialize.ts      timestamps → ISO, cents → decimal
+<span class="c">17.</span> api/entities.ts       onSuccess → invalidate ['items'] and ['history']
+<span class="c">18.</span> HomePage.tsx          stock re-renders; a toast offers Undo</code></pre>
+
+      <p>
+        Eighteen steps and two of them think. Everything from 1 to 6 is
+        transport, and everything from 16 to 18 is transport back. The product
+        lives in steps 8 to 14, inside one transaction, in one file.
+      </p>
+      <h3>What each layer is allowed to do</h3>
+      <ul>
+        <li><strong>The page</strong> may not know that a status is a string.
+          It calls a hook.</li>
+        <li><strong>The hook</strong> may not know a URL is a URL. It calls
+          <code>api()</code> and declares what to invalidate afterwards.</li>
+        <li><strong>The route</strong> may not compute. Look at step 7: it
+          reads the id, names the new status, and hands over. Twelve lines.</li>
+        <li><strong>The transaction</strong> is where correctness lives —
+          and note the order: every refusal (9, 10, 11) happens
+          <em>before</em> the first write.</li>
+      </ul>
+      <h3>When it goes wrong</h3>
+
+<pre><code>throw notFoundError('item', id)        →  middleware/error.ts
+                                       →  { error: { code: 'not_found', … } }  404
+                                       →  api/client.ts throws ApiRequestError
+                                       →  the component catches it and says so</code></pre>
+
+      <p>
+        One shape, all the way out. That is what lets a component turn a
+        refusal into an offer instead of a red box — the delete flow catches
+        exactly this and reads <code>details.cascade</code> out of it.
+      </p>
+      <div class="note tip">
+        <span class="lbl">The second trace worth doing yourself</span>
+        <p>
+          Follow <code>POST /api/v1/actions/record</code> the same way, through
+          <code>services/actions.ts</code>. It is the same skeleton with a
+          harder middle: one activity fans out to several concepts, each one
+          finds its open container, and the two figures per container part ways.
+          If you understand that one, you understand the product.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 08 -->
+    <section id="c8">
+      <h2><span class="n"></span>The services — where the thinking is</h2>
+
+      <p>
+        If you read one directory, read this one. Routes are plumbing; the
+        product's actual opinions live here.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/services/ids.ts <span class="n">~90 lines</span></p>
+        <p>
+          Mints the human-readable ids: <code>CON006</code>,
+          <code>supplyAA042</code>. A registry table holds the counter per
+          prefix, and the increment happens <em>inside</em> the same
+          transaction as the insert — so a failed insert cannot burn an id, and
+          two simultaneous creates cannot get the same one. The lettered form
+          rolls <code>AA999 → AB001</code>, which is tested, because it will
+          happen once in three years and be baffling.
+        </p>
+        <p>
+        The rollover, which is three lines and will confuse somebody once every
+        three years:
+      </p>
+<pre><code>if (!row) {
+  letterPart = style === 'lettered' ? 'AA' : '';
+  numberPart = 1;
+} else {
+  letterPart = row.letterPart;
+  numberPart = row.numberPart + 1;
+  if (style === 'lettered' &amp;&amp; numberPart &gt; 999) {
+    letterPart = nextLetters(letterPart);   <span class="c">// AA999 → AB001</span>
+    numberPart = 1;
+  }
+}</code></pre>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/history.ts <span class="n">~80 lines</span></p>
+        <p>
+          <span class="sig">logEvent(event)</span> — one row per mutation. It
+          records the entity's human id alongside its uuid, so a purged row
+          still reads as a sentence.
+        </p>
+        <p>
+          The interesting part is what it does <em>not</em> take: a transaction.
+          It writes through the same global <code>db</code> handle as everything
+          else, and it still rolls back with the mutation it records — because
+          <code>better-sqlite3</code> is synchronous and there is exactly one
+          connection, opened in <code>db/client.ts</code>, and a SQLite
+          transaction belongs to its connection. Calling it inside a
+          <code>db.transaction()</code> callback is therefore enough.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Fragile</span>
+          <p>
+            That is a real guarantee resting on an implicit condition. Introduce
+            a connection pool, or make any of this asynchronous, and history
+            would silently stop being part of the transaction
+            would still be written down and no longer be true. If that ever
+            changes, <code>logEvent</code> must take the transaction
+            explicitly.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/stock.ts <span class="n">52 lines</span></p>
+        <p>
+          The single definition of "how much do we have", and it is worth
+          seeing in full because it is smaller than people expect. Nothing else
+          in the codebase sums a quantity.
+        </p>
+<pre><code>const ACTIVE_STOCK_STATUSES: ItemStatus[] = ['in_stock', 'open'];
+
+export function stockByConcept(locationIds?: string[]): Record&lt;string, number&gt; {
+  const rows = db
+    .select({ conceptId: items.conceptId, stock: sum(items.quantityRemaining) })
+    .from(items)
+    .where(
+      and(
+        inArray(items.status, ACTIVE_STOCK_STATUSES),
+        isNull(items.deletedAt),
+        isNotNull(items.conceptId),
+        locationIds ? inArray(items.locationId, locationIds) : undefined,
+      ),
+    )
+    .groupBy(items.conceptId)
+    .all();
+  …
+}</code></pre>
+        <p>
+          Three things are decided in that one <code>where</code>. Only
+          <code>in_stock</code> and <code>open</code> count. It sums
+          <code>quantityRemaining</code>, not the original quantity, so a
+          half-used bottle counts as half. And the optional
+          <code>locationIds</code> — a subtree from <code>subtreeIds()</code> —
+          is what makes the Home tree a <em>filter</em> rather than navigation:
+          the same aggregation, one extra condition.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Corrected 2026-08-08</span>
+          <p>
+            An earlier draft of this manual credited this file with two things
+            it does not do. Excluding types with
+            <code>countsAsStock = false</code> happens in
+            <code>routes/concepts.ts</code> (the <code>stockOnly</code> filter)
+            and in <code>services/forecast.ts</code>; deriving a pool's counts
+            from <code>pool_units</code> happens in
+            <code>routes/pools.ts</code>. Both were found by fetching the code
+            to quote it, which is the argument for quoting code.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/actions.ts <span class="n">370 lines</span></p>
+        <p>
+          Recording an activity, and the file where the product changed its
+          mind. Rule once said estimates never move stock. That was
+          wrong, and the reason it was wrong is worth keeping: it conflated the
+          <em>recipe</em> ("a pH test uses 5 mL" — a forecast) with the
+          <em>act of recording one</em> ("I ran a pH test" — a fact). Doing it
+          by hand would have moved stock seven times, so recording it moves
+          stock too.
+        </p>
+        <p>
+          What did <em>not</em> change is the other half:
+          <strong>only a person declares a container finished.</strong> Two
+          figures are kept per container —
+          <code>quantityRemaining</code>, clamped at zero and summed into
+          stock, and <code>estimatedUsed</code>, uncapped. Their difference when
+          the container is closed is the signed gap between what the recipe
+          claimed and what the bottle held, and that gap is the most valuable
+          number the system produces.
+        </p>
+        <p>
+          <span class="sig">openContainerFor(conceptId)</span> lives here and
+          is shared with the log bridge. It was rewritten after two defects
+          that only appeared in real use: a container reading zero but still
+          open absorbed every charge while a full bottle sat beside it, and a
+          null-quantity container won for being oldest and swallowed
+          consumption invisibly.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/cascade.ts <span class="n">253 lines</span></p>
+        <p>
+          Works out what a delete would take with it, and does it in one
+          transaction if you agree. The interesting rule is the exception:
+          <strong>deleting a location never deletes the items on it.</strong>
+          Everywhere else a parent owns its children; a shelf does not own the
+          bottle standing on it, and a UI that quietly deleted your inventory
+          because you tidied the location tree would be indefensible.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/purchasing.ts <span class="n">290 lines</span></p>
+        <p>
+          Requests and lots. Receiving a lot line is the largest single labour
+          saving in the product: it creates the items automatically — human
+          ids, price, location, expiry — so twelve bottles arrive without
+          typing twelve items.
+        </p>
+        <p>
+          A line has two sides and neither is ever overwritten. Ordered 5 × A,
+          received 4 × B: editing the line to say "4 × B" would destroy exactly
+          the interesting data. Items are created for the variant that actually
+          arrived, and the discrepancy is kept — accumulated, those become
+          "short-ships 8% of lines" and "11 days average", and that second
+          number is what the forecast needs. The forecast gets better purely
+          from using the purchase flow, with nothing to configure.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/forecast.ts <span class="n">245 lines</span></p>
+        <p>
+          "What runs out before I can reorder it." Consumption is measured from
+          <strong>real depletion events</strong>, not from recorded activities,
+          and that is deliberate: the forecast works for a workshop that never
+          records a single activity, and improves if they do. Lead time is
+          learned per supplier from ordered-date to received-date.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Correction</span>
+          <p>
+            An earlier version of this manual said
+            the unassigned per-day burn rate feeds <code>daysRemaining</code>.
+            It does not, and never did — see <code>forecast.ts</code>, where
+            <code>daysRemaining</code> uses <code>rate.monthlyRate</code> only.
+            The per-day figure is display, and feeds real cost.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/logbridge.ts <span class="n">503 lines</span></p>
+        <p>
+          Reads the machine controller's line-by-line output. Four decisions carry it:
+        </p>
+        <ul>
+          <li><strong>Quantities live in a dated dictionary, never in the log.</strong>
+            The log says <em>what happened</em>; how much that costs is our
+            business, and versioning it by date means history can be
+            reprocessed when a map is corrected.</li>
+          <li><strong>Unknown events are a configuration screen, not an error
+            list.</strong> A new name appears, you say what it does, it never
+            appears again — setup as a feedback loop instead of a blank page.</li>
+          <li><strong>Unknown objects, asymmetrically.</strong> An unrecognised
+            asset is parked and queried; auto-creating is how you get 400
+            phantom trays from one typo. An unrecognised kit is created
+            silently — there will be thousands and they are transient.</li>
+          <li><strong>Shadow mode before activation.</strong> A new rule records
+            what it <em>would</em> do for a day; you review; you enable it.</li>
+        </ul>
+        <p>
+          Ingestion is idempotent — each line takes effect exactly once, checked
+          by the suite re-reading the same file. The silence detector notices
+          when no line has arrived for hours during working time, because a log
+          that stops does not shout; the numbers just quietly stop being true.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/maintenance.ts <span class="n">176 lines</span></p>
+        <p>
+          Plans count days, uses, or both, and <strong>due means whichever runs
+          out first</strong> — which is what "every 6 months or 500 jobs"
+          actually means. <code>nextDueAt</code> is recomputed on every change
+          so "what is due" is one indexed query. Never-serviced starts the
+          clock at the plan's creation: the only honest guess, and visibly
+          wrong in a way somebody will correct.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 09 -->
+    <section id="c9">
+      <h2><span class="n"></span>The routes</h2>
+
+      <p>
+        Sixteen files, one pattern. Each declares its routes with
+        <code>createRoute</code> (method, path, middleware, request schema,
+        every response it can produce), then registers a handler. The schemas
+        come from <code>@inventory/shared</code>, never inline, so the OpenAPI spec
+        at <code>/api/docs</code> is generated from the same objects that do
+        the validating and cannot drift from reality.
+      </p>
+
+      <p>
+        One route, in full, because the other hundred look like this:
+      </p>
+<pre><code>const listRoute = createRoute({
+  method: 'get',
+  path: '/concepts',
+  tags: ['concepts'],
+  middleware: [requireRole('viewer')] as const,
+  request: {
+    query: paginationQuerySchema.extend({
+      search: z.string().optional(),
+      <span class="c">/** Home passes this: instruments and documents are not stock. */</span>
+      stockOnly: z.enum(['true', 'false']).optional(),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Paginated concepts with computed stock',
+      ...jsonContent(listResponseSchema(conceptWithStockSchema)),
+    },
+    401: errorResponse('Not signed in'),
+  },
+});</code></pre>
+      <p>
+        Everything a caller needs is declared, not implied: the role, the query
+        shape, and <em>every</em> response it can produce. The OpenAPI page at
+        <code>/api/docs</code> is generated from this object — the same object
+        that validates — so the documentation cannot drift from the behaviour.
+        The handler underneath is usually five lines.
+      </p>
+      <p>
+        Note the comment on <code>stockOnly</code>. That one flag is where
+        instruments and documents leave the Home screen, and the rule is
+        subtler than it looks: a concept counts as stock if <em>any</em> of its
+        live items is of a counting type — <strong>and a concept with no items
+        at all is kept</strong>, because it has simply not been used yet and
+        hiding it would make new concepts look broken.
+      </p>
+      <p>
+        And the mirror image on the other side. The query key is
+        <code>['concepts', 'list', params]</code>, so a mutation invalidating
+        <code>['concepts']</code> refreshes every variation of every list
+        without naming any of them.
+      </p>
+<pre><code>export function useConcepts(params: ConceptListParams) {
+  return useQuery({
+    queryKey: ['concepts', 'list', params],
+    queryFn: () =&gt;
+      api&lt;{ data: ConceptWithStock[]; meta: PaginationMeta }&gt;('/concepts', {
+        query: { page: params.page ?? 1, search: params.search || undefined, … },
+      }),
+    placeholderData: keepPreviousData, <span class="c">// old page stays while the next loads</span>
+  });
+}</code></pre>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>File</th><th>Lines</th><th>Worth knowing</th></tr></thead>
+          <tbody>
+            <tr><td><code>items.ts</code></td><td>835</td><td>The busy one. Filtered browser, the action endpoints (open, deplete, move, adjust), N-copies create, and quick-add's find-or-create chain. Its <code>PATCH</code> cannot change <code>status</code>, because the shared update schema has no such field.</td></tr>
+            <tr><td><code>lots.ts</code></td><td>1138</td><td>The largest file in the repo: draft, request queue, lines, ordering, reception, discrepancies.</td></tr>
+            <tr><td><code>pools.ts</code></td><td>1115</td><td>Counted and identified pools, events, recounts, commissioning from stock.</td></tr>
+            <tr><td><code>equipment.ts</code></td><td>672</td><td>Item links and maintenance. <code>linkQuery</code> resolves the far end in both directions.</td></tr>
+            <tr><td><code>logbridge.ts</code></td><td>613</td><td>Sources, parsers, dictionary, ingestion, the unknown-event queue.</td></tr>
+            <tr><td><code>actions.ts</code></td><td>567</td><td>Activity definitions and recording, plus reconciliation.</td></tr>
+            <tr><td><code>requests.ts</code></td><td>463</td><td>Demand at concept level; duplicates become a +1, not a second row.</td></tr>
+            <tr><td><code>concepts.ts</code></td><td>415</td><td>CRUD plus <code>/concepts/stock</code>, the endpoint Home is built on.</td></tr>
+            <tr><td><code>trash.ts</code></td><td>341</td><td>Everything deletable, restore parent-first, and permanent purge for managers.</td></tr>
+            <tr><td><code>variants.ts</code> · <code>analogous.ts</code></td><td>322 · 289</td><td>The denormalization mass-updates, with a count returned so the UI can warn first.</td></tr>
+            <tr><td><code>users.ts</code></td><td>286</td><td>Admin account creation, passwords, roles, fast-key management.</td></tr>
+            <tr><td><code>transfer.ts</code></td><td>270</td><td>CSV import and export.</td></tr>
+            <tr><td><code>locations.ts</code></td><td>263</td><td>The tree, with subtree guards and suggested child codes.</td></tr>
+            <tr><td><code>types.ts</code></td><td>220</td><td>User-defined types, including field-key rename with data migration.</td></tr>
+            <tr><td><code>forecast.ts</code></td><td>207</td><td>Thin — the arithmetic is in the service.</td></tr>
+            <tr><td><code>history.ts</code></td><td>180</td><td>Read-only, filtered, paginated. Nothing here writes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note tip">
+        <span class="lbl">Adding an endpoint</span>
+        <p>
+          Schema in <code>@inventory/shared</code> → <code>createRoute</code> with
+          every response listed → handler that calls a service → hook in
+          <code>web/src/api/</code>. If the handler starts computing rather
+          than delegating, the logic belongs in <code>services/</code>.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">api/src/routes/items.ts — ordering <span class="n">~40 lines</span></p>
+        <p>Sorting is a query parameter, so SQLite does the work over every matching row. Sorting the 25 rows already in the browser would be a lie: "the cheapest item" would mean "the cheapest of the 25 that arrived most recently". Each router declares its own key list, so an unknown key is a 400 at the edge rather than a silent fallback to an order nobody asked for.</p>
+        <p>Two details are load-bearing. Translated names are JSON columns, so they sort through <code>json_extract</code> in the reader's own language with an English fallback — the same rule <code>resolveText()</code> applies in the browser. And NULLs are forced last in both directions: SQLite sorts NULL first, so a page of items with no price would otherwise open with a column of dashes.</p>
+      </div>
+
+    <!-- ============================================================== 10 -->
+    <section id="c10">
+      <h2><span class="n"></span>The frontend skeleton</h2>
+
+      <div class="file">
+        <p class="path">web/src/main.tsx <span class="n">34 lines</span></p>
+        <p>
+          The provider stack, and its order is not arbitrary: query client →
+          theme → i18n → toasts → router. Theme sits outside i18n because a
+          colour is not translated; toasts sit inside i18n because their text
+          is; the router sits innermost because everything above it must
+          survive navigation.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/App.tsx <span class="n">~70 lines</span></p>
+        <p>
+          The route table, and one thing that is deliberately outside it: the
+          <code>FastLoginListener</code>. A key chord has to work on the sign-in
+          screen <em>and</em> in the middle of the Items table, so it cannot
+          live inside the authenticated layout.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/RequireAuth.tsx <span class="n">~35 lines</span></p>
+        <p>
+          Redirects to <code>/login</code> when there is no session, and — the
+          part that matters — renders nothing while the session is still being
+          fetched. Without that, every reload flashes the login screen at
+          somebody who is signed in.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/Layout.tsx <span class="n">225 lines</span></p>
+        <p>
+          The shell: sidebar, navigation, language switcher, theme menu,
+          password and fast-key dialogs. The navigation is one array of
+          objects, role-gated by the same <code>roleAtLeast</code> the server
+          uses, and split into three bands — what you own, what happens to it,
+          settings and the record. On a phone the same markup becomes a drawer,
+          which is why it is rendered twice and why the tour engine has to pick
+          the <em>visible</em> copy.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 -->
+    <section id="c11">
+      <h2><span class="n"></span>Talking to the API</h2>
+
+      <div class="file">
+        <p class="path">web/src/api/client.ts <span class="n">~70 lines</span></p>
+        <p>
+          One <code>fetch</code> wrapper. It sends cookies, sets the JSON
+          headers, and — the useful part — turns the API's uniform error shape
+          back into an <code>ApiRequestError</code> carrying
+          <code>code</code>, <code>message</code> and <code>details</code>. That
+          is why a blocked delete can be caught in a component and turned into
+          "this will also delete 3 items — go ahead?" instead of a red box.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/api/{concepts,entities,history,operations}.ts <span class="n">~1,500 lines</span></p>
+        <p>
+          Every server interaction, as TanStack Query hooks, grouped by area
+          rather than by entity — <code>operations.ts</code> is the whole of
+ because those features are used together. Two conventions hold
+          throughout:
+        </p>
+        <ul>
+          <li><strong>Query keys are <code>[entity, 'list', filters]</code></strong>,
+            so invalidating <code>['items']</code> refreshes every list and
+            detail of an item without naming them.</li>
+          <li><strong>Every mutation invalidates its entity <em>and</em>
+            history</strong>, through a small <code>useInvalidator</code>
+            helper — because every mutation writes history, so a stale history
+            page is guaranteed otherwise.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/api/auth.ts <span class="n">21 lines</span></p>
+        <p>
+          The better-auth React client with the username plugin, plus
+          <span class="sig">asSessionUser</span> — a cast that exists to
+          document a real gap: the server adds <code>role</code> as an
+          additional field and the client's generated type does not know about
+          it. One cast in one place beats <code>as any</code> scattered around.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 12 -->
+    <section id="c12">
+      <h2><span class="n"></span>Three colours</h2>
+
+      <div class="file">
+        <p class="path">web/src/styles/index.css <span class="n">~200 lines</span></p>
+        <p>
+          The whole theme derives from <strong>three</strong> custom
+          properties — primary, secondary, accent — through
+          <code>color-mix(in oklab, …)</code>. Surfaces, borders, muted text
+          and tints are all mixes of the primary with the background, which is
+          why changing one variable in devtools retints the entire application
+          instead of half of it.
+        </p>
+        <p>
+          <code>oklab</code> rather than sRGB is the detail that makes it work:
+          mixing in a perceptual space keeps a 14% tint looking like a 14% tint
+          at every hue, where sRGB would make the violet muddy and the amber
+          fluorescent. Status colours — red, amber, green — are deliberately
+          <em>not</em> derived. "Low stock" must be the same red whatever
+          somebody has chosen as their primary.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/theme/ThemeProvider.tsx <span class="n">~120 lines</span></p>
+        <p>
+          Reads the three colours from <code>localStorage</code> and writes
+          them onto <code>documentElement</code>. Defaults live in CSS, not
+          here, so a first load has no flash of the wrong palette. It also
+          carries the contrast helper: given a chosen primary it computes
+          relative luminance and picks black or white for text on top, so
+          somebody choosing a pale yellow gets readable buttons instead of a
+          designer's assumption.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">web/src/lib/palette.ts <span class="n">~250 lines</span></p>
+        <p>Reading a theme out of a logo. Nobody wants to pick three hex values, and almost everybody already has a logo — which is a colour decision somebody made on purpose, so the honest shortcut is to read it back out.</p>
+        <p>Pixels are bucketed by hue, 24 buckets of 15°, rather than clustered properly: a logo has three or four flat colours, not a photograph's gradient, and k-means would be more code to read for an answer that is no better. Transparent, grey, near-black and near-white pixels are skipped — they are the paper, not the mark, and keeping them would give every logo in the world the same grey theme.</p>
+        <p>What survives from the image is the <strong>hue</strong>; saturation and lightness are re-set three ways (<em>Calm</em>, <em>Bright</em>, <em>Deep</em>). That is not a liberty — the app's surfaces are dark and tinted by the primary, so a brand navy taken raw would disappear into the background and a brand pastel would wash it out. A single-colour logo gets the other two hues by rotating around the wheel, which is a triad rather than an apology.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/settings.ts <span class="n">~35 lines</span></p>
+        <p>A key/value table rather than one row with a column per setting: every new setting would otherwise be a migration, and settings are exactly the thing that gets added on a Tuesday afternoon. The value is JSON, validated by a Zod schema at the route — the shape lives in the type system, not in the DDL.</p>
+        <p>The logo travels as a <code>data:</code> URI inside that JSON, capped at about 300 KB. It is in the database on purpose: a backup of this product is one file, and an uploads/ directory beside it would be the first thing to go missing. Stored JSON that no longer parses falls back to the built-in look rather than throwing — a bad logo must not be able to take the whole app down.</p>
+      </div>
+
+    <!-- ============================================================== 13 -->
+    <section id="c13">
+      <h2><span class="n"></span>Two layers of language</h2>
+
+      <p>
+        Interface text and user data are translated by different mechanisms,
+        and confusing them is the classic mistake.
+      </p>
+
+      <div class="file">
+        <p class="path">web/src/i18n/index.tsx <span class="n">~90 lines</span></p>
+        <p>
+          <span class="sig">t('items.title')</span> over three JSON
+          dictionaries, falling back to English and then to the key itself — so
+          a missing translation shows <code>items.title</code>, which is ugly
+          on purpose and gets fixed. It interpolates
+          (<code>t('lots.itemsCreated', { n: 6 })</code>) while leaving unknown
+          placeholders untouched, so pre-existing strings containing braces did
+          not break the day interpolation was added.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/i18n/{en,ca,de}.json <span class="n">691 keys each</span></p>
+        <p>
+          Adding a language is adding one file. There is no key in one that is
+          missing from another — that is checked, not hoped for.
+        </p>
+      </div>
+
+      <p>
+        The second layer is data: a concept's name is a JSON column
+        <code>{"en": …, "de": …, "ca": …}</code> rendered through
+        <span class="sig">resolveText(name, locale)</span> from the shared
+        package. That is why adding a fourth language needs no migration, and
+        why <code>MultilangInput.tsx</code> exists — a three-tab field with
+        English required.
+      </p>
+    </section>
+
+    <!-- ============================================================== 14 -->
+    <section id="c14">
+      <h2><span class="n"></span>The primitives</h2>
+
+      <div class="file">
+        <p class="path">web/src/components/ui.tsx <span class="n">283 lines</span></p>
+        <p>
+          Button, Input, Label, Select, Textarea, Spinner, Drawer, Modal,
+          Pagination, StatusBadge, RoleBadge. shadcn-style, built with
+          <code>class-variance-authority</code>, and they only ever use theme
+          tokens — <code>bg-primary</code>, <code>text-muted</code>,
+          <code>border-line</code> — never a literal colour. That is the rule
+          that makes the three-colour system actually reach every corner.
+        </p>
+        <p>
+          <code>Drawer</code> and <code>Modal</code> share a
+          <span class="sig">useEscape</span> hook and both carry
+          <code>role="dialog"</code>, <code>aria-modal</code> and a
+          <code>data-ui</code> attribute. The attribute is not styling: it is
+          how the browser suites address a dialog without depending on class
+          names that change.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/toast.tsx <span class="n">~90 lines</span></p>
+        <p>
+          Toasts with an optional action, which is what makes the optimistic
+          quick actions on Home honest: "supplyAA042 → depleted · Undo?".
+          Without the undo, an accidental click on a phone would be
+          unrecoverable, and the buttons would have to be smaller and slower.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/lib/{cn,format}.ts</p>
+        <p>
+          <code>cn()</code> merges Tailwind classes so a caller's
+          <code>className</code> beats the component's default instead of
+          fighting it. <code>format.ts</code> renders dates, quantities and
+          money per locale — the mirror image of <code>parseMoneyInput</code>,
+          and the reason a price is never rendered by string concatenation.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 15 -->
+    <section id="c15">
+      <h2><span class="n"></span>The pages</h2>
+
+      <p>
+        Eighteen pages. Most are the same shape — filters, a table, a drawer —
+        and are readable without help. Five are worth a paragraph.
+      </p>
+
+      <div class="file">
+        <p class="path">web/src/pages/HomePage.tsx <span class="n">472 lines</span></p>
+        <p>
+          The screen the app is judged on. A metric strip, a location tree that
+          acts as a <em>filter</em> rather than navigation, concept cards with
+          an expandable hierarchy, overdue maintenance above the stock (a
+          machine out of calibration stops work in a way a low bottle does
+          not), and quick actions that are optimistic with an undo. Standalone
+          items — items with no variant — get their own card, because Home
+          speaks in concepts and they would otherwise be invisible.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/ItemsPage.tsx <span class="n">476 lines</span></p>
+        <p>
+          Multi-status, type, concept, location-subtree and text filters. The
+          empty state is worth the mention: it distinguishes "you have no
+          items" from "nothing matches these filters" and offers one click to
+          clear them. That distinction was a real defect — the default filter is
+          <code>in_stock</code>+<code>open</code>, an instrument is
+          <code>in_service</code>, and searching for your own caliper
+          confidently reported that it did not exist.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/LogPage.tsx <span class="n">797 lines</span></p>
+        <p>
+          The largest page, because the log bridge has the most to configure:
+          sources, the parser builder, the dictionary, unknown events, and the
+          ingestion report. The parser builder is the interesting part — you
+          paste a real line, it labels the tokens, and you say which is the
+          timestamp, which is the object, which is the event. Nobody types a
+          regular expression.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/PoolsPage.tsx <span class="n">651 lines</span></p>
+        <p>
+          Cups in rotation, their states, the recount, and commissioning
+          from the cupboard. The recount screen is the measuring instrument for
+          attrition: nobody ever reports a breakage, they just count what is
+          there, and the difference <em>is</em> the mortality rate.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/LocationsPage.tsx <span class="n">417 lines</span></p>
+        <p>
+          The tree used to describe places that exist but could never answer
+          "what is in this cupboard" — the question somebody standing in front of
+          the cupboard actually has. Picking a node now lists its contents, with
+          a subtree toggle, a type filter and a search.
+        </p>
+      </div>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>The rest</th><th>In one line</th></tr></thead>
+          <tbody>
+            <tr><td><code>ConceptsPage</code> · <code>AnalogousPage</code> · <code>VariantsPage</code></td><td>The three upper levels, with the re-link warning before a mass update.</td></tr>
+            <tr><td><code>TypesPage</code></td><td>The field-definition builder with a live preview — you see the form your users will get while you build it.</td></tr>
+            <tr><td><code>RequestsPage</code> · <code>LotsPage</code></td><td>Ask, then buy. The request queue lives inside the draft lot, where the decision is.</td></tr>
+            <tr><td><code>ForecastPage</code></td><td>A list, not a chart: "these 6 will run out before you can reorder" and one button to request them all.</td></tr>
+            <tr><td><code>ActionsPage</code></td><td>Activity definitions and recording; consumption maps are dated so history can be reprocessed.</td></tr>
+            <tr><td><code>HistoryPage</code> · <code>TrashPage</code> · <code>UsersPage</code></td><td>The record, the bin, the accounts.</td></tr>
+            <tr><td><code>LoginPage</code></td><td>Username and password, plus the sign that a key chord will work.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============================================================== 16 -->
+    <section id="c16">
+      <h2><span class="n"></span>Components that think</h2>
+
+      <div class="file">
+        <p class="path">web/src/components/QuickAddModal.tsx <span class="n">295 lines</span></p>
+        <p>
+          The feature that makes the four-level hierarchy ignorable, which is
+. Type a name, pick a type and a quantity, press enter:
+          the server's find-or-create chain builds Concept → Analogous →
+          Variant behind you in one transaction. The modal stays open, and
+          remembers the last type and location, because the real use is
+          twenty items in a row after a delivery. Bound to <code>q</code>.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/ItemDrawer.tsx <span class="n">489 lines</span></p>
+        <p>
+          Everything about one item: custom fields rendered from its Type, the
+          action buttons, its own history tab, and the equipment panel. The
+          detail that matters most is small — depleting the <em>last</em> item
+          of a concept offers "request more" right there in the toast. That is
+          the entry point to the whole purchasing loop, captured at the second
+          the human knows, rather than on a screen they would have to remember
+          to visit.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/Tour.tsx <span class="n">421 lines</span> · web/src/tours.ts</p>
+        <p>
+          The interactive manual: four guided tours that point at the real
+          screen. A step names its target with a <code>data-tour</code>
+          attribute, <strong>never a class</strong> — a tour that breaks when
+          somebody restyles a button is a tour nobody maintains.
+        </p>
+        <p>
+          Two fixes in here came from testing on a phone. The sidebar is
+          rendered twice (desktop and drawer), so <code>querySelector</code>
+          cheerfully picked the hidden copy and pointed at nothing; the engine
+          now scans for the first target with a non-zero bounding box. And
+          starting a tour closed the very drawer the step was about, so a step
+          can declare <code>needsNav</code> and the engine opens it first.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/lib/chord.ts <span class="n">220 lines</span></p>
+        <p>
+          Reading a key chord off the keyboard. Keys are identified by
+          <code>event.code</code> — position, not character — which is what
+          makes the same gesture work on a Catalan, German or English layout.
+        </p>
+        <p>
+          Two rules earn their keep. <strong>A group ends when the fingers
+          lift, not when the timer fires</strong>: every new key restarts the
+          hold clock, and the group is whatever is still down when the hand
+          stops moving, so a slow hand is not read as two groups. And
+          <strong>the detector stays quiet while you are typing</strong> —
+          except where a field opts back in with <code>data-chord-ok</code>,
+          which the sign-in form does, because that is exactly where the cursor
+          lands by itself and a silently ignored chord there would break the
+          one screen the feature exists for.
+        </p>
+        <p>
+          <span class="sig">suspendChords()</span> is a counter, not a flag, so
+          the practice panel can disable the app-wide listener without a second
+          suspender re-arming it. Without it, learning your own chord would
+          sign you out every time you got it right.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/EquipmentPanel.tsx <span class="n">648 lines</span></p>
+        <p>
+          Attached items and maintenance plans, both generic rather than gated
+          behind a type called "instrument" — the same argument that made Types
+          user-defined. A cupboard has a service interval; a torque wrench has a
+          calibration certificate; the list of things a workshop hangs off a machine
+          is not knowable in advance.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/components/{LotLineForm,ReceiveModal,SupplierPicker,LocationPicker,CustomFields,DeleteDialog,CsvModal,LabelSheet,MultilangInput,PasswordModal,RequestModal,FastKeyModal,FastLogin,ThemeMenu,LocationTree}.tsx</p>
+        <p>
+          The supporting cast. Three are worth a sentence each:
+          <code>LotLineForm</code> shows the pack arithmetic instead of
+          silently applying it ("you need 500 mL · the bottle is 1 L ·
+          quantity 1"); <code>CustomFields</code> renders and validates fields
+          that did not exist when the code was written, driven by the Type;
+          <code>LabelSheet</code> generates QR labels client-side with a print
+          stylesheet, so there is no server round trip and no image storage.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">web/src/components/Combobox.tsx <span class="n">~230 lines</span></p>
+        <p>A <code>&lt;select&gt;</code> you can type into. The filter bars were plain dropdowns, which are fine with eight options and useless with two hundred — and the list was capped at one page of results anyway, so a concept on page 2 looked like a concept that did not exist.</p>
+        <p>Two details carry it. The input holds <em>what you are typing</em> while the list is open and <em>what you picked</em> when it is closed; mixing those is what makes most hand-rolled comboboxes feel broken. And matching is accent-insensitive through <code>NFD</code> normalisation, because nobody types the accent in a hurry and <code>Heptà</code> has to be findable as <code>hepta</code>.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/ResizablePanel.tsx <span class="n">~120 lines</span></p>
+        <p>The location tree's width, dragged and remembered. The listeners go on the window rather than the 6px handle — once a drag starts the pointer routinely leaves the handle, and a handle-scoped <code>mousemove</code> would drop it the moment it did. The width is written to storage when the drag ends, not on every frame, and arrow keys resize it too, because a control that only takes a mouse is a control half the room cannot use.</p>
+      </div>
+
+    <!-- ============================================================== 17 -->
+    <section id="c17">
+      <h2><span class="n"></span>The desktop client</h2>
+
+      <div class="file">
+        <p class="path">desktop/src-tauri/src/main.rs <span class="n">220 lines</span></p>
+        <p>
+          A window onto a server — <strong>not</strong> a second copy of the
+          app. That is the design decision, and it is worth stating plainly
+          because the opposite is the obvious choice: this product is one
+          server holding one file that the whole workshop shares, so an installer
+          carrying its own API and its own database would quietly give every
+          bench a private inventory, which is precisely what the app exists to
+          prevent.
+        </p>
+        <p>
+          What it buys over a browser tab is a window with no address bar to
+          wander out of, no tab to close by accident, and a keyboard the
+          operating system hands straight to it — which is what makes the key
+          chord practical on a shared bench.
+        </p>
+        <p>
+          Three startup paths: no saved server opens the connect screen; a good
+          one opens the app; a saved server that has since moved falls
+          <em>back</em> to the connect screen showing what it tried, rather
+          than a blank rectangle. It probes <code>/api/v1/health</code> from
+          Rust rather than from the page, which sidesteps CORS entirely.
+          <span class="sig">normalize()</span> accepts what a person actually
+          types — <code>workshop-pc:3000</code>, <code>192.168.1.20:3000</code>,
+          with or without a scheme — and its unit tests caught a real bug on
+          the first run: trimming trailing slashes before checking the scheme
+          turned a bare <code>http://</code> into <code>http://http:</code>, a
+          perfectly valid URL for a host nobody has.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">desktop/ui/index.html <span class="n">~180 lines</span></p>
+        <p>
+          The connect screen, and the only interface the desktop app owns. One
+          static file with no bundler and no dependencies, calling
+          <code>window.__TAURI__</code> directly — everything else it shows
+          comes from the server.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 18 -->
+    <section id="c18">
+      <h2><span class="n"></span>Building and shipping</h2>
+
+      <div class="file group">
+        <p class="path">web/vite.config.ts · api/tsup.config.ts</p>
+        <p>
+          Vite proxies <code>/api</code> to <code>:3001</code> in development,
+          which is the only reason two dev servers feel like one app. tsup
+          bundles the API to a single <code>dist/index.js</code> and inlines
+          <code>@inventory/shared</code>, because that package has no build output of
+          its own.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">Dockerfile <span class="n">52 lines</span></p>
+        <p>
+          Multi-stage. The build stage installs a C toolchain because
+          <code>better-sqlite3</code> is a native module; the runtime stage
+          copies only what is needed and runs <code>node dist/index.js</code>
+          with <code>SERVE_WEB=1</code>, so one port serves the SPA, the API,
+          the docs and the manuals.
+        </p>
+        <p>
+          <strong>The workspace layout is preserved rather than flattened</strong>,
+          which looks wasteful and is not: npm does not hoist
+          <code>better-auth</code> to the root <code>node_modules</code>, and
+          flattening breaks module resolution at runtime — a failure that only
+          appears in the container.
+        </p>
+        <div class="note warn">
+          <span class="lbl">The lesson from the first real run</span>
+          <p>
+            <code>NODE_ENV=production</code> is set in exactly one place in
+            this repository — here — and nothing else runs with it. Everything
+            that behaves differently in production had therefore never been
+            executed. The first <code>docker run</code> found it: the container
+            started, printed a warning, and died on its first authenticated
+            request (, <code>lib/secret.ts</code>).
+          </p>
+        </div>
+      </div>
+
+      <div class="file group">
+        <p class="path">docs/build-manuals.mjs · docs/build-artifacts.mjs</p>
+        <p>
+          Turn <code>docs/manual.css</code> plus <code>docs/content/*.html</code>
+          into standalone documents — including the one you are reading. The
+          fonts are inlined as data URIs, so a manual works with no network at
+          all: it can be emailed, copied to a USB stick, or served by the app
+          itself at <code>/api/v1/manual/:locale</code>, which is what the
+          <code>?</code> in the sidebar opens.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== day to day -->
+    <section id="c23">
+      <h2><span class="n"></span>Working on it, day to day</h2>
+
+      <h3>The loop</h3>
+<pre><code>npm install
+npm run db:seed                  <span class="c"># demo data; refuses on a non-empty database</span>
+npm run dev                      <span class="c"># API :3001, web :5173</span>
+npm run typecheck                <span class="c"># every workspace, including the Rust no-op</span></code></pre>
+      <p>
+        Two servers in development, one port in production — the only
+        difference is <code>SERVE_WEB=1</code>. Migrations run at boot, so
+        there is no separate step to forget.
+      </p>
+
+      <h3>Changing the schema</h3>
+<pre><code><span class="c"># 1. edit packages/api/src/db/schema.ts</span>
+cd packages/api
+npx drizzle-kit generate --name what_it_does
+<span class="c"># 2. read drizzle/00NN_what_it_does.sql before you trust it</span>
+<span class="c"># 3. restart — index.ts applies it at boot. Commit the .sql file.</span></code></pre>
+      <p>
+        Never hand-write a migration and never edit one that has been applied.
+        Read the generated SQL before trusting it: <code>drizzle-kit</code> is
+        good, but SQLite cannot drop a column without rebuilding the table, and
+        that is worth seeing.
+      </p>
+
+      <h3>Adding an entity, in the order that works</h3>
+<pre><code>shared/src/schemas/thing.ts       schema + create + update, exported from index.ts
+api/src/db/schema.ts              the table, with auditColumns
+api/drizzle/                      generated migration, committed
+api/src/services/thing.ts         only if it needs to think
+api/src/routes/thing.ts           createRoute × N, registered in app.ts
+web/src/api/entities.ts           useThings / useCreateThing / useUpdateThing
+web/src/pages/ThingsPage.tsx      the screen, + a route in App.tsx
+web/src/i18n/{en,ca,de}.json      all three, or the key shows through</code></pre>
+      <p>
+        Eight files, and the order matters because each one is typed against
+        the one above it. Start anywhere else and you will fight the compiler
+        for an hour.
+      </p>
+
+      <h3>When something is wrong</h3>
+<pre><code>curl -s localhost:3001/api/v1/concepts/stock | python3 -m json.tool
+open localhost:3001/api/docs                  <span class="c"># every endpoint, try it live</span>
+sqlite3 packages/api/data/inventory.db 'select * from history order by created_at desc limit 20'</code></pre>
+      <p>
+        In that order. Ask the API first, because most "the screen is wrong"
+        bugs are the screen being right about wrong data. The Swagger UI at
+        <code>/api/docs</code> lets you fire any endpoint with a real session.
+        And the history table is the closest thing to a flight recorder: every
+        mutation is there, in order, with who did it.
+      </p>
+
+      <h3>Three habits that will save you</h3>
+      <ul>
+        <li><strong>Run one suite before you start</strong>, so you know what
+          was already broken. <code>verify-rules.mjs</code> takes ninety
+          seconds and needs no browser.</li>
+        <li><strong>Point it at a copy.</strong> Every suite writes. See —
+          and use sqlite's own backup, not <code>cp</code>.</li>
+        <li><strong>If you added a string, add it three times.</strong> A
+          missing key renders as <code>items.title</code> on somebody's
+          screen.</li>
+      </ul>
+
+      <div class="file group">
+        <p class="path">api/drizzle.config.ts · api/scripts/create-user.mts · web/src/pages/Placeholder.tsx</p>
+        <p>
+          The three files nothing else needed to say anything about, listed so
+          that "every file" is true. The drizzle config points the generator at
+          both schema files; <code>create-user.mts</code> makes an account from
+          a terminal, bypassing the closed registration the same way the Users
+          page does; <code>Placeholder.tsx</code> is a stub kept for routes that
+          are sketched but not built.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 19 -->
+    <section id="c19">
+      <h2><span class="n"></span>The suites</h2>
+
+      <p>
+        Nine scripts in <code>packages/web/scripts/</code>. They are not unit
+        tests: they drive the real application in a real browser, or hit the
+        real API, because almost every defect this project has found lived
+        between correct components rather than inside one.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Script</th><th>What it drives</th><th>Checks</th></tr></thead>
+          <tbody>
+            <tr><td><code>acceptance.mjs</code></td><td>The definition of done, end to end</td><td>8</td></tr>
+            <tr><td><code>verify-gaps.mjs</code></td><td>Bin, cascade, CSV, labels, passwords</td><td>12</td></tr>
+            <tr><td><code>verify-operations.mjs</code></td><td>Everything in</td><td>28</td></tr>
+            <tr><td><code>verify-equipment.mjs</code></td><td>Instruments, maintenance, locations</td><td>9</td></tr>
+            <tr><td><code>verify-tour.mjs</code></td><td>The guided tours, in three languages</td><td>8</td></tr>
+            <tr><td><code>verify-rules.mjs</code></td><td>The invariants, at the API — no browser</td><td>50</td></tr>
+            <tr><td><code>verify-limits.mjs</code></td><td>Roles, purchasing, concurrency, CSV</td><td>18</td></tr>
+            <tr><td><code>verify-fastkey.mjs</code></td><td>Fast login, with a real keyboard</td><td>12</td></tr>
+            <tr><td><code>verify-ui.mjs</code></td><td>Grid, typed filters, column sorting, branding, the session rules</td><td>39</td></tr>
+            <tr><td><code>verify-sessions.mjs</code></td><td>Accounts, roles, sign-out, chords and claimed computers — with two people at once</td><td>51</td></tr>
+            <tr><td><code>verify-docker.mjs</code></td><td>The shipping story, against a container</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note stop">
+        <span class="lbl">Before you run one</span>
+        <p>
+          <strong>They write to whatever database the API is pointed at</strong>,
+          and the argument that says <em>which</em> database is not in the same
+          position in every script — <code>verify-equipment</code> and
+          <code>verify-tour</code> take the output directory first and the URL
+          last. Read the header. Copy the database with sqlite's own backup and
+          not <code>cp</code>: it runs in WAL mode and a plain copy of the
+          <code>.db</code> alone can be torn.
+        </p>
+      </div>
+
+      <p>
+        Two habits that make them worth keeping. They <strong>exit non-zero</strong>,
+        so they can be believed without reading the output. And they are
+        <strong>re-runnable</strong> — which sounds obvious and was not: an
+        early version of <code>verify-rules</code> assumed an open container
+        with contents in it, passed once, and failed on every subsequent run.
+        A suite that only works on virgin data is a suite nobody runs twice.
+      </p>
+    </section>
+
+    <!-- ============================================================== 20 -->
+    <section id="c20">
+      <h2><span class="n"></span>Where the bodies are buried</h2>
+
+      <p>
+        The things that will bite you, collected in one place. Most were found
+        by using the app rather than by reading it.
+      </p>
+
+      <h3>Traps in the code</h3>
+      <ul>
+        <li><strong>Both ends of a move must move by the same amount.</strong>
+          <code>pools.ts</code> once clamped the source at zero while crediting
+          the destination in full, so an oversized <em>take</em> invented
+          cups out of nothing — 692 of them from one click, in the very
+          number the recount measures attrition against. Any transfer between
+          two counters is suspect until you have checked both sides.</li>
+        <li><strong>Derived columns can be right on screen and wrong in the
+          database.</strong> An identified pool's counts are computed from its
+          units on read, so a bulk event wrote nonsense into the stored columns
+          and nobody could see it. If a value is derived on read, refuse to
+          write it.</li>
+        <li><strong>A default filter is a claim.</strong> The Items page
+          defaulted to <code>in_stock</code>+<code>open</code> and said
+          "Nothing here yet" — telling you your instrument did not exist. An
+          empty state must distinguish "nothing" from "nothing matching".</li>
+        <li><strong>Rendering the same thing twice breaks
+          <code>querySelector</code>.</strong> The sidebar exists as a desktop
+          column and a mobile drawer; anything looking for an element in it
+          must pick the visible one.</li>
+        <li><strong>`localhost` is a privileged origin, and this app never
+          runs there in real life.</strong> Two blockers hid behind that for
+          months: <code>crypto.randomUUID()</code> does not exist outside a
+          secure context, so the first account could not be created from any
+          other machine; and better-auth marks its cookie <code>Secure</code>
+          in production, which a browser discards over plain HTTP, so nobody
+          stayed signed in past a reload. Any browser-facing change wants one
+          pass against <code>http://&lt;lan-ip&gt;:3000</code>.</li>
+        <li><strong>History is inside the transaction by accident of
+          architecture, not by argument.</strong> <code>logEvent()</code> takes
+          no transaction and writes through the global handle; it rolls back
+          with its mutation only because <code>better-sqlite3</code> is
+          synchronous and there is exactly one connection. A pool, or an async
+          path, would silently break while leaving it written
+          down.</li>
+        <li><strong>The denormalized parent ids can drift.</strong> They are
+          kept correct by mass-update transactions in
+          <code>variants.ts</code> and <code>analogous.ts</code>. Writing a
+          <code>conceptId</code> anywhere else is how they stop being true.</li>
+      </ul>
+
+      <h3>Version choices worth knowing</h3>
+      <ul>
+        <li>Zod v4, not v3 — <code>@hono/zod-openapi</code> requires it. The
+          real rule (one version workspace-wide) holds.</li>
+        <li>React Router v8, not v7; TypeScript 7 (native <code>tsgo</code>).</li>
+        <li><code>items.createdBy</code> is plain text, not a foreign key:
+          deleting a user must never break an item.</li>
+        <li>Docker keeps the workspace layout instead of flattening.</li>
+      </ul>
+
+      <h3>Not built, on purpose</h3>
+      <ul>
+        <li><strong>Automatic log watching.</strong> Everything else in the log
+          bridge exists; ingestion is triggered by a button or a paste. The
+          silence detector is already there to pair with a watcher.</li>
+        <li><strong>A log effect that counts machine runs.</strong>
+          <code>POST /items/:id/uses</code> exists; the dictionary entry kind
+          that would let a machine controller line raise the counter does not.</li>
+        <li><strong>Approval before purchasing.</strong> Held back because it
+          depends on whether the workshop wants a sign-off step at all.</li>
+        <li><strong>A desktop app carrying its own server.</strong> The client
+          half is built; the sidecar needs a per-platform <code>node</code> and
+          a per-platform <code>better-sqlite3</code>, and is a product decision
+          rather than more of the same work.</li>
+      </ul>
+
+      <h3>Never tested against reality</h3>
+      <p>
+        The log bridge has never been connected to an actual machine controller. It works
+        against pasted lines and against the source the suite creates, and the
+        design was settled in detail — but the day it is pointed at a real
+        instrument's output will be the first day, and the first day is always
+        different.
+      </p>
+
+      <div class="note tip">
+        <span class="lbl">If you are picking this up</span>
+        <p>
+          Read <code>db/schema.ts</code> first, then
+          <code>services/stock.ts</code>
+          and <code>services/actions.ts</code>. Those four things are the
+          product; everything else is how it reaches a screen.
+        </p>
+      </div>
+    
+      <h3>A claimed computer never expires on its own</h3>
+      <p><code>session.expiresIn</code> is a year, and that is not laziness. How long a session lives is decided by the <em>cookie</em>: a shared machine gets a browser-session cookie plus a twenty-minute idle rule, a claimed one gets a lasting cookie and is meant to survive shutdowns. With a thirty-day server expiry the claimed machine would throw somebody out after a long holiday for a reason no user could ever explain. Ending a claimed session is therefore always deliberate: signing out, or <code>POST /users/sessions/revoke-all</code>.</p>
+      <h3>A lot line may create the variant it orders</h3>
+      <p><code>POST /lots/:id/lines</code> takes <em>either</em> an <code>orderedVariantId</code> <em>or</em> a <code>newVariantName</code>, enforced by a Zod refinement. The second path runs the same find-or-create chain as Quick Add, inside the line's own transaction, so a failed line cannot leave a stray product behind. It exists because requests are Concept-level by design, which means the first order for any new concept has no variant to pick — and before this the form simply dead-ended on an empty list.</p>
+</section>
+
+  </main>
+
+  <footer class="footer">
+    Architecture manual as of August 2026, against roughly 28,000 lines. The
+    What the app does for its users is the
+    <a href="manual.en.html">user manual</a>.
+  </footer>
+
+</div>

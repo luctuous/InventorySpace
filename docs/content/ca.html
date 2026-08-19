@@ -1,0 +1,2074 @@
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">Manual d'ús · v0.2 · agost 2026</span>
+    <h1>Inventari</h1>
+    <p>
+      Tot el que l'aplicació sap fer avui, en ordre d'ús: des d'esborrar les
+      dades de demostració fins a muntar el teu inventari des de zero, el dia a
+      dia, i els límits que encara té.
+    </p>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Índex">
+      <p>Índex</p>
+      <ol>
+        <li><a href="#s1"><span class="n">01</span> Com pensa l'aplicació</a></li>
+        <li><a href="#s2"><span class="n">02</span> Engegar i entrar</a></li>
+        <li><a href="#s3"><span class="n">03</span> Buidar la demostració</a></li>
+        <li><a href="#s4"><span class="n">04</span> Tutorial des de zero</a></li>
+        <li><a href="#s5"><span class="n">05</span> Quick Add</a></li>
+        <li><a href="#s6"><span class="n">06</span> El dia a dia d'un article</a></li>
+        <li><a href="#s7"><span class="n">07</span> La pantalla d'Inici</a></li>
+        <li><a href="#s8"><span class="n">08</span> Buscar entre articles</a></li>
+        <li><a href="#s9"><span class="n">09</span> Els tres nivells de dalt</a></li>
+        <li><a href="#s10"><span class="n">10</span> Historial</a></li>
+        <li><a href="#s11"><span class="n">11</span> Usuaris i permisos</a></li>
+        <li><a href="#s12"><span class="n">12</span> Idioma i colors</a></li>
+        <li><a href="#s13"><span class="n">13</span> Esborrar i recuperar</a></li>
+        <li><a href="#s14"><span class="n">14</span> Còpies de seguretat</a></li>
+        <li><a href="#s15"><span class="n">15</span> L'API</a></li>
+        <li><a href="#s17"><span class="n">16</span> Entrades i sortides en bloc</a></li>
+        <li><a href="#s18"><span class="n">17</span> Amb quin detall seguir cada cosa</a></li>
+        <li><a href="#s19"><span class="n">18</span> Peticions</a></li>
+        <li><a href="#s20"><span class="n">19</span> Lots: comprar i rebre</a></li>
+        <li><a href="#s21"><span class="n">20</span> Previsió</a></li>
+        <li><a href="#s22"><span class="n">21</span> Activitats i cost real</a></li>
+        <li><a href="#s23"><span class="n">22</span> Reutilitzables i recompte</a></li>
+        <li><a href="#s24"><span class="n">23</span> El pont del log</a></li>
+        <li><a href="#s26"><span class="n">24</span> Instruments i manteniment</a></li>
+        <li><a href="#s27"><span class="n">25</span> Passejar per ubicacions</a></li>
+        <li><a href="#s28"><span class="n">26</span> Entrar amb una combinació de tecles</a></li>
+        <li><a href="#s25"><span class="n">27</span> Què encara no fa</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ============================================================== 01 -->
+    <section id="s1">
+      <h2><span class="n"></span>Com pensa l'aplicació</h2>
+
+      <p>
+        Abans de tocar res val la pena entendre una sola idea, perquè tota la
+        resta en surt: <strong>cada cosa física que tens és un Article</strong>,
+        i els articles es miren des de quatre alçades diferents.
+      </p>
+
+      <div class="levels">
+        <div class="lv"><span class="name">Concepte</span><span class="ex">Què necessito · <em>“Filament PLA negre”</em></span></div>
+        <div class="lv"><span class="name">Anàleg</span><span class="ex">Quines opcions em serveixen indistintament · <em>“Filament PLA negre 1,75 mm”</em></span></div>
+        <div class="lv"><span class="name">Variant</span><span class="ex">Què compro exactament · <em>“Prusament PLA negre, bobina 1 kg”</em></span></div>
+        <div class="lv"><span class="name">Article</span><span class="ex">Quina unitat física tinc · <em>la bobina <span class="hid">filamentAA007</span></em></span></div>
+      </div>
+
+      <p>
+        Els tres nivells de dalt són <em>catàleg</em>: descriuen coses. Només
+        l'últim nivell és <em>realitat</em>: cada Article és un objecte concret
+        que pots tocar, amb la seva ubicació, la seva quantitat restant i el seu
+        preu.
+      </p>
+
+      <h3>La regla d'or: l'estoc no s'escriu mai</h3>
+      <p>
+        Enlloc de l'aplicació hi ha una casella on posis “tinc 4 quilos de
+        filament”. L'estoc es <strong>calcula</strong> sumant la quantitat
+        restant dels articles que estan en estoc o oberts. Si el número que veus
+        a Inici no et quadra, la resposta sempre és mirar els articles: o n'hi ha
+        un que no has esgotat, o un que no has donat d'alta.
+      </p>
+
+      <h3>La jerarquia es pot ignorar</h3>
+      <p>
+        Els quatre nivells hi són per quan els necessites, no per obligar-te.
+        Amb <a href="#s5">Quick Add</a> escrius un nom, tries un tipus i una
+        quantitat, i el sistema crea el Concepte, l'Anàleg i la Variant en
+        silenci. Pots portar l'inventari sencer sense obrir mai aquelles
+        pantalles, i afinar-ho més endavant si algun dia et fa falta.
+      </p>
+
+      <h3>Els Tipus són el que fa que l'app sigui teva</h3>
+      <p>
+        Un <strong>Tipus</strong> defineix quins camps propis tenen els seus
+        articles, quins estats poden tenir i si porten quantitat. Un col·leccionista
+        de trens defineix “escala” i “època”; un taller d'impressió 3D defineix
+        “material” i “diàmetre”. La mateixa aplicació, sense tocar codi.
+      </p>
+
+      <div class="note tip">
+        <span class="lbl">Si prefereixes que t'ho ensenyin a llegir-ho</span>
+        <p>
+          La <strong>?</strong> de baix de la barra lateral té aquest manual i
+          un conjunt de <strong>visites guiades</strong>. Assenyalen la pantalla
+          de debò, pas a pas, i duren uns dos minuts cadascuna. Tot el que
+          ensenyen també està escrit aquí — comença pel que et vagi millor.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 02 -->
+    <section id="s2">
+      <h2><span class="n"></span>Engegar i entrar</h2>
+
+      <h3>En desenvolupament</h3>
+      <pre><code>npm run dev</code></pre>
+      <p>
+        Engega les dues meitats alhora: l'API al port 3001 i la web al 5173.
+        Obre <code>http://localhost:5173</code>. Per aturar-ho, <code>Ctrl+C</code>.
+      </p>
+
+      <h3>Amb Docker</h3>
+      <pre><code>docker build -t inventoryspace .
+docker run -d -p 3000:3000 \
+  -v ./inventory-data:/data \
+  -e BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
+  inventoryspace</code></pre>
+      <p>
+        Aquí tot va per un sol port: <code>http://localhost:3000</code> serveix
+        la web, l'API i la documentació. Les migracions de base de dades
+        s'apliquen soles en arrencar, o sigui que un volum buit funciona a la
+        primera.
+      </p>
+
+      <h3>El primer compte</h3>
+      <p>
+        A la pantalla d'entrada hi ha l'enllaç <em>“Primer cop? Crea el compte
+        d'administrador”</em>. <strong>El primer compte que registris es
+        converteix en administrador i tot seguit el registre públic es
+        tanca.</strong> A partir d'aquí els comptes els crea l'administrador des
+        de la pàgina d'Usuaris.
+      </p>
+      <p>
+        <strong>Per entrar fas servir el nom d'usuari, no el correu.</strong>
+        És lliure: <code>anna</code>, <code>Anna Müller</code>,
+        <code>torn-nit</code>, <code>jm</code> tots serveixen — lletres,
+        espais i accents inclosos. Les majúscules no compten, així que
+        <code>Anna</code> i <code>anna</code> són la mateixa persona. L'únic
+        que no hi pot haver és una <code>@</code>, dos espais seguits o espais
+        als extrems. El correu és <em>opcional</em> i només hi és per si algun
+        dia vols lligar el compte a una bústia; no s'hi envia mai res.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Compte</span>
+        <p>
+          Si no defineixes <code>BETTER_AUTH_SECRET</code>, el servidor en genera
+          un de nou a cada arrencada i tothom queda desconnectat cada cop que
+          reinicies. En desenvolupament és igual; en producció, posa'l.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 03 -->
+    <section id="s3">
+      <h2><span class="n"></span>Buidar la demostració</h2>
+
+      <p>
+        La base de dades de desenvolupament ve amb dades d'exemple d'un
+        taller: 5 tipus, un arbre d'ubicacions, 4 conceptes i uns quants
+        articles, pensats perquè la pantalla d'Inici mostri els tres estats
+        d'alerta (bé, estoc baix, sense estoc). Per començar amb el <em>teu</em>
+        inventari tens dues vies.
+      </p>
+
+      <h3>Via ràpida: esborrar-ho tot de cop</h3>
+      <pre><code><span class="c"># atura el servidor abans</span>
+rm packages/api/data/inventory.db*
+npm run dev</code></pre>
+      <p>
+        L'arrencada torna a crear l'esquema buit. No executis
+        <code>npm run db:seed</code> i tindràs una base neta de veritat: cap
+        tipus, cap ubicació, cap article. El primer compte que registris tornarà
+        a ser administrador.
+      </p>
+      <div class="note stop">
+        <span class="lbl">Irreversible</span>
+        <p>
+          Això esborra també els comptes d'usuari i tot l'historial. Amb Docker
+          l'equivalent és esborrar el contingut del volum <code>./inventory-data</code>.
+        </p>
+      </div>
+
+      <h3>Via manual: esborrar des de l'aplicació</h3>
+      <p>
+        Si prefereixes fer-ho a mà per veure com funciona, has de seguir
+        <strong>l'ordre de baix a dalt</strong>. L'aplicació et bloqueja
+        qualsevol esborrat que deixaria coses penjades, i t'ho diu amb un
+        missatge concret:
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Per esborrar…</th><th>Abans has de…</th><th>Missatge si no</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Concepte</th><td>esborrar els seus Anàlegs</td><td>“encara hi ha N anàlegs”</td></tr>
+            <tr><th>Anàleg</th><td>esborrar les seves Variants</td><td>“encara hi ha N variants”</td></tr>
+            <tr><th>Variant</th><td>esborrar els seus Articles</td><td>“encara hi ha N articles”</td></tr>
+            <tr><th>Tipus</th><td>esborrar els articles d'aquell tipus</td><td>“N articles fan servir aquest tipus”</td></tr>
+            <tr><th>Ubicació</th><td>buidar-la i esborrar-ne les filles</td><td>“N articles en aquesta ubicació o les seves sububicacions”</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Així que l'ordre real és: <strong>Articles → Variants → Anàlegs →
+        Conceptes</strong>, i després Ubicacions (de la fulla cap a l'arrel) i
+        Tipus.
+      </p>
+      <p>
+        Cap esborrat és destructiu de debò: tot és <em>esborrat suau</em>. La
+        fila continua a la base de dades amb una data d'esborrat i desapareix de
+        les llistes. L'historial no s'esborra mai. Llegeix
+        <a href="#s13"></a> abans de confiar-hi gaire, perquè recuperar-ho
+        encara no és fàcil des de la interfície.
+      </p>
+    </section>
+
+    <!-- ============================================================== 04 -->
+    <section id="s4">
+      <h2><span class="n"></span>Tutorial: muntar el teu inventari</h2>
+
+      <p>
+        Anem a muntar l'inventari d'un <strong>taller d'impressió 3D</strong>
+        des d'una base buida. Serveix igual per a una col·lecció, un obrador de
+        cosmètica o un magatzem de recanvis: només canvien els noms.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Defineix els teus Tipus</h4>
+          <p>
+            És el primer pas perquè tota la resta hi depèn. Vés a
+            <strong>Tipus</strong> (només administrador) i prem <em>Tipus nou</em>.
+            Per al taller en necessitem dos ben diferents.
+          </p>
+          <p><strong>Filament</strong> — una cosa que es consumeix:</p>
+          <ul>
+            <li><strong>Nom</strong>: “Filament”. El camp té pestanyes
+              <span class="pill role">EN</span> <span class="pill role">DE</span>
+              <span class="pill role">CA</span>: l'anglès és obligatori, els
+              altres opcionals.</li>
+            <li><strong>Clau</strong>: <code>filament</code>. És l'identificador
+              intern i <strong>no es pot canviar mai més</strong>.</li>
+            <li><strong>Prefix d'ID</strong>: <code>filament</code>. Els articles
+              es diran <span class="hid">filamentAA001</span>,
+              <span class="hid">filamentAA002</span>…</li>
+            <li><strong>Porta quantitat</strong>: sí (una bobina es va gastant).</li>
+            <li><strong>Estats vàlids</strong>: <code>in_stock</code>,
+              <code>open</code>, <code>depleted</code>, <code>discarded</code>.</li>
+            <li><strong>Camps propis</strong>: prem <em>Afegeix camp</em> tres cops:
+              <code>material</code> (llista amb opcions <em>PLA, PETG, ABS,
+              TPU</em>), <code>color</code> (text), <code>diameter</code>
+              (número, unitat <em>mm</em>).</li>
+          </ul>
+          <p>
+            A la dreta, el panell <strong>Vista prèvia del formulari</strong> et
+            va ensenyant en directe com quedarà el formulari d'alta d'articles
+            d'aquest tipus. És la manera de comprovar que has entès el que estàs
+            definint abans de desar.
+          </p>
+          <p><strong>Impressora</strong> — una màquina, que no es consumeix:</p>
+          <ul>
+            <li>Clau <code>printer</code>, prefix <code>printer</code>.</li>
+            <li><strong>Porta quantitat</strong>: no.</li>
+            <li><strong>Estats vàlids</strong>: <code>in_service</code>,
+              <code>maintenance</code>, <code>out_of_service</code>,
+              <code>retired</code>.</li>
+            <li>Camps propis: <code>manufacturer</code> (text),
+              <code>nextService</code> (data).</li>
+          </ul>
+          <div class="note tip">
+            <span class="lbl">Estats propis</span>
+            <p>
+              Els articles d'aquest tipus no poden estar «oberts» ni «esgotats»:
+              el seu cicle és un altre. Al seu detall hi trobaràs un desplegable
+              <em>Posa estat</em> amb els estats que tu has definit.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h4>Dibuixa on són les coses</h4>
+          <p>
+            Vés a <strong>Ubicacions</strong>. L'arbre té quatre nivells fixos
+            —<em>taller → sala → zona → superfície</em>— però els noms te'ls
+            poses tu; per a un taller pensa-hi com <em>edifici → habitació →
+            moble → prestatge</em>.
+          </p>
+          <p>
+            Prem <em>Taller nou</em>: el codi <code>L01</code> ja ve
+            suggerit, posa-li nom “Taller”. Ara passa el ratolí per sobre de la
+            fila i apareix un <em>+</em> per afegir-hi una filla: el codi
+            següent també ve calculat sol (<code>L01R01</code>). Munta per
+            exemple:
+          </p>
+          <pre><code>L01            Taller
+  L01R01       Sala d'impressió
+    L01R01Z01  Armari de material
+      ...S01   Prestatge A
+    L01R01Z02  Taula d'impressores</code></pre>
+          <p>
+            El número que veus a la dreta de cada fila és <strong>quants
+            articles hi ha en aquell node i tot el que en penja</strong>. Aquest
+            arbre no és només etiquetatge: a Inici serveix de filtre.
+          </p>
+        </li>
+
+        <li>
+          <h4>Dona d'alta les primeres coses</h4>
+          <p>
+            Aquí tens dos camins. Per a la immensa majoria de casos, el bo és
+            <a href="#s5">Quick Add</a>: prem la tecla <code>q</code> o el botó
+            <em>Afegeix ràpid</em> a Inici, escriu “PLA negre Prusament”, tria el
+            tipus Filament, la ubicació, quantitat <code>1</code>, unitat
+            <code>kg</code>, i desa. Ja tens l'article, i el Concepte, l'Anàleg i
+            la Variant s'han creat sols.
+          </p>
+          <p>
+            Repeteix-ho unes quantes vegades: la finestra es queda oberta amb el
+            nom buit i recorda l'últim tipus i ubicació, perquè donar d'alta deu
+            coses seguides és el cas normal.
+          </p>
+        </li>
+
+        <li>
+          <h4>Afina el catàleg només si et cal</h4>
+          <p>
+            Imagina que ara compres filament PLA negre d'una altra marca i vols
+            que l'aplicació entengui que <em>et serveixen els dos igual</em>.
+            Aquest és el moment —i només aquest— d'entrar a les pantalles del
+            catàleg:
+          </p>
+          <ul>
+            <li>Vés a <strong>Variants</strong> i canvia el nom de la que et va
+              crear Quick Add perquè digui el producte comercial de debò:
+              “Prusament PLA negre, bobina 1 kg”. Aprofita per omplir marca,
+              proveïdor, referència, mida d'envàs i unitat.</li>
+            <li>Prem <em>Variant nova</em>, penja-la del <strong>mateix
+              Anàleg</strong>, i posa-hi l'altra marca.</li>
+          </ul>
+          <p>
+            A partir d'ara l'estoc del Concepte suma les dues marques, i a Inici
+            les veuràs agrupades sota el mateix concepte però en línies
+            separades.
+          </p>
+        </li>
+
+        <li>
+          <h4>Alerta't quan et quedis curt</h4>
+          <p>
+            Vés a <strong>Conceptes</strong>, edita “Filament PLA negre” i posa
+            <strong>Estoc mínim</strong> = 2. A partir d'ara, quan la suma baixi
+            de 2 kg, la targeta d'Inici es marcarà en ambre i s'obrirà sola. Si
+            arriba a zero, en vermell. Sense llindar, el concepte no avisa mai.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============================================================== 05 -->
+    <section id="s5">
+      <h2><span class="n"></span>Quick Add, amb detall</h2>
+
+      <p>
+        És la manera pensada per quan ets dret al magatzem amb la cosa a la mà.
+        S'obre amb la tecla <code>q</code> (si no estàs escrivint en cap camp) o
+        amb el botó <em>Afegeix ràpid</em>, present a Inici i a Articles.
+      </p>
+
+      <h3>El camp de nom fa de cercador</h3>
+      <p>
+        A mesura que escrius, sota apareixen coincidències —<strong>en tots els
+        idiomes alhora</strong>— i el que passa depèn del que triïs:
+      </p>
+      <ul>
+        <li><strong>Tries una Variant</strong> (surten primer, són el camí més
+          curt): l'article es penja directament d'aquell producte. El selector de
+          tipus desapareix, perquè la variant ja sap quin és.</li>
+        <li><strong>Tries un Concepte</strong>: queda apuntat com a referència
+          per a la cerca.</li>
+        <li><strong>No tries res</strong>: en desar, el sistema crea la cadena
+          Concepte → Anàleg → Variant amb el nom que has escrit, i hi penja
+          l'article. <strong>Tot passa en una sola transacció</strong>: o es crea
+          tot, o no es crea res.</li>
+      </ul>
+      <div class="note tip">
+        <span class="lbl">Per què importa</span>
+        <p>
+          Aquest cercador és l'única cosa que evita que la base s'ompli de
+          duplicats. Val la pena escriure tres lletres i mirar la llista abans de
+          crear res nou.
+        </p>
+      </div>
+
+      <h3>La resta del formulari</h3>
+      <ul>
+        <li><strong>Tipus</strong> — recorda l'últim que vas fer servir.</li>
+        <li><strong>Ubicació</strong> — també la recorda; s'obre l'arbre.</li>
+        <li><strong>Quantitat i unitat</strong> — només tenen efecte si el tipus
+          porta quantitat.</li>
+        <li><strong>Preu</strong> — escriu-lo com et surti natural
+          (<code>22.40</code> o <code>22,40</code>).</li>
+        <li><strong>Còpies</strong> — de 1 a 100. Si arriben tres bobines
+          idèntiques, posa 3: es crearan tres articles amb identificadors
+          consecutius.</li>
+        <li>Si el tipus té camps propis <strong>obligatoris</strong>, surten
+          aquí. Els opcionals només surten al formulari complet.</li>
+      </ul>
+      <p>
+        En desar, un avís et confirma els identificadors creats. Si s'ha creat
+        una cadena nova, l'avís ofereix un enllaç <em>Refina →</em> cap a
+        Variants per si vols posar-hi marca i proveïdor de seguida. Si no ho
+        fas, no passa res: refinar és opcional per sempre.
+      </p>
+    </section>
+
+    <!-- ============================================================== 06 -->
+    <section id="s6">
+      <h2><span class="n"></span>El dia a dia d'un article</h2>
+
+      <p>
+        Clica qualsevol fila a <strong>Articles</strong> i s'obre el calaix de
+        detall per la dreta, amb dues pestanyes: <em>Detalls</em> i
+        <em>Historial</em>. A dalt hi tens les accions.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Acció</th><th>Què fa exactament</th><th>Rol mínim</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Obre</th>
+              <td>Passa de <span class="pill ok">in stock</span> a <span class="pill warn">open</span> i apunta la data d'obertura.</td>
+              <td><span class="pill role">operador</span></td>
+            </tr>
+            <tr>
+              <th>Esgota</th>
+              <td>Passa a <span class="pill bad">depleted</span>, apunta la data i <strong>posa la quantitat restant a zero</strong>.</td>
+              <td><span class="pill role">operador</span></td>
+            </tr>
+            <tr>
+              <th>Mou</th>
+              <td>Obre l'arbre d'ubicacions; queda registrat d'on a on.</td>
+              <td><span class="pill role">operador</span></td>
+            </tr>
+            <tr>
+              <th>Ajusta qty</th>
+              <td>Corregeix la quantitat restant. <strong>Exigeix un motiu escrit</strong>, que queda a l'historial.</td>
+              <td><span class="pill role">operador</span></td>
+            </tr>
+            <tr>
+              <th>Edita</th>
+              <td>Ubicació, unitat, sèrie, lot, notes i camps propis.</td>
+              <td><span class="pill role">operador</span></td>
+            </tr>
+            <tr>
+              <th>Esborra</th>
+              <td>Esborrat suau: desapareix de les llistes, l'historial es queda.</td>
+              <td><span class="pill role">gestor</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Els estats que no són obrir ni esgotar</h3>
+      <p>
+        <em>Obre</em> i <em>Esgota</em> només surten quan tenen sentit. Per a la
+        resta d'estats que el Tipus permet hi ha el desplegable
+        <strong>Posa estat</strong>: és com portes una impressora de
+        <code>in_service</code> a <code>maintenance</code>, o un document
+        d'<code>active</code> a <code>archived</code>. Només hi surten els estats
+        vàlids d'aquell Tipus, mai cap altre.
+      </p>
+
+      <h3>Per què l'estat no es pot editar a mà</h3>
+      <p>
+        A propòsit. Els canvis d'estat només passen pels botons d'acció, i cada
+        botó valida que l'estat de destí sigui dels que el Tipus permet. Per això
+        no pots “reobrir” un article esgotat: et dirà <em>“no es pot passar de
+        depleted a open”</em>. La quantitat és una estimació; el fet que
+        l'obrissis o l'acabessis és un fet, i els fets es registren.
+      </p>
+
+      <h3>Els preus es congelen</h3>
+      <p>
+        Si dones d'alta un article amb preu, aquell preu queda <strong>bloquejat
+        per sempre</strong> i el camp surt desactivat en editar. Els canvis de
+        tarifa no són mai retroactius: el que vas pagar per aquella bobina el mes
+        passat continua sent el que vas pagar. Si el vas deixar buit, el pots
+        omplir més tard.
+      </p>
+      <p>
+        Internament els preus són nombres enters de cèntims, mai decimals, per
+        evitar errors d'arrodoniment.
+      </p>
+    </section>
+
+    <!-- ============================================================== 07 -->
+    <section id="s7">
+      <h2><span class="n"></span>La pantalla d'Inici</h2>
+
+      <p>
+        Inici parla en <strong>Conceptes</strong>, no en articles. Respon tres
+        preguntes: què tinc, em falta res, i deixa'm actuar de pressa.
+      </p>
+
+      <h3>La tira de dalt</h3>
+      <p>
+        Quatre números: conceptes actius, articles actius, articles oberts, i
+        quants conceptes estan per sota del mínim. L'últim es tenyeix de vermell
+        si algun està a zero.
+      </p>
+
+      <h3>L'arbre de l'esquerra és un filtre</h3>
+      <p>
+        Clica una zona i <strong>tot</strong> —números de dalt, estoc de cada
+        targeta i llistes d'articles— es limita a aquella branca i tot el que en
+        penja. Apareix una etiqueta amb el codi actiu; clica-la per treure el
+        filtre. És la manera de fer inventari físic d'un moble concret.
+      </p>
+
+      <h3>Les targetes de concepte</h3>
+      <ul>
+        <li>Nom, identificador, i l'estoc gran en tipografia mono, amb el mínim
+          al costat si n'has posat.</li>
+        <li>Vora esquerra ambre si està baix, vermella si és a zero — i en aquest
+          cas <strong>la targeta s'obre sola</strong>.</li>
+        <li>En obrir-la veus la jerarquia: agrupada per Variant, i sota cada
+          variant, els articles amb el seu identificador, estat, ubicació i
+          quantitat.</li>
+        <li>Si un article té un camp de data que sembli de caducitat i queden
+          menys de 90 dies, hi surt un avís <span class="pill warn">exp 34d</span>.</li>
+        <li>A la dreta de cada article, el botó que toca ara: <em>Obre</em> si
+          està en estoc, <em>Esgota</em> si està obert.</li>
+      </ul>
+
+      <div class="note tip">
+        <span class="lbl">Desfés</span>
+        <p>
+          Després de cada acció ràpida surt un avís a baix a la dreta amb un
+          botó <strong>Desfés</strong>. Torna l'article a l'estat anterior — i
+          aquest retorn també queda registrat a l'historial, perquè l'historial
+          no s'edita mai, només creix.
+        </p>
+      </div>
+
+      <h3>Els articles sense concepte</h3>
+      <p>
+        Si crees un article sense variant, no pertany a cap concepte i per tant
+        no pot sortir a cap targeta. Els trobaràs agrupats al final, en una
+        targeta <strong>Articles independents</strong> que només apareix si n'hi
+        ha algun.
+      </p>
+
+      <p>
+        Els articles esgotats estan amagats per defecte; hi ha una casella
+        <em>Mostra els esgotats</em> a dalt a la dreta.
+      </p>
+
+      <h3>La disposició: una graella, i un arbre que pots arrossegar</h3>
+      <p>
+        Les targetes es col·loquen en una <strong>graella que s'omple sola</strong>:
+        en un monitor ample en surten tres o quatre columnes, en un portàtil dues
+        i en un mòbil una. No hi ha res a configurar — el navegador hi fa cabre
+        tantes columnes com permet la finestra i les recol·loca quan la canvies
+        de mida.
+      </p>
+      <p>
+        L'arbre d'ubicacions té una <strong>nansa</strong> a la vora dreta.
+        Estira-la fins on necessitin els teus noms d'ubicació i s'hi queda, en
+        aquest ordinador, a partir d'ara. Doble clic a la nansa per tornar-la a
+        posar; amb el teclat, enfoca-la i fes servir les fletxes.
+      </p>
+      <p>
+        Una targeta oberta es desplaça per dins quan passa d'una desena
+        d'articles, de manera que un concepte molt ple no pugui estirar tota la
+        seva fila de la graella.
+      </p>
+    </section>
+
+    <!-- ============================================================== 08 -->
+    <section id="s8">
+      <h2><span class="n"></span>Buscar entre articles</h2>
+
+      <p>
+        La pàgina <strong>Articles</strong> és el llistat complet, amb una barra
+        de filtres que es combinen entre ells:
+      </p>
+      <ul>
+        <li><strong>Estats</strong>: pastilles que s'encenen i s'apaguen. Per
+          defecte hi ha <span class="pill ok">in stock</span> i
+          <span class="pill warn">open</span>; per veure-ho tot, encén-los tots.</li>
+        <li><strong>Tipus</strong> i <strong>Concepte</strong>: desplegables.</li>
+        <li><strong>Ubicació</strong>: inclou sempre les sububicacions.</li>
+        <li><strong>Text lliure</strong>: busca dins l'identificador, el número
+          de sèrie, el número de lot i les notes.</li>
+      </ul>
+      <p>
+        La tauel kit identificador, tipus, concepte, estat, ubicació, restant,
+        data de recepció i preu. Qualsevol fila obre el calaix de detall.
+      </p>
+
+      <h3>El formulari complet d'alta</h3>
+      <p>
+        El botó <em>Afegeix article</em> obre el formulari llarg, per quan vols
+        control total. La gràcia és el primer camp: <strong>en triar el Tipus,
+        el formulari es reconstrueix</strong> i apareixen els camps que tu vas
+        definir per a aquell tipus. També pots triar la Variant (i llavors hereta
+        unitat i mida d'envàs), o deixar-ho en blanc per fer un article
+        independent, sense catàleg al darrere.
+      </p>
+    </section>
+
+
+      <h3>Filtres on pots escriure</h3>
+      <p>
+        Els filtres de tipus, concepte i variant són caixes de cerca, no només
+        desplegables: comences a escriure i la llista es va reduint. Ignora
+        accents i majúscules, així que <code>hepta</code> troba <em>Cola de fusta</em>, i
+        amb les fletxes i Retorn tries sense tocar el ratolí.
+      </p>
+      <p>
+        També s'estrenyen entre ells. Tria un concepte i la llista de variants
+        només ofereix els productes d'aquell concepte; canvia el tipus i el
+        filtre de variant es buida sol, perquè una variant pertany a un sol
+        tipus i deixar-hi la vella et mostraria una taula buida sense cap motiu
+        visible.
+      </p>
+
+      <h3>Ordenar per una columna</h3>
+      <p>
+        Clica qualsevol capçalera per ordenar-hi, torna-hi per invertir-ho i una
+        tercera vegada per tornar a l'ordre propi de la taula (els més nous
+        primer). La fletxa de la capçalera diu en quin sentit va.
+      </p>
+      <ul>
+        <li>Els noms i els llocs s'ordenen <strong>alfabèticament, en l'idioma
+          que estàs llegint</strong> — qui llegeix en català té ordre català, no
+          el de l'idioma que per casualitat vagi primer al registre.</li>
+        <li>Les quantitats, les dates i els preus s'ordenen com a
+          <strong>números i dates</strong>, del més petit o més antic primer.</li>
+        <li>Les files que no tenen res en aquella columna van sempre a baix,
+          ordenis en el sentit que ordenis.</li>
+      </ul>
+      <p>
+        L'ordenació la fa el servidor, sobre <strong>tots els articles que
+        encaixen amb els filtres</strong> — no només la pàgina que tens al
+        davant. «L'alcohol isopropílic més barat que tenim» és un clic, sigui on sigui de
+        la llista.
+      </p>
+    <!-- ============================================================== 09 -->
+    <section id="s9">
+      <h2><span class="n"></span>Els tres nivells de dalt</h2>
+
+      <p>
+        Aquestes tres pàgines són el catàleg. Si fas servir només Quick Add,
+        pots no obrir-les mai.
+      </p>
+
+      <h3>Conceptes</h3>
+      <p>
+        Taula amb l'estoc calculat, el mínim, quants anàlegs té i un punt de
+        color amb l'estat. Edites nom (multiidioma), unitat funcional, llindar
+        d'estoc mínim i notes.
+      </p>
+
+      <h3>Anàlegs</h3>
+      <p>
+        Un Anàleg és <strong>un grup de coses que et serveixen indistintament</strong>.
+        La seva raó de ser apareix quan un Concepte en té més d'un: “Guants de
+        nitril” amb un anàleg per talla, o “Filament PLA” amb un anàleg per
+        diàmetre. Dins d'un grup canvies de marca sense pensar-hi; entre grups,
+        no.
+      </p>
+
+      <h3>Variants</h3>
+      <p>
+        Una Variant és <strong>un producte comercial concret</strong>: el que
+        realment compres. Aquí van marca, proveïdor, referència de catàleg,
+        format, mida i unitat d'envàs, puresa i concentració.
+      </p>
+
+      <h3>Moure coses de lloc a l'arbre</h3>
+      <p>
+        Pots reassignar un Anàleg a un altre Concepte, o una Variant a un altre
+        Anàleg. Quan ho fas, el formulari t'avisa abans:
+      </p>
+      <div class="note warn">
+        <span class="lbl">Avís de re-enllaç</span>
+        <p>Això reenllaçarà 2 variants i 7 articles al concepte nou.</p>
+      </div>
+      <p>
+        I quan deses, l'actualització de tots els descendents passa en una sola
+        transacció: o es mou tot, o no es mou res. No queden mai articles
+        apuntant a un lloc i el seu producte a un altre.
+      </p>
+    </section>
+
+    <!-- ============================================================== 10 -->
+    <section id="s10">
+      <h2><span class="n"></span>Historial</h2>
+
+      <p>
+        Cada cosa que passa deixa rastre, i el rastre s'escriu <strong>dins la
+        mateixa transacció</strong> que el canvi: si el canvi es desa, el registre
+        també; si falla, cap dels dos.
+      </p>
+      <p>Es registren aquestes accions:</p>
+      <ul>
+        <li><code>created</code>, <code>updated</code> (una entrada per camp
+          canviat, amb el valor d'abans i el de després)</li>
+        <li><code>status_changed</code>, <code>moved</code>,
+          <code>quantity_adjusted</code></li>
+        <li><code>soft_deleted</code>, <code>restored</code></li>
+      </ul>
+      <p>
+        A la pàgina <strong>Historial</strong> pots filtrar per tipus d'entitat, per acció, per usuari (si ets administrador) i per identificador. Cada fila diu qui ho va fer i quan.
+      </p>
+      <p>
+        A més, el calaix de detall de cada article té la seva pròpia pestanya
+        d'historial, que és la mateixa informació filtrada per aquell article:
+        útil per respondre “i aquesta bobina, d'on ha sortit i qui l'ha
+        tocada?”.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Només creix</span>
+        <p>
+          Les entrades d'historial no s'editen ni s'esborren mai, ni tan sols
+          quan esborres l'entitat a què fan referència.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 -->
+    <section id="s11">
+      <h2><span class="n"></span>Usuaris i permisos</h2>
+
+      <p>
+        Hi ha quatre rols, acumulatius: cadascun pot tot el de l'anterior i una
+        mica més.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Rol</th><th>Pot fer</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th><span class="pill role">visualitzador</span></th>
+              <td>Ho veu absolutament tot. No canvia res.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">operador</span></th>
+              <td>+ crear articles, obrir, esgotar, moure, ajustar quantitats, editar articles.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">gestor</span></th>
+              <td>+ crear i editar Conceptes, Anàlegs, Variants i Ubicacions; esborrar articles.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">administrador</span></th>
+              <td>+ Tipus i Usuaris.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        La filosofia és <em>tot visible, no tot editable</em>: fins i tot un
+        visualitzador entra a totes les pàgines de dades; simplement no li
+        surten els botons. I això no és només cosmètic — el servidor torna a
+        comprovar el permís a cada petició, o sigui que amagar el botó no és la
+        seguretat, és només educació.
+      </p>
+
+      <h3>Crear comptes</h3>
+      <p>
+        Com que el registre públic es tanca després del primer compte, els altres
+        els crea l'administrador des de <strong>Usuaris</strong> → <em>Usuari
+        nou</em>: nom, nom d'usuari, correu opcional, contrasenya temporal i
+        rol.
+        El rol es pot canviar després des del desplegable de la taula, amb una
+        excepció: <strong>no pots canviar-te el teu propi rol</strong>, perquè
+        seria la manera més fàcil de quedar-te fora de l'administració.
+      </p>
+      <h3>Contrasenyes</h3>
+      <p>
+        La icona de clau, al costat del teu nom a la barra lateral, obre
+        <strong>Canvia la contrasenya</strong>. Cal escriure l'actual, i en
+        desar-la es tanquen les sessions dels altres dispositius però no la teva.
+      </p>
+      <p>
+        Si algú ha perdut la seva, un administrador la pot restablir des
+        d'<strong>Usuaris</strong> → botó <em>Contrasenya</em> de la seva fila.
+        No cal saber l'anterior; la persona quedarà desconnectada a tot arreu i
+        haurà d'entrar amb la nova.
+      </p>
+
+      <p>També ho pots fer per terminal:</p>
+      <pre><code>cd packages/api
+npx tsx --env-file-if-exists=.env scripts/create-user.mts \
+  elseunom "la-contrasenya" "El Seu Nom" operator</code></pre>
+    </section>
+
+    <!-- ============================================================== 12 -->
+    <section id="s12">
+      <h2><span class="n"></span>Idioma i colors</h2>
+
+      <h3>Tres idiomes, dos nivells</h3>
+      <p>
+        A baix de la barra lateral hi ha <strong>EN / DE / CA</strong>. Canvia
+        els textos de la interfície a l'instant i es recorda.
+      </p>
+      <p>
+        Però hi ha una segona capa: <strong>els noms de les teves dades també
+        són multiidioma</strong>. Cada camp de nom (conceptes, anàlegs, variants,
+        ubicacions, tipus, etiquetes de camps propis) té les tres pestanyes.
+        L'anglès és obligatori i fa de recanvi: si mires l'app en català i una
+        cosa no té nom català, veuràs l'anglès en lloc d'un buit.
+      </p>
+
+      <h3>Els colors</h3>
+      <p>
+        La icona de paleta, al costat dels idiomes, obre el selector. Tota
+        l'aparença de l'aplicació surt de <strong>tres colors</strong>:
+      </p>
+      <ul>
+        <li><strong>Primari</strong> — botons, enllaços, navegació activa i el to
+          general dels fons.</li>
+        <li><strong>Secundari</strong> — accents i xips.</li>
+        <li><strong>Accent</strong> — detalls càlids.</li>
+      </ul>
+      <p>
+        Els fons foscos es tenyeixen amb el primari, o sigui que canviar-lo no
+        et canvia només els botons: transforma tota l'app. Tens quatre paletes
+        fetes i un botó per tornar a l'original. El text sobre els botons es
+        recalcula sol perquè sempre es llegeixi, tant si tries un color clar com
+        un de fosc.
+      </p>
+      <p>
+        Els colors d'estat —vermell de sense estoc, ambre d'avís, verd de
+        correcte— <strong>no canvien mai</strong>. Un avís ha de semblar un avís
+        encara que et facis un tema rosa.
+      </p>
+      <div class="note warn">
+        <span class="lbl">A tenir en compte</span>
+        <p>
+          Tant l'idioma com els colors es desen al navegador, no al compte. Si
+          entres des d'un altre ordinador, tornaràs a veure els valors per
+          defecte.
+        </p>
+      </div>
+
+      <h3>El logotip del taller</h3>
+      <p>
+        Un <strong>administrador</strong> pot posar el logotip del taller al
+        mateix diàleg. Tria una imatge — PNG, JPEG, WebP o SVG — i surt a la
+        barra lateral, a la pantalla d'entrada i al tauler públic d'estoc. Les
+        imatges grosses es redueixen soles abans de desar-se; un SVG es deixa tal
+        com és, perquè ja escala.
+      </p>
+      <p>
+        El logotip va <strong>dins del fitxer de la base de dades</strong>, no en
+        una carpeta al costat. És expressament així: la còpia de seguretat
+        d'aquest programa és un fitxer, i un logotip que visqués en un altre lloc
+        seria la primera cosa que es perdria quan algú copiés la base de dades a
+        un llapis.
+      </p>
+
+      <h3>Colors trets del logotip</h3>
+      <p>
+        Així que hi ha una imatge, l'aplicació en llegeix els colors i n'ofereix
+        <strong>tres esquemes</strong> — <em>Suau</em>, <em>Viu</em> i
+        <em>Fosc</em>. Són els mateixos colors del teu logotip, il·luminats de
+        tres maneres; passa-hi el ratolí per damunt per veure-hi tota
+        l'aplicació, i clica per quedar-te'l.
+      </p>
+      <p>
+        El que en treu és el <strong>to</strong> — allò que la gent reconeix com
+        «el nostre color» — i després n'ajusta la força i la claror, perquè les
+        superfícies de l'aplicació són fosques i un blau marí de marca tal com ve
+        desapareixeria contra el fons. Els píxels grisos, negres, blancs i
+        transparents no compten: són el paper, no la marca.
+      </p>
+
+      <h3>Del taller, o només teus</h3>
+      <p>
+        El diàleg té dues meitats i responen preguntes diferents.
+      </p>
+      <ul>
+        <li><strong>Desa-ho per a tot el taller</strong> (només
+          administradors) guarda el logotip, el nom i els colors a la base de
+          dades. Tots els ordinadors de la casa els agafen, també aquells on
+          ningú no obrirà mai aquest diàleg.</li>
+        <li><strong>Només en aquest ordinador</strong> és el comportament de
+          sempre: els teus tres colors, guardats en aquest navegador, i manen per
+          damunt dels del taller. El botó de reiniciar torna a l'aspecte del
+          taller, no al de fàbrica.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================== 13 -->
+    <section id="s13">
+      <h2><span class="n"></span>Esborrar i recuperar</h2>
+
+      <p>
+        Res del que esborres des de la interfície s'elimina de debò. La fila es
+        marca amb una data d'esborrat i totes les consultes la salten. Això
+        vol dir que un esborrat per error no és una pèrdua de dades.
+      </p>
+
+      <h3>La Paperera</h3>
+      <p>
+        A la barra lateral, per a gestors i administradors, hi ha
+        <strong>Paperera</strong>: la llista de tot el que s'ha esborrat mai, de
+        qualsevol tipus, amb la data i un botó <em>Recupera</em>. Tot vol dir
+        tot: articles, conceptes i ubicacions, però també peticions, lots,
+        proveïdors, activitats i grups reutilitzables.
+      </p>
+
+      <h3>Esborrar per sempre</h3>
+      <p>
+        De vegades el que vols és que la fila desaparegui: un proveïdor que vas
+        crear amb una errada, un tipus duplicat, un lot de proves. A la Paperera,
+        gestors i administradors tenen <strong>Esborra permanentment</strong>,
+        que et fa escriure l'identificador abans de fer res.
+      </p>
+      <div class="note stop">
+        <span class="lbl">Això sí que no té marxa enrere</span>
+        <p>
+          No es pot desfer, i l'app s'hi nega si encara hi ha res que hi
+          apunti — i et dirà què. El que sobreviu és l'<strong>historial</strong>:
+          el rastre que aquella cosa va existir, i que algú la va destruir, no
+          s'esborra mai.
+        </p>
+      </div>
+      <p>
+        L'única regla és que <strong>els pares tornen abans que els fills</strong>.
+        Una variant no pot reviure dins d'un anàleg que encara està esborrat, i
+        la llista t'ho diu abans que ho intentis: en lloc del botó veuràs
+        <em>“recupera abans el seu anàleg”</em>. Recupera de dalt a baix i tot
+        torna al seu lloc, amb l'estoc recalculat sol.
+      </p>
+
+      <h3>Esborrar en cascada</h3>
+      <p>
+        Si esborres alguna cosa que té coses a sota, l'aplicació no s'hi nega i
+        prou: t'ensenya exactament què hi ha al mig i t'ofereix
+        <strong>emportar-s'ho tot</strong> d'un cop.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Exemple</span>
+        <p>
+          Esborrar-ho també esborrarà: <strong>1 × Anàlegs · 2 × Variants ·
+          3 × Articles</strong>
+        </p>
+      </div>
+      <p>
+        La cascada passa en una sola transacció i tot plegat va a la Paperera,
+        d'on es pot recuperar en ordre. L'única excepció deliberada són les
+        ubicacions: esborrar un prestatge <strong>mai</strong> esborra el que hi
+        ha a sobre. La cascada d'ubicacions només es queda les sububicacions
+        buides; si hi ha articles, primer els has de moure.
+      </p>
+    </section>
+
+    <!-- ============================================================== 14 -->
+    <section id="s14">
+      <h2><span class="n"></span>Còpies de seguretat</h2>
+
+      <p>
+        Tota la base de dades és <strong>un sol fitxer</strong>. Aquesta és la
+        gran comoditat d'aquest disseny: fer una còpia és copiar un fitxer.
+      </p>
+      <ul>
+        <li>En desenvolupament: <code>packages/api/data/inventory.db</code></li>
+        <li>Amb Docker: <code>inventory-data/inventory.db</code> dins del volum</li>
+      </ul>
+      <p>
+        Al costat hi trobaràs <code>inventory.db-wal</code> i <code>inventory.db-shm</code>.
+        Són fitxers de treball de SQLite. El més segur és <strong>aturar el
+        servidor abans de copiar</strong>; així els canvis pendents queden
+        integrats al fitxer principal i amb copiar <code>inventory.db</code> ja en
+        tens prou. Si copies en calent, emporta't els tres.
+      </p>
+      <p>
+        Restaurar és el mateix a la inversa: atura, substitueix el fitxer,
+        torna a engegar.
+      </p>
+    </section>
+
+    <!-- ============================================================== 15 -->
+    <section id="s15">
+      <h2><span class="n"></span>L'API</h2>
+
+      <p>
+        Tot el que fa la interfície ho fa cridant una API REST normal, i està
+        documentada sola. Obre <code>/api/docs</code> —
+        <code>http://localhost:3001/api/docs</code> en desenvolupament, o
+        <code>:3000</code> amb Docker— i tens la llista completa d'operacions amb
+        els seus paràmetres, i les pots provar des d'allà mateix.
+      </p>
+      <p>
+        Serveix per a tres coses: automatitzar càrregues (per exemple donar
+        d'alta cent articles des d'un full de càlcul), connectar-hi una altra
+        eina, o ensenyar-la a algú que hagi de continuar el projecte. Els errors
+        sempre tenen la mateixa forma:
+      </p>
+      <pre><code>{ "error": { "code": "concept_in_use",
+             "message": "Cannot delete: 1 analogous group(s)…" } }</code></pre>
+    </section>
+
+    <!-- ============================================================== 16 -->
+    <section id="s17">
+      <h2><span class="n"></span>Entrades i sortides en bloc</h2>
+
+      <p>
+        Dues eines a la pàgina <strong>Articles</strong> per als moments en què
+        anar d'un en un no té sentit.
+      </p>
+
+      <h3>Exportar i importar CSV</h3>
+      <p>
+        <em>Exporta</em> et baixa tots els articles en un fitxer CSV amb l'estat,
+        la ubicació, les quantitats, el preu i els camps propis. S'obre amb
+        Excel, LibreOffice o el que facis servir.
+      </p>
+      <p>
+        <em>Importa</em> (rol gestor) fa el camí invers, i ho fa en dos temps: en
+        triar el fitxer, el servidor el llegeix <strong>sense escriure res</strong>
+        i et diu quantes files ha entès i quines fallarien i per què. Només quan
+        prems <em>Importa</em> s'escriu, i s'escriu <strong>tot o res</strong>:
+        un full amb una fila dolenta no importa la meitat.
+      </p>
+      <div class="note tip">
+        <span class="lbl">El truc</span>
+        <p>
+          Exporta primer encara que no tinguis res: així veus les columnes
+          exactes que s'esperen. Les mínimes són <code>type</code> i, si vols
+          lligar-ho al catàleg, <code>variant</code>. Les ubicacions s'indiquen
+          amb el codi (<code>L01R01Z02</code>).
+        </p>
+      </div>
+
+      <h3>Etiquetes amb codi QR</h3>
+      <p>
+        A la taula d'articles, cada fila té una casella. Selecciona'n unes
+        quantes i apareix una barra amb <em>Imprimeix etiquetes</em>.
+      </p>
+      <p>
+        Cada etiqueta porta l'identificador, el nom, la ubicació i un
+        <strong>codi QR que apunta a aquell article dins la teva app</strong>.
+        Escanejant-lo amb la càmera del mòbil s'obre la seva fitxa: és la manera
+        de saber què hi ha en una capsa sense obrir-la. En imprimir, tota la
+        interfície desapareix i només va al paper el full d'etiquetes, en blanc i
+        negre i sense tallar cap etiqueta entre pàgines.
+      </p>
+    </section>
+
+    
+
+
+    <!-- ============================================================== 18 -->
+    <section id="s18">
+      <h2><span class="n"></span>Amb quin detall seguir cada cosa</h2>
+
+      <p>
+        No totes les coses del taller mereixen la mateixa atenció. Per això
+        cada <strong>Concepte</strong> porta el seu propi nivell de seguiment, i
+        un mateix taller en fa servir tres alhora sense cap problema.
+      </p>
+
+      <h3>Nivell 1 — manual</h3>
+      <p>
+        Apuntes quan obres i quan esgotes, i prou. Poses el teu llindar
+        (<em>avisa'm quan quedin 5 capses</em>) i ja està. <strong>És una manera
+        completament vàlida de fer servir l'aplicació</strong>, no un pas
+        provisional cap a res.
+      </p>
+
+      <h3>Nivell 2 — consum estimat</h3>
+      <p>
+        Escrius quant creus que gastes al mes. Serveix perquè el primer dia, quan
+        encara no hi ha historial, l'app pugui contestar <em>quant em durarà el
+        que tinc</em>.
+      </p>
+      <p>
+        Quan hi hagi esgotaments de veritat, la mesura pren el relleu — però
+        <strong>la teva estimació no s'esborra mai</strong>. Es queda al costat
+        de la mesurada:
+      </p>
+      <blockquote>
+        Vas dir <s>800</s>/mes. Mesurat: 500/mes (3 capses esgotades en 2 mesos).
+        Fent servir 500.
+      </blockquote>
+      <p>
+        Aquest moment és a propòsit. Veure la teva pròpia estimació corregida per
+        la realitat és el que fa que et creguis el número.
+      </p>
+
+      <h3>Nivell 3 — les activitats el gasten</h3>
+      <p>
+        Defineixes què gasta cada activitat i, en registrar-la, <strong>l'app
+        treu aquella quantitat de l'envàs obert</strong>. Ho expliquem al.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">La regla que no es trenca mai</span>
+        <p>
+          Una activitat mou la quantitat. <strong>Només una persona diu que un
+          envàs s'ha acabat.</strong> L'app t'avisarà que una ampolla hauria de
+          ser buida; mai ho dirà per tu — perquè la diferència entre el que
+          deia la recepta i el que hi havia realment a l'ampolla és el número
+          més valuós que produeix l'aplicació.
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="lbl">Això va canviar l'agost del 2026</span>
+        <p>
+          Les versions anteriors d'aquest manual deien que cap estimació movia
+          mai l'estoc. Era fals, i fals d'una manera que et feia fer la feina
+          dues vegades. Registrar <em>«he fet set anàlisis de pH»</em> no és una
+          suposició: és una persona dient què ha passat. La suposició és la
+          <em>recepta</em> — 5 mL per anàlisi — i l'app les manté separades, que
+          és exactament el que mesura la conciliació del.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 19 -->
+    <section id="s19">
+      <h2><span class="n"></span>Peticions</h2>
+
+      <p>
+        Una petició és <em>«fa falta cola de fusta»</em>. Res més. No hi ha cap decisió
+        de compra a dins: qui necessita cola de fusta no ha de saber de quina marca, i
+        per això la petició es fa sobre el <strong>Concepte</strong>.
+      </p>
+
+      <h3>On neix</h3>
+      <p>
+        El millor lloc per demanar alguna cosa no és la pàgina de Peticions: és
+        el segon en què t'adones que s'ha acabat, amb el pot buit a la mà.
+        Per això, <strong>quan esgotes l'últim article d'un concepte, l'app obre
+        sola el formulari de petició</strong> amb el concepte ja triat.
+      </p>
+      <p>
+        També pots demanar des de <em>Peticions → Demana alguna cosa</em>, i des
+        de la Previsió amb un sol botó per a tota una llista.
+      </p>
+
+      <h3>Què s'omple</h3>
+      <ul>
+        <li><strong>Què</strong> i <strong>quant</strong>. Obligatoris.</li>
+        <li><strong>Urgència</strong>: normal o bloquejant. Només dos nivells,
+          a posta — amb cinc, al cap d'un mes tot és urgent.</li>
+        <li>Una <strong>nota</strong>, si vols dir alguna cosa a qui compra.</li>
+      </ul>
+
+      <h3>Si algú ja ho ha demanat</h3>
+      <p>
+        En triar el concepte, si ja hi ha una petició oberta l'app t'ho diu i
+        t'ofereix <em>Afegeix-m'hi</em> en comptes de crear-ne una altra.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Per què</span>
+        <p>
+          Tres peticions iguals no són informació; una petició amb tres persones
+          al darrere sí que ho és. Et diu la <strong>intensitat</strong> de la
+          demanda, no només que existeix.
+        </p>
+      </div>
+
+      <h3>Què passa després</h3>
+      <p>
+        La petició va passant d'<em>Oberta</em> a <em>En un lot</em>,
+        <em>Demanada</em> i <em>Arribada</em>, i qui l'ha feta ho veu a la seva
+        llista sense haver de preguntar-ho a ningú. Com que no hi ha servidor de
+        correu, aquest és el retorn.
+      </p>
+    </section>
+
+
+      <h3>Triar què es demana de debò</h3>
+      <p>
+        Quan converteixes peticions en una línia, el formulari s'obre amb la
+        resposta que ja pot deduir:
+      </p>
+      <ul>
+        <li>Si qui ho va demanar va dir quin producte preferia, <strong>aquell
+          surt triat</strong> i marcat com a suggeriment seu. El que va escriure
+          ja era a la petició; no hi ha cap motiu per fer-t'ho tornar a
+          preguntar.</li>
+        <li>Si no, surt triat el que vau <strong>comprar l'última vegada</strong>,
+          al preu de l'última vegada.</li>
+        <li>Els productes ja comprats surten primer; els que només existeixen
+          queden agrupats sota <em>Mai demanat</em>, perquè «el de sempre» i «el
+          tenim fitxat» no es confonguin mai.</li>
+      </ul>
+
+      <h3>Batejar un producte allà mateix</h3>
+      <p>
+        Un concepte que ningú no ha demanat mai no té cap producte a sota — i és
+        justament el concepte que algú acaba de demanar. <strong>Producte
+        nou</strong> et deixa batejar-lo aquí: com l'anomena el proveïdor, la
+        marca, la mida de l'envàs. Es crea com una variant de debò sota aquell
+        concepte, així que el pròxim cop és un clic, i el preu que escrius avui
+        és el preu «de l'última vegada» de demà.
+      </p>
+
+      <h3>La quantitat, i quan no es pot calcular</h3>
+      <p>
+        Triar un producte proposa una quantitat: el que s'ha demanat, dividit per
+        la mida de l'envàs, arrodonit cap amunt. El càlcul es mostra, no s'amaga
+        — «et calen 500 mL, l'envàs és d'1 L, doncs 1».
+      </p>
+      <div class="note warn">
+        <span class="lbl">Unitats diferents</span>
+        <p>
+          Si la petició va en <strong>mL</strong> i l'envàs en <strong>L</strong>,
+          l'aplicació no fa aquesta divisió. T'ho diu i deixa la quantitat
+          tranquil·la, perquè dividir 500 entre 1 i demanar cinc-centes ampolles
+          és una resposta molt pitjor que demanar-te que ho miris.
+        </p>
+      </div>
+    <!-- ============================================================== 20 -->
+    <section id="s20">
+      <h2><span class="n"></span>Lots: comprar i rebre</h2>
+
+      <div class="note tip">
+        <span class="lbl">On es toquen les dues meitats</span>
+        <p>
+          Una petició diu un <strong>concepte</strong> — «cola de fusta, 500 mL» —
+          perquè qui ho necessita no ha de saber quina marca. Una comanda diu un
+          <strong>producte</strong>, perquè això és el que un proveïdor pot
+          enviar de debò. La línia del lot és on algú travessa aquest buit, i el
+          formulari està fet perquè es travessi un cop i quedi desat.
+        </p>
+      </div>
+
+      <p>
+        Un <strong>lot</strong> és una comanda a un proveïdor. Es fa en tres
+        temps: muntar-lo, demanar-lo i rebre'l.
+      </p>
+
+      <h3>Muntar-lo</h3>
+      <p>
+        <em>Lots → Lot nou</em>, tries el proveïdor i vas afegint línies. Cada
+        línia és el pas de <strong>Concepte a Variant</strong>: entra com
+        <em>«cola de fusta, 500 mL»</em> i ha de sortir com <em>«1 ampolla d'1 L de tal
+        marca, 41,80 €»</em>.
+      </p>
+      <div class="note tip">
+        <span class="lbl">La referència ve després</span>
+        <p>
+          Aquí no te la demana, perquè encara no existeix: te la dóna la botiga
+          <em>després</em> de fer la comanda. Te la demana al pas de
+          <em>marca com a demanat</em>, que és quan realment la tens.
+        </p>
+      </div>
+      <p>
+        <strong>Els proveïdors es recorden.</strong> Comences a escriure i l'app
+        et proposa els que ja fas servir, amb quants lots i què vas pagar
+        l'última vegada. Escriure un nom que només canvia en majúscules no crea
+        una botiga nova: <em>SensLab</em> i <em>SensLAb</em> són un sol proveïdor
+        amb un sol historial de preus.
+      </p>
+
+      <h3>Portar-hi el que ha demanat la gent</h3>
+      <p>
+        Un lot en esborrany t'ensenya les <strong>peticions obertes</strong>,
+        agrupades per concepte i amb qui hi ha al darrere. Marca les que cobreix
+        aquesta comanda i es converteixen en línies, ja amb la quantitat que
+        s'havia demanat.
+      </p>
+      <p>
+        Aquesta és tota la gràcia de les peticions: algú ho ha demanat, tu
+        compres, i cap dels dos ha hagut d'enviar un correu. El que deixis sense
+        marcar es queda obert per a la propera comanda.
+      </p>
+      <p>
+        La pantalla t'ho posa fàcil perquè gairebé sempre es recompra el mateix:
+        et mostra <strong>el que ja vas comprar altres vegades</strong> amb el
+        preu i la data, i amb un clic omple la variant i el preu. Si el format no
+        quadra amb el que necessites, et mostra el càlcul —
+        <em>necessites 500 mL · el format és 1 L · quantitat 1</em> — perquè
+        l'arrodoniment es vegi en comptes de passar en silenci.
+      </p>
+      <div class="note tip">
+        <span class="lbl">El preu al moment de decidir</span>
+        <p>
+          Si el preu que escrius s'aparta de l'últim que vas pagar, la línia t'ho
+          diu allà mateix: <em>+12% des de l'última comanda</em>. La informació
+          on es pren la decisió, no en un informe que no obre ningú.
+        </p>
+      </div>
+
+      <h3>Demanar-lo</h3>
+      <p>
+        <em>Marca com a demanat</em> tanca el lot a edicions i posa totes les
+        seves peticions en estat <em>Demanada</em>. A partir d'aquí l'app compta
+        els dies fins que arribi.
+      </p>
+
+      <h3>Rebre'l — la part que ho paga tot</h3>
+      <p>
+        Arriba la caixa, obres el lot i dius de cada línia quants n'han vingut.
+        En confirmar, <strong>l'app crea els articles sola</strong>: amb
+        identificador, preu, ubicació i caducitat. Dotze ampolles sense teclejar
+        dotze articles.
+      </p>
+      <ul>
+        <li><strong>N'han vingut menys?</strong> És normal. La línia queda oberta
+          pel que falta, i tens la casella <em>la resta no arribarà mai</em> per
+          tancar-la quan calgui.</li>
+        <li><strong>N'han enviat un altre?</strong> Marques <em>n'han enviat un
+          altre</em> i escrius què ha arribat. Els articles es creen del producte
+          que <strong>realment ha arribat</strong>, i si no existia es crea allà
+          mateix.</li>
+        <li><strong>Caducitat</strong>: una per línia, no dotze camps de data.</li>
+      </ul>
+
+      <div class="note warn">
+        <span class="lbl">El que no es toca mai</span>
+        <p>
+          Una línia té <strong>dues cares</strong>: el que vas demanar i el que
+          va arribar. La primera no se sobreescriu mai. Si edités
+          <em>5 de l'A</em> perquè digués <em>4 del B</em>, destruiria
+          precisament la dada interessant.
+        </p>
+      </div>
+
+      <h3>El que en surt sol</h3>
+      <p>
+        Sense configurar res, amb el temps la pàgina de Lots et diu el
+        <strong>comportament de cada proveïdor</strong>: quin percentatge de
+        línies serveix de menys i quants dies triga de mitjana. Aquest segon
+        número és justament el que necessita la Previsió.
+      </p>
+    </section>
+
+    <!-- ============================================================== 21 -->
+    <section id="s21">
+      <h2><span class="n"></span>Previsió</h2>
+
+      <p>
+        La pantalla no és un gràfic. És una frase i un botó:
+      </p>
+      <blockquote>
+        6 coses s'acabaran abans que et puguin arribar. &nbsp; [ Demana-ho tot ]
+      </blockquote>
+      <p>
+        Marques les que vulguis o les demanes totes, i es converteixen en
+        peticions. Amb això el cicle es tanca sobre si mateix.
+      </p>
+
+      <h3>D'on surten els números</h3>
+      <ul>
+        <li>El <strong>consum</strong> es mesura dels <em>esgotaments reals</em>,
+          no de les activitats. Per tant la previsió funciona encara que ningú
+          registri mai cap activitat, i millora si ho fan.</li>
+        <li>El <strong>termini de lliurament</strong> l'aprèn de les teves pròpies
+          comandes: dels dies entre demanar un lot i rebre'l. Si encara no n'hi
+          ha, suposa 14 dies i t'ho diu.</li>
+      </ul>
+
+      <h3>Honestedat</h3>
+      <p>
+        Amb tres esgotaments en tres mesos no es pot preveure res, i l'app diu
+        <em>encara no hi ha prou historial</em> en comptes d'inventar-se una
+        xifra. Quan sí que en té, ensenya els deures:
+      </p>
+      <blockquote>
+        4 ampolles en 90 dies · en queden 2 · uns 45 dies
+      </blockquote>
+    </section>
+
+    <!-- ============================================================== 22 -->
+    <section id="s22">
+      <h2><span class="n"></span>Activitats i cost real</h2>
+
+      <p>
+        Una <strong>activitat</strong> és una cosa que feu i que gasta material:
+        una anàlisi, una tirada, una preparació. Declares què gasta —
+        <em>preparació per ICP → 3 tubs, 10 puntes</em> — i després només has de
+        dir quantes vegades l'has feta.
+      </p>
+
+      <h3>Registrar-la</h3>
+      <p>
+        Tres tocs: quina activitat, quantes vegades, desa. Si costés més que
+        apuntar-ho a la llibreta, no ho faria ningú.
+      </p>
+      <p>
+        En registrar-la, <strong>l'app treu el material de l'envàs obert</strong>
+        de cada concepte del mapa. No és una nota al costat de l'estoc: és
+        l'estoc. Si algun concepte <strong>no té cap envàs obert</strong>, t'ho
+        diu en comptes de callar: el consum no té on anar.
+      </p>
+      <p>
+        Quin envàs? El més antic que estigui obert <em>i que encara tingui
+        alguna cosa a dins</em>. Un envàs que marca zero se salta sempre que hi
+        hagi un altre obert que pugui rebre el càrrec, així una ampolla que algú
+        es va deixar oberta no s'empassa un mes de consum mentre al costat n'hi
+        ha una altra d'oberta.
+      </p>
+      <div class="note">
+        <span class="lbl">Quan la buida és l'única oberta</span>
+        <p>
+          Aleshores sí que rep el càrrec — l'app no et pot obrir la següent
+          ampolla — però no en silenci: et diu <em>el mapa creu que això és
+          buit</em> cada vegada, fins que ho confirmes. L'estoc es queda a zero,
+          l'excés continua comptant per sota, i la diferència es registra en el
+          moment que la tanques.
+        </p>
+      </div>
+
+      <h3>Dos números per envàs</h3>
+      <p>
+        Cada envàs obert porta dues xifres, i mantenir-les separades és el que fa
+        funcionar tota la resta:
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Xifra</th><th>Què és</th><th>Terra</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Queda</strong></td>
+              <td>El que l'app creu que hi ha a l'ampolla. És el que compta com a estoc.</td>
+              <td>Mai baixa de zero</td>
+            </tr>
+            <tr>
+              <td><strong>Carregat</strong></td>
+              <td>Tot el que les receptes n'han tret mai.</td>
+              <td>Segueix comptant més enllà del buit</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Quan el mapa diu que hauria de ser buit</h3>
+      <p>
+        Quan el carregat arriba al que contenia l'envàs, l'app <strong>aixeca la
+        mà</strong>: <em>el mapa diu que supplyAA002 hauria de ser buit — ho
+        és?</em> No esgota res sola. Ho decideixes tu, amb l'ampolla a la mà.
+      </p>
+      <p>
+        I mentre decideixes no deixa de comptar. Si continues treballant i les
+        receptes carreguen més enllà del buit, això no és un error per discutir:
+        és que l'ampolla ha durat <strong>menys</strong> del que deia la recepta.
+        En el moment que la marques com a esgotada, l'app apunta la diferència
+        amb el seu signe:
+      </p>
+      <blockquote>
+        Les receptes deien 500 mL · l'ampolla en tenia 500 · tancada als 540 →
+        <strong>40 mL de menys</strong><br>
+        Les receptes deien 500 mL · tancada amb 60 encara dins →
+        <strong>60 mL de més</strong>
+      </blockquote>
+      <div class="note tip">
+        <span class="lbl">Per què no et demana cap número</span>
+        <p>
+          Perquè no el saps. Ningú mesura l'últim centímetre d'una ampolla abans
+          de llençar-la. El que sí que saps és <em>que ara és buida</em>, i amb
+          aquell sol clic l'app ja en dedueix la resta.
+        </p>
+      </div>
+
+      <h3>El consum no assignat</h3>
+      <p>
+        Aquí és on això deixa de ser un inventari qualsevol. Imagina una capsa de
+        400 puntes, un mapa que en diu 10 per anàlisi, i 30 anàlisis registrades:
+        les activitats en justifiquen 300, però la capsa és buida. Les
+        <strong>100 restants</strong> són consum no assignat.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Per què no en diem «malbaratament»</span>
+        <p>
+          Perquè no diu que s'hagin perdut: només que cap activitat les ha
+          reclamat. Sovint vol dir que <em>et falta un mapa</em>, i això és
+          informació útil, no una culpa.
+        </p>
+      </div>
+      <p>
+        Aquest sobrant també es compta <strong>per dia que l'envàs ha estat
+        obert</strong>. Una capsa oberta 40 dies que ha perdut 100 puntes més
+        enllà de les receptes en perdia dues i mitja al dia, a mans que no van
+        registrar res. Aquesta taxa es mostra al costat de la previsió com a
+        consum mesurat.
+      </p>
+      <div class="note">
+        <span class="lbl">Què no fa</span>
+        <p>
+          No mou els <em>«dies d'estoc que queden»</em>. Aquell número surt dels
+          esgotaments reals — ampolles acabades de debò — perquè la previsió ha
+          de funcionar en un taller que no registra ni una sola activitat
+. La taxa hi és al costat com a segona opinió, i és la que
+          converteix el cost teòric en cost real, aquí sota.
+        </p>
+      </div>
+      <div class="note tip">
+        <span class="lbl">Per què per dia i no per activitat</span>
+        <p>
+          Perquè repartir-ho entre les activitats dóna per fet que elles ho van
+          causar, que és justament l'única cosa que saps que no: ja havien
+          declarat el que agafaven. Una taxa per dia obert només dóna per fet que
+          ha passat el temps, i això és cert.
+        </p>
+      </div>
+      <p>
+        Per al <strong>cost</strong>, aquest mateix sobrant s'atribueix a les
+        activitats que gasten aquell concepte, ponderat per quantes en gasten —
+        perquè un cost ha d'anar a parar a algun lloc. I d'aquí surten
+        <strong>dos costos per activitat</strong>, sempre junts:
+      </p>
+      <ul>
+        <li><strong>Teòric</strong> — el mapa pel preu.</li>
+        <li><strong>Real</strong> — el teòric més la part que li toca del no
+          assignat.</li>
+      </ul>
+      <p>
+        La relació entre els dos (<em>va a 1,33× del teòric</em>) és una mesura
+        de com va el procés de debò. Al llarg dels mesos val més que tot
+        l'inventari junt.
+      </p>
+
+      <h3>Canviar un mapa</h3>
+      <p>
+        Si canvies el mapa, l'app <strong>no reescriu el passat</strong>: tanca
+        la versió vigent i n'obre una de nova amb data. Així el març es continua
+        calculant amb la recepta del març. El botó <em>Historial del mapa</em>
+        et deixa veure totes les versions — que de passada són documentació de
+        quan van canviar els procediments, escrita per ningú.
+      </p>
+    </section>
+
+    <!-- ============================================================== 23 -->
+    <section id="s23">
+      <h2><span class="n"></span>Reutilitzables i recompte</h2>
+
+      <p>
+        Els gots de barreja, els recipients de titració o les safates no són
+        consumibles ni són equips: <strong>es presten i tornen</strong>. L'única
+        cosa que es gasta de veritat és el que es trenca.
+      </p>
+      <p>
+        Per això no són articles. Un got de barreja no porta número i ningú en
+        seguirà mai un per un. El que necessites saber és
+        <strong>quants n'hi ha de nets</strong> i <strong>quants se'n perden al
+        mes</strong>, i cap de les dues coses demana identitat individual.
+      </p>
+
+      <h3>Dues granularitats</h3>
+      <ul>
+        <li><strong>Només comptats</strong> — els vasos. Saps quants n'hi ha
+          disponibles, en ús i bruts. Mai quin.</li>
+        <li><strong>Identificats</strong> — les safates, que porten número. Cada
+          un té el seu estat i la seva ubicació.</li>
+      </ul>
+
+      <h3>El recompte és l'aparell de mesura</h3>
+      <p>
+        Ningú registrarà mai <em>«se m'ha caigut un vas»</em>. Per tant el número
+        sempre deriva cap amunt. La correcció és obrir el calaix i comptar:
+      </p>
+      <blockquote>
+        L'app n'esperava 260 · n'has comptat 248 → <strong>12 perduts des de
+        l'últim recompte</strong>
+      </blockquote>
+      <p>
+        Aquesta diferència <strong>és</strong> la teva mortalitat, mesurada. Amb
+        dos recomptes ja tens una taxa mensual, i és l'únic que d'un
+        reutilitzable arriba a compres: en compres al ritme que en trenques,
+        <strong>sense que ningú hagi de registrar cap trencament</strong>.
+      </p>
+
+      <h3>Omplir el grup des de l'armari</h3>
+      <p>
+        Els vasos que giren no són els únics que tens. També hi ha la caixa de
+        250 a l'armari, sense obrir — i <strong>aquella caixa és un article
+        normal</strong>. La compres, la reps dins un lot, i surt a la previsió
+        com qualsevol altra cosa.
+      </p>
+      <p>
+        Quan la rotació va justa, obre el grup i fes servir <em>A rotació</em>:
+        dius quants, i l'app els treu de la caixa i els posa al grup.
+      </p>
+      <blockquote>
+        60 a rotació · <strong>en queden 440 a l'armari</strong>
+      </blockquote>
+      <p>
+        Això és el que tanca el cercle. Els vasos es trenquen, el grup baixa,
+        l'armari el reomple, l'armari es queda curt, i compres ho veu — sense que
+        el grup hagi de saber què és comprar.
+      </p>
+
+      <h3>On és un kit</h3>
+      <p>
+        Si una safata té posicions numerades, hi pots posar mostres. I aquí hi ha
+        una decisió important: <strong>un kit no té ubicació pròpia</strong>.
+        La seva posició és la dla safata. Mous la safata i les quaranta kits el
+        segueixen sense actualitzar res, i mai pot passar que la safata sigui a la
+        prestatgeria i els kits es pensin que són al taller.
+      </p>
+    </section>
+
+    <!-- ============================================================== 24 -->
+    <section id="s24">
+      <h2><span class="n"></span>El pont del log</h2>
+
+      <p>
+        Si al taller hi ha un sistema que ja sap què està passant (un controlador de la màquina,
+        per exemple) i escriu un registre línia a línia, l'app el pot llegir i
+        convertir-lo en moviments d'inventari.
+      </p>
+      <p>
+        La comunicació és <strong>d'un sol sentit</strong>: el controlador de la màquina diu què ha
+        passat, l'inventari decideix què vol dir. L'inventari no li contesta mai.
+      </p>
+
+      <h3>1. La forma de la línia — es configura un cop</h3>
+      <p>
+        <em>Pont del log → Connecta un log</em>. Enganxes <strong>una línia de
+        veritat</strong> i dius què és cada tros:
+      </p>
+      <pre><code>12:40:32  Mostra_DMK3-21099-2621703602  RegistreFeinaK
+   hora            objecte i identificador          esdeveniment</code></pre>
+      <p>
+        L'app en dedueix el patró i te'l mostra aplicat a les línies que hagis
+        enganxat. <strong>No escrius mai cap expressió regular.</strong> Un cop
+        fet, això no es torna a tocar.
+      </p>
+
+      <h3>2. El diccionari d'esdeveniments — la configuració viva</h3>
+      <p>
+        Aquí dius què fa cada nom. <em>RegistreFeinaK</em> → <em>agafa un vas
+        del fons</em>. Com que els noms els poseu vosaltres, seran trenta o
+        quaranta en tot el taller.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Les quantitats van aquí, mai al log</span>
+        <p>
+          Un esdeveniment que gasta tres vasos és un <strong>esdeveniment
+          diferent amb nom propi</strong>, no una xifra dins la línia. Això és el
+          que permet que, si un dia descobreixes que un mapa estava malament,
+          el corregeixis i <strong>tornis a llegir tot l'historial</strong>. Si
+          la quantitat estigués escrita a les línies, el passat quedaria congelat
+          amb l'error a dins per sempre.
+        </p>
+      </div>
+      <p>
+        Per la mateixa raó, canviar els efectes obre una <strong>versió nova amb
+        data</strong>: rellegir el passat aplica la recepta que era vigent aquell
+        dia.
+      </p>
+
+      <h3>3. Mode ombra</h3>
+      <p>
+        Cada regla neix <strong>en ombra</strong>: apunta què <em>hauria</em> fet
+        sense fer-ho. La revises i llavors la actives. I la font també té el seu
+        interruptor: <strong>si qualsevol dels dos està tancat, no s'aplica
+        res</strong>.
+      </p>
+
+      <h3>4. Els esdeveniments sense explicar</h3>
+      <p>
+        Els noms que el log ha fet servir i que encara no explica res no són una
+        llista d'errors: <strong>són la pantalla on construeixes les regles</strong>.
+        En veus un que surt 200 vegades, li dius què fa des d'allà mateix, i no
+        torna a aparèixer.
+      </p>
+
+      <h3>Coses que val la pena saber</h3>
+      <ul>
+        <li><strong>Cada línia fa efecte exactament un cop.</strong> Pots tornar
+          a llegir el mateix fitxer les vegades que vulguis sense por.</li>
+        <li><strong>Pots rellegir logs antics.</strong> Apunta l'app al registre
+          de l'any passat i tindràs historial de consum real des del primer dia.</li>
+        <li><strong>Els objectes desconeguts es tracten diferent</strong>: si
+          apareix una safata que no existeix, la línia queda apartada i t'ho pregunta
+          — crear actius sols és com s'acaba amb 400 safates fantasma per una
+          errada de teclat. Una mostra nova, en canvi, es crea sempre.</li>
+        <li><strong>El silenci avisa.</strong> Si el log deixa d'escriure, no es
+          trenca res: els números simplement deixen de ser certs en silenci. Per
+          això l'app t'avisa quan fa massa estona que no arriba cap línia.</li>
+      </ul>
+
+      <div class="note tip">
+        <span class="lbl">Què fa de debò el log</span>
+        <p>
+          No serveix per «comptar el consum»: l'estoc segueix movent-se només
+          quan una persona diu que un envàs és buit. El que fa és que el número
+          teòric passi de ser <em>el que algú s'ha recordat d'apuntar</em> a ser
+          gairebé exacte — i quan el teòric és exacte, el que sobra ja no és
+          «el que no hem apuntat», és pèrdua de veritat.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== 25 -->
+    <section id="s26">
+      <h2><span class="n"></span>Instruments: manuals, recanvis i manteniment</h2>
+
+      <p>
+        Una balança és un article igual que ho és una ampolla d'cola de fusta. Però és
+        l'única mena de cosa que <strong>té altres articles que hi pertanyen</strong>,
+        i l'única que s'ha de cuidar amb un calendari. Totes dues coses viuen a
+        la pestanya <em>Equip</em> del panell de qualsevol article.
+      </p>
+      <div class="note tip">
+        <span class="lbl">No hi ha cap funció «instrument»</span>
+        <p>
+          Cap de les dues està reservada a un tipus que es digui instrument. Una
+          armari té un manteniment; una clau dinamomètrica té un certificat de calibratge;
+          una impressora té un broquet de recanvi. Quines coses penja un
+          taller d'una màquina no es pot saber per endavant, així que la
+          pestanya hi és sempre i la fas servir on tingui sentit.
+        </p>
+      </div>
+
+      <h3>Associar coses</h3>
+      <p>
+        <em>Associa</em>, digues què és, busca l'article. Quatre relacions:
+      </p>
+      <ul>
+        <li><strong>Document</strong> — el full d’instruccions, el manual, el certificat de
+          calibratge.</li>
+        <li><strong>Recanvi</strong> — la torxa, la làmpada, la columna del
+          calaix.</li>
+        <li><strong>Accessori</strong> — el joc de pesos, el mostrejador.</li>
+        <li><strong>Consumible</strong> — el que gasta mentre funciona.</li>
+      </ul>
+      <p>
+        L'enllaç es llegeix pels dos costats. La balança llista el seu full d’instruccions; obre
+        el full d’instruccions i et diu quina balança descriu. Això importa perquè el full d’instruccions és
+        arxivat a la sala d'anàlisi i el peu de rei és en una taula — i la que
+        tinguis al davant és per on has començat.
+      </p>
+
+      <h3>Plans de manteniment</h3>
+      <p>
+        Un pla és <em>què s'ha de fer</em> i <em>cada quant</em>. El «cada quant»
+        es pot comptar de dues maneres, i pots fer servir una o totes dues:
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Comptat en</th><th>Va bé per a</th><th>Exemple</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Dies</strong></td>
+              <td>Coses que envelleixen amb el calendari</td>
+              <td>Calibratge extern, cada 365 dies</td>
+            </tr>
+            <tr>
+              <td><strong>Usos</strong></td>
+              <td>Coses que envelleixen treballant</td>
+              <td>Comprovació interna, cada 500 usos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn">
+        <span class="lbl">Amb tots dos, el que arribi abans</span>
+        <p>
+          <em>Cada 6 mesos o 500 injeccions</em> vol dir que el pla toca en el
+          moment que s'acaba <strong>qualsevol</strong> dels dos comptadors. Un
+          pla que només en pogués comptar un aniria malament per a la meitat de
+          l'equipament de qualsevol taller.
+        </p>
+      </div>
+      <p>
+        Omple <strong>últim cop fet</strong> quan crees el pla. Si el deixes
+        buit, el rellotge comença avui, i això amaga en silenci una màquina que ja
+        fa un any que està fora de calibratge.
+      </p>
+
+      <h3>Comptar usos</h3>
+      <p>
+        <em>+1 ús</em> compta un ús a tots els plans d'aquell article que mesuren
+        usos. És deliberadament tosc: si el teu controlador de la màquina ja sap quantes injeccions ha
+        fet la màquina, el número hauria de venir d'allà, i l'app té una porta
+        d'entrada justament per a això.
+      </p>
+
+      <h3>Marcar-ho com a fet</h3>
+      <p>
+        <em>Fet</em> escriu el manteniment en un registre que només creix, i
+        torna a començar <strong>tots dos</strong> comptadors — els dies i els
+        usos — perquè el manteniment cobria el que tocava. El registre guarda el
+        comptador d'usos tal com era en aquell moment, de manera que
+        <em>«fet amb 480 usos»</em> continua volent dir alguna cosa anys després.
+      </p>
+      <p>
+        <em>Historial</em> al pel kit tots els que s'han fet, amb qui i quan i
+        la nota que hi hagis deixat (el número de certificat és la que val la
+        pena escriure).
+      </p>
+
+      <h3>A la pantalla d'inici</h3>
+      <p>
+        Tot el que està endarrerit, o el que toca d'aquí a quinze dies, apareix
+        en una franja <strong>per sobre de l'estoc</strong>, l'endarrerit primer.
+        Clica una fila i ets al panell d'aquella màquina.
+      </p>
+      <p>
+        És per sobre de l'estoc a propòsit: una màquina fora de calibratge atura
+        la feina d'una manera que una ampolla baixa no ho fa. Quan no toca res,
+        la franja directament no hi és.
+      </p>
+    </section>
+
+
+      <h3>Els ordinadors compartits es tanquen sols</h3>
+      <p>
+        Un ordinador que ningú no ha reclamat et tanca la sessió al cap de
+        <strong>vint minuts sense tecla ni clic</strong>, amb un avís d'un minut
+        abans. No va de robatoris; va del registre. Un navegador que es queda
+        obert fa que cada buidatge i cada ajust semblin feina de qui va marxar
+        l'últim, i l'historial és l'única cosa d'aquí que ha de ser de fiar.
+      </p>
+
+      <h3>Reclamar el teu ordinador</h3>
+      <p>
+        La icona del monitor, al costat del teu nom, obre <strong>Recorda aquest
+        ordinador</strong>. Confirma-ho amb la contrasenya i aquest navegador es
+        queda amb la sessió oberta <em>com a tu</em> — encara que s'apagui,
+        s'hiverni, se suspengui o es tanqui el navegador. No caduca mai.
+      </p>
+      <ul>
+        <li>La reclamació és d'<strong>una sola persona</strong>. Un company que
+          premi la seva combinació a la teva taula té una sessió normal que
+          caduca, i la teva torna el pròxim cop que entris.</li>
+        <li>Costa una contrasenya a posta: sense això, un ordinador de banc
+          deixat obert dos minuts n'hi hauria prou perquè algú se'l fes seu per
+          sempre.</li>
+        <li>Sortir a mà manté la reclamació — és tancar la porta, no marxar de
+          casa. <strong>Oblida aquest ordinador</strong> l'acaba, i et tanca la
+          sessió immediatament perquè el canvi sigui cert de seguida.</li>
+      </ul>
+
+      <h3>Tancar la sessió a tothom</h3>
+      <p>
+        Com que un ordinador reclamat no es tanca mai sol, hi ha d'haver una
+        palanca que hi arribi. A la pàgina d'<strong>Usuaris</strong>,
+        <em>Tanca la sessió a tothom, a tot arreu</em> acaba totes les sessions
+        de la casa alhora — també les dels ordinadors reclamats, i també la de
+        l'administrador que ho prem. Per a un portàtil que s'ha perdut o una
+        contrasenya que algú ha vist per damunt de l'espatlla, és la resposta
+        honesta.
+      </p>
+
+      <h3>Mirar sense compte</h3>
+      <p>
+        Obrir l'adreça sense entrar mostra un <strong>tauler d'estoc de només
+        lectura</strong>: noms de concepte, quantitats, què va baix o s'ha acabat,
+        i l'arbre d'ubicacions. Res més — cap fila d'article, així que cap número
+        de sèrie, cap número de lot, cap preu, cap nota i cap nom de persona.
+        Clicar-hi et demana que entris.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Decideix-ho a posta</span>
+        <p>
+          Aquest tauler el veu <strong>qualsevol que pugui arribar al
+          servidor</strong>, que en una xarxa de taller vol dir tothom de la
+          casa. Està pensat com un tauler d'anuncis — «queda cola de fusta?» respost
+          sense demanar cap compte manllevat. Si la teva llista d'estoc no és una
+          cosa que vulguis en un tauler d'anuncis, no posis el servidor a la
+          xarxa compartida.
+        </p>
+      </div>
+    <!-- ============================================================== 27 -->
+    <section id="s27">
+      <h2><span class="n"></span>Passejar per ubicacions</h2>
+
+      <p>
+        L'arbre d'ubicacions és com dius on viuen les coses. També és com
+        <strong>hi fas un tomb</strong>: tries un lloc i el panell del costat
+        llista què hi ha.
+      </p>
+      <p>
+        Això respon la pregunta que té de debò algú plantat davant d'un armari
+        — <em>què hi ha en aquest armari?</em> — i que l'arbre tot sol no podia
+        respondre mai.
+      </p>
+      <ul>
+        <li><strong>Inclou sububicacions</strong> — activat, la sala ensenya tot
+          el que hi ha a cada prestatge de sota; desactivat, només el que està
+          arxivat a la sala mateixa. La columna de la dreta et diu el prestatge
+          exacte sempre que la llista n'abasti més d'un.</li>
+        <li><strong>Tipus</strong> i <strong>cerca</strong> ho estrenyen més:
+          <em>els productes de l'armari d’inflamables</em>.</li>
+        <li><strong>Mostra esgotats i inactius</strong> està desactivat per
+          defecte. Un prestatge ple d'ampolles buides no és el que hi ha al
+          prestatge.</li>
+      </ul>
+      <p>
+        Cada fila obre el panell complet de l'article, així que passar revista és:
+        tria el prestatge, baixa per la llista, obre, esgota, mou. Sense buscar
+        res pel nom.
+      </p>
+    </section>
+
+    <!-- ============================================================== 25 -->
+    <!-- ============================================================== 27 -->
+    <section id="s28">
+      <h2><span class="n"></span>Entrar amb una combinació de tecles</h2>
+
+      <p>
+        Un ordinador, unes quantes persones, i un relleu cada cop que algú ha
+        d'apuntar trenta segons de feina. Escriure nom i contrasenya per això ja
+        fa prou mandra perquè la feina acabi apuntada a nom de qui hi hagués
+        abans — i això es carrega justament allò per què existeix l'historial.
+        Per tant cadascú pot tenir la seva <strong>combinació de
+        tecles</strong>: un segon escàs i ja hi ets.
+      </p>
+
+      <h3>Què és una combinació</h3>
+      <p>
+        Dos grups de tecles, cada un premut tot junt un moment. Prems
+        <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd> i aguantes; deixes anar; prems
+        <kbd>U</kbd><kbd>I</kbd><kbd>L</kbd> i aguantes. Ja està, ets a dins.
+        L'ordre de les tecles <em>dins</em> d'un grup és igual; l'ordre dels dos
+        grups no.
+      </p>
+      <p>
+        La combinació no la tries tu: la genera l'aplicació. No és mania. Dues
+        persones no poden compartir-ne una — la gràcia és precisament que digui
+        qui ets — i si cadascú es fes la seva, la meitat xocarien i haurien de
+        tornar a triar. L'aplicació també tria tecles que es puguin prémer de
+        debò: tres tecles d'una mà, en columnes veïnes, mai a més d'una fila de
+        distància. Per això et surt <kbd>Z</kbd><kbd>X</kbd><kbd>D</kbd> i mai
+        <kbd>A</kbd><kbd>Y</kbd><kbd>P</kbd>. Si la que t'ha tocat no t'agrada,
+        en demanes una altra.
+      </p>
+
+      <h3>Com te'n fas una</h3>
+      <p>
+        La icona de clau que hi ha al costat del teu nom, a la barra lateral,
+        obre <strong>Clau d'accés ràpid</strong>. Allà en pots crear una,
+        demanar-ne una altra o treure-te-la. Les tecles es dibuixen tal com
+        estan al teclat, d'esquerra a dreta, així que el que veus és la forma
+        que fa la mà.
+      </p>
+      <p>
+        <strong>La pots assajar allà mateix.</strong> Mentre aquest tauler és
+        obert la combinació no fa res més que dir-te si l'has encertada —
+        altrament, aprendre el teu propi gest et faria sortir cada cop que
+        l'encertessis.
+      </p>
+      <p>
+        Sota la combinació hi ha una barra de <strong>temps d'aguantar</strong>,
+        des d'un toc fins a una premuda decidida. Es desa en aquell ordinador i
+        no al teu compte, i és a posta: a la pantalla d'entrada l'aplicació
+        encara no sap de qui ha d'aplicar la preferència. És cosa d'aquell
+        teclat.
+      </p>
+
+      <h3>La mateixa combinació fa les tres coses</h3>
+      <ul>
+        <li>Si ets fora → et fa entrar.</li>
+        <li>Si hi ha algú altre → et posa a tu i li tanca la sessió en aquella
+          màquina.</li>
+        <li>Si ja hi ets tu → et fa sortir.</li>
+      </ul>
+      <p>
+        Un sol gest que vol dir <em>ara sóc jo</em>, i per això no hi ha una
+        segona combinació per recordar per sortir. Funciona des de qualsevol
+        pantalla — la d'entrar, el tauler públic d'estoc, o enmig de la taula
+        d'articles mentre treballes.
+      </p>
+      <p>
+        Hi ha dues pantalles que la llegeixen fins i tot amb el cursor dins una
+        casella de text: el formulari d'entrada i el tauler públic, perquè són
+        els dos llocs on algú clica en un camp i tot seguit prem la seva
+        combinació. A tota la resta, un camp de text se la menja, i és el que ha
+        de fer: tres lletres alhora dins d'un cercador només són tres lletres.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Compte</span>
+        <p>
+          <strong>Una combinació és una identificació, no una contrasenya.</strong>
+          Qui te la vegi prémer pot entrar fent-se passar per tu, igual que un
+          codi de porta. Aquest és el tracte que fas a canvi de la velocitat, i
+          és el tracte bo per a una taula d'un taller tancat i el dolent per
+          a una màquina per on passa gent de fora. La contrasenya continua
+          servint igualment, i un administrador pot anul·lar la combinació de
+          qualsevol des d'<strong>Usuaris</strong> → <em>Anul·la</em>. Les
+          combinacions errades estan limitades, així que endevinar-la no és una
+          manera pràctica d'entrar.
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="lbl">Més endavant</span>
+        <p>
+          Les targetes QR i NFC són la mateixa idea amb un altre maquinari, i
+          són a la llista. La combinació va primer perquè no cal comprar res.
+        </p>
+      </div>
+    </section>
+
+    <section id="s25">
+      <h2><span class="n"></span>Què encara no fa</h2>
+
+      <p>
+        Perquè no perdis temps buscant-ho, aquesta és la llista honesta del que
+        falta a la versió d'avui.
+      </p>
+
+      <h4>Comportaments que convé saber</h4>
+      <ul>
+        <li>La clau d'un <em>Tipus</em> no es pot canviar un cop desada. La clau
+          d'un <em>camp propi</em> sí: en desar, els valors ja guardats als
+          articles es migren a la clau nova dins la mateixa transacció.</li>
+        <li>Treure un camp d'un Tipus no destrueix res: les dades antigues es
+          queden guardades i simplement deixen de mostrar-se.</li>
+        <li>Els preus queden congelats en crear l'article. És a propòsit.</li>
+        <li>Esborrar una ubicació mai esborra els articles que hi ha.</li>
+        <li>Registrar una activitat <strong>sí</strong> que mou l'estoc — és l'única cosa que ha canviat des de la primera versió. El que
+          no passa mai sol és que un envàs es doni per acabat.</li>
+        <li>Associar un manual a una màquina no el mou ni el canvia. Un enllaç és
+          un enllaç; l'article manté la seva ubicació i el seu estat.</li>
+      </ul>
+
+      <h4>Encara no existeix</h4>
+      <ul>
+        <li>Exportar a Excel natiu (l'exportació és CSV, que Excel obre
+          igualment) i importar entitats que no siguin articles.</li>
+        <li>Recuperar la contrasenya per correu: com que no hi ha servidor de
+          correu, el restabliment el fa l'administrador.</li>
+        <li>Aprovació de peticions abans de comprar. Ara qui compra veu tot el
+          que es demana i decideix; no hi ha un pas de vist-i-plau.</li>
+        <li>Vigilància automàtica del fitxer de log: cal prémer <em>llegeix
+          línies noves</em> o enganxar contingut. El que ja hi és és tota
+          la part difícil — llegir sol és el pas que falta.</li>
+        <li>Un esdeveniment de log que compti usos de màquina. A l'app se li
+          pot dir <em>aquesta màquina ha fet 40 injeccions</em>, però el
+          diccionari del log encara no s'hi pot apuntar, així que avui algú
+          prem <em>+1 ús</em>.</li>
+        <li>Aplicació d'escriptori (Tauri).</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Manual a l'agost del 2026. Com està construïda l'aplicació, fitxer a
+    fitxer, és al <a href="code.ca.html">manual de codi</a>.
+  </footer>
+
+</div>

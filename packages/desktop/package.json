@@ -1,0 +1,14 @@
+{
+  "name": "@inventory/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tauri desktop client — points at a server, shows the app in a real window",
+  "scripts": {
+    "dev": "cd src-tauri && cargo run",
+    "build": "cd src-tauri && cargo build --release",
+    "typecheck": "echo 'no TypeScript here — the UI is one static HTML file'"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4"
+  }
+}

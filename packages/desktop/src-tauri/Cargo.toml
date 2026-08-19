@@ -1,0 +1,24 @@
+[package]
+name = "inventory-desktop"
+version = "0.1.0"
+description = "Desktop client for the inventory server"
+edition = "2021"
+rust-version = "1.77"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde_json = "1"
+# Blocking, tiny, and enough: one GET to /api/v1/health before opening a window.
+# A full async HTTP stack would be a lot of build time for one request.
+ureq = { version = "2", features = ["json", "tls"] }
+url = "2"
+
+[profile.release]
+# A desktop wrapper has no business being large; the app it shows is elsewhere.
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true

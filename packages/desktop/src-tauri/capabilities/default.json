@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The connect screen may call the three commands it needs, and nothing else.",
+  "windows": ["setup"],
+  "permissions": ["core:default"]
+}

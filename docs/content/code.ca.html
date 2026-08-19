@@ -1,0 +1,1936 @@
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">Manual d'arquitectura · v0.1 · Agost 2026</span>
+    <h1>Inventari — el codi</h1>
+    <p>
+      Per a què serveix cada fitxer i per què es va escriure així. No línia a
+      línia, però gairebé: unes 28.000 línies en 130 fitxers, amb les decisions
+      que els van donar forma i els paranys que encara hi són.
+    </p>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Contingut">
+      <p>Contingut</p>
+      <ol>
+        <li><a href="#c1"><span class="n">01</span> Com llegir això</a></li>
+        <li><a href="#c2"><span class="n">02</span> El mapa</a></li>
+        <li><a href="#c3"><span class="n">03</span> Les regles, i on viuen</a></li>
+        <li><a href="#c4"><span class="n">04</span> <code>@inventory/shared</code> — el contracte</a></li>
+        <li><a href="#c5"><span class="n">05</span> La base de dades</a></li>
+        <li><a href="#c21"><span class="n">06</span> El model de dades, dibuixat</a></li>
+        <li><a href="#c6"><span class="n">07</span> Qui ets</a></li>
+        <li><a href="#c7"><span class="n">08</span> L'esquelet HTTP</a></li>
+        <li><a href="#c22"><span class="n">09</span> Una petició, de punta a punta</a></li>
+        <li><a href="#c8"><span class="n">10</span> Els serveis — on hi ha el pensament</a></li>
+        <li><a href="#c9"><span class="n">11</span> Les rutes</a></li>
+        <li><a href="#c10"><span class="n">12</span> L'esquelet del navegador</a></li>
+        <li><a href="#c11"><span class="n">13</span> Parlar amb l'API</a></li>
+        <li><a href="#c12"><span class="n">14</span> Tres colors</a></li>
+        <li><a href="#c13"><span class="n">15</span> Dues capes d'idioma</a></li>
+        <li><a href="#c14"><span class="n">16</span> Les peces bàsiques</a></li>
+        <li><a href="#c15"><span class="n">17</span> Les pantalles</a></li>
+        <li><a href="#c16"><span class="n">18</span> Components que pensen</a></li>
+        <li><a href="#c17"><span class="n">19</span> L'aplicació d'escriptori</a></li>
+        <li><a href="#c18"><span class="n">20</span> Construir i publicar</a></li>
+        <li><a href="#c23"><span class="n">21</span> Treballar-hi, dia a dia</a></li>
+        <li><a href="#c19"><span class="n">22</span> Les suites</a></li>
+        <li><a href="#c20"><span class="n">23</span> On són enterrats els morts</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ============================================================== 01 -->
+    <section id="c1">
+      <h2><span class="n"></span>Com llegir això</h2>
+
+      <p>
+        Hi ha dos documents sobre aquesta aplicació i responen preguntes
+        diferents. El <a href="manual.ca.html">manual d'usuari</a> diu què fa.
+        Aquest diu <strong>com està construïda i per què es va construir
+        així</strong>.
+      </p>
+      <p>
+        Està ordenat com ho està el codi: de dins cap enfora, començant per allò
+        de què depèn tota la resta. Primer els tipus compartits, després la base
+        de dades, el servidor, el navegador, i finalment l'escriptori i la caixa
+        on va tot. Llegeix-lo seguit un cop i després fes servir l'índex.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Compte</span>
+        <p>
+          <strong>Aquest és el document que caduca més de pressa</strong>, i és
+          exactament per això que es va escriure l'últim. Quan no coincideixi
+          amb el codi, el codi té raó. Cada afirmació va lligada a un camí, així
+          que comprovar-la són deu segons — i els comentaris dels fitxers es
+          tracten com a part del codi font, no com a decoració, així que la
+          versió curta sol ser a dalt del fitxer mateix.
+        </p>
+      </div>
+
+      <h3>L'estil de la casa</h3>
+      <p>
+        Dues costums es repeteixen per tot arreu i val la pena anomenar-les
+        d'entrada, perquè expliquen molt del que sembla estrany.
+      </p>
+      <ul>
+        <li><strong>Els comentaris diuen el <em>perquè</em>, mai el
+          <em>què</em>.</strong> Si un comentari es pot esborrar llegint la
+          línia de sota, s'ha d'esborrar. El que queda és el raonament que no és
+          al codi: el cas que va aparèixer en ús real, la versió més senzilla
+          que va resultar ser incorrecta.</li>
+        <li><strong>Un sol lloc per idea.</strong> L'estoc es calcula en un
+          fitxer. Els identificadors humans es generen en un fitxer. L'historial
+          s'escriu en un fitxer. El valor no és l'ordre — és que canviar una
+          regla vol dir canviar una cosa, i que una regla es pugui
+          <em>provar</em> en absolut.</li>
+      </ul>
+
+      <h3>Els números</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Paquet</th><th>Què és</th><th>Fitxers</th><th>Línies</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>@inventory/shared</code></td><td>Tipus i validació que les dues bandes accepten</td><td>18</td><td>~1.700</td></tr>
+            <tr><td><code>@inventory/api</code></td><td>Hono + Drizzle + SQLite</td><td>45</td><td>~12.500</td></tr>
+            <tr><td><code>@inventory/web</code></td><td>React + Vite + Tailwind</td><td>60</td><td>~13.000</td></tr>
+            <tr><td><code>@inventory/desktop</code></td><td>Client Tauri, en Rust</td><td>5</td><td>~450</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Que el navegador pesi tant com el servidor no és descuit. La major part
+        de la dificultat del producte és <em>fer a una persona la pregunta bona
+        en el moment bo</em> — l'avís de reconciliació, la cua de peticions dins
+        d'un lot esborrany, el recompte — i aquesta dificultat viu al navegador.
+      </p>
+    </section>
+
+    <!-- ============================================================== 02 -->
+    <section id="c2">
+      <h2><span class="n"></span>El mapa</h2>
+
+      <p>
+        Un repositori, npm workspaces, quatre paquets. Ni pnpm, ni turborepo, ni
+        nx: qui acabi sent l'amo d'això ha de necessitar exactament una eina que
+        ja té.
+      </p>
+
+<pre><code>packages/
+  shared/    @inventory/shared    Esquemes Zod + tipus, importats per les dues bandes
+  api/       @inventory/api       Hono + Drizzle + SQLite, REST a /api/v1
+  web/       @inventory/web       React + Vite + Tailwind
+  desktop/   @inventory/desktop   Client Tauri (Rust), una finestra cap a un servidor
+docs/                       els manuals i els seus constructors
+</code></pre>
+
+      <h3>Per què el paquet compartit no es compila</h3>
+      <p>
+        <code>@inventory/shared</code> exporta TypeScript en cru. No hi ha
+        <code>dist/</code>, ni <code>tsc -b</code>, ni cap vigilant que et
+        puguis oblidar d'engegar. Vite el compila com a codi font;
+        <code>tsx</code> fa el mateix al servidor. El cost és una línia a
+        <code>packages/api/tsup.config.ts</code> —
+        <code>noExternal: ['@inventory/shared']</code> — que l'inclou dins el paquet
+        de producció. És un bon canvi: una línia de configuració a canvi d'una
+        família sencera de «per què no es veu el meu canvi» que si no et
+        cauria cada dia.
+      </p>
+
+      <h3>Per què els nivells no són carpetes</h3>
+      <p>
+        El domini té quatre nivells — Concepte, Anàleg, Variant, Article — i
+        seria natural donar-li a cadascun una carpeta amb el seu esquema, la
+        seva ruta, el seu servei i la seva pantalla. El codi fa el contrari:
+        agrupa per <em>mecanisme</em> (totes les rutes juntes, tots els serveis
+        junts, totes les pantalles juntes), perquè el que canvia junt són els
+        mecanismes, no els nivells. Un canvi a com funciona la paginació toca
+        totes les rutes; un canvi a Variants toca quatre fitxers que ja porten
+        el seu nom.
+      </p>
+
+      <div class="note">
+        <span class="lbl">Convenció</span>
+        <p>
+          Tot el que hi ha a <code>lib/</code> és infraestructura i no sap res
+          del domini. Tot el que hi ha a <code>services/</code> sap del domini i
+          pot tocar la base de dades, però mai HTTP. Tot el que hi ha a
+          <code>routes/</code> sap d'HTTP i crida serveis. Quan una ruta comença
+          a fer aritmètica, és al fitxer equivocat.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 03 -->
+    <section id="c3">
+      <h2><span class="n"></span>Les regles, i on viuen</h2>
+
+      <p>
+        Hi ha quinze regles que no es doblen. Una regla que ningú pot
+        assenyalar és un desig, així que aquí tens cadascuna amb el fitxer que
+        la fa complir de debò.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Regla</th><th>Es fa complir a</th></tr></thead>
+          <tbody>
+            <tr><td>Els diners són enters de cèntims</td><td><code>shared/src/schemas/common.ts</code> (<span class="sig">parseMoneyInput</span>), columnes <code>*_cents</code></td></tr>
+            <tr><td>L'estoc es calcula en un sol lloc</td><td><code>api/src/services/stock.ts</code> — res més suma quantitats</td></tr>
+            <tr><td>Cada mutació escriu historial, dins la mateixa transacció</td><td><code>api/src/services/history.ts</code>, cridat dins cada <code>db.transaction</code></td></tr>
+            <tr><td>Tota entrada i sortida validada amb esquemes compartits</td><td><code>api/src/lib/router.ts</code> + cada <code>createRoute</code></td></tr>
+            <tr><td>Esborrat suau; historial només-afegir</td><td>columnes <code>deletedAt</code>; cap <code>DELETE</code> sobre <code>history</code></td></tr>
+            <tr><td>La sincronització desnormalitzada és transaccional</td><td><code>api/src/routes/variants.ts</code>, <code>analogous.ts</code></td></tr>
+            <tr><td>Els identificadors humans només al servidor</td><td><code>api/src/services/ids.ts</code>, dins la transacció d'inserció</td></tr>
+            <tr><td>Els estats només canvien per endpoints d'acció</td><td><code>shared/src/schemas/item.ts</code> — l'<code>itemUpdateSchema</code> simplement no té <code>status</code>, així que un <code>PATCH</code> no en pot portar</td></tr>
+            <tr><td>Cap dependència sense una raó escrita</td><td>registre de dependències a <code>package.json</code></td></tr>
+            <tr><td>Les migracions es guarden al repositori</td><td><code>api/drizzle/*.sql</code>, aplicades a l'arrencada per <code>api/src/index.ts</code></td></tr>
+            <tr><td>La jerarquia ha de ser ignorable</td><td><code>api/src/routes/items.ts</code> quick-add, <code>web/src/components/QuickAddModal.tsx</code></td></tr>
+            <tr><td>Registrar una activitat mou estoc; només una persona buida un envàs</td><td><code>api/src/services/actions.ts</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note tip">
+        <span class="lbl">Si toques una sola cosa</span>
+        <p>
+          La regla que és més fàcil de trencar sense adonar-se'n és la segona.
+          Sumar <code>quantityRemaining</code> dins d'una ruta és fàcil, sembla
+          inofensiu, i parteix en dues la definició de «quant en tenim» — que és
+          precisament el número que el producte existeix per produir. Si
+          necessites l'estoc, importa'l.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 04 -->
+    <section id="c4">
+      <h2><span class="n"></span><code>@inventory/shared</code> — el contracte</h2>
+
+      <p>
+        Aquest paquet existeix perquè el servidor i el navegador no puguin
+        discrepar sobre què és una Variant. No hi ha cap lògica que toqui una
+        base de dades ni cap component que toqui una pantalla — només les
+        formes, i les funcions pures que hi treballen.
+      </p>
+
+      <div class="file">
+        <p class="path">shared/src/constants.ts <span class="n">178 línies</span></p>
+        <p>
+          Tots els conjunts tancats del producte: estats d'article, rols,
+          nivells d'ubicació, tipus de camp, nivells de seguiment, estats de
+          grup, efectes de log. Tots declarats <code>as const</code> i convertits
+          en unions, de manera que afegir un estat és una línia i el compilador
+          després t'enumera tots els llocs que l'han de tractar. També hi ha
+          <span class="sig">roleAtLeast(rol, mínim)</span>, l'única definició de
+          «prou alt» que fan servir tant el middleware de l'API com la
+          navegació.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/common.ts <span class="n">~120 línies</span></p>
+        <p>
+          Les peces sobre les quals es construeix tota la resta:
+          <span class="sig">translatedTextSchema</span> (un nom en EN/DE/CA,
+          amb l'anglès obligatori), la paginació i els diners.
+          <span class="sig">parseMoneyInput("12,50")</span> torna
+          <code>1250</code> i accepta els dos separadors decimals, perquè un
+          alemany i un català escriuen el mateix preu diferent i cap dels dos
+          s'equivoca. <span class="sig">resolveText(nom, idioma)</span> cau cap
+          a l'anglès i després cap al primer valor que no sigui buit — un nom
+          no es dibuixa mai com a <code>undefined</code>.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/type.ts <span class="n">~150 línies</span></p>
+        <p>
+          El fitxer més interessant del paquet, perquè construeix validadors en
+          temps d'execució.
+          <span class="sig">buildCustomFieldsValidator(definicions)</span> pren
+          els camps que un usuari s'ha inventat a la pantalla de Tipus i torna
+          un objecte Zod que valida els articles d'aquell Tipus. Això és el que
+          fa que els camps definits per l'usuari siguin reals i no un bloc de
+          JSON que ningú comprova: un camp <code>number</code> rebutja text, un
+          <code>select</code> rebutja un valor fora de les seves opcions, i ho
+          fa al servidor, que és on compta.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">shared/src/schemas/{concept,analogous,variant,item,location,history}.ts</p>
+        <p>
+          Un fitxer per entitat de l'MVP 1, cadascun amb les mateixes tres
+          formes: <code>…Schema</code> (el que surt),
+          <code>…CreateSchema</code> i <code>…UpdateSchema</code> (el que pot
+          entrar). Crear i actualitzar són tipus separats en comptes d'un de
+          parcial, perquè els camps que pots posar en crear i els que pots
+          canviar després són realment diferents — el preu d'un article queda
+          congelat quan neix.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">shared/src/schemas/{request,lot,action,pool,forecast,log,equipment}.ts</p>
+        <p>
+          El mateix patró per a tot el que ve després de la primera versió.
+          <code>log.ts</code> és el més gran
+          perquè el pont del log té més vocabulari: fonts, analitzadors,
+          entrades de diccionari, efectes i l'informe d'ingesta.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">shared/src/schemas/responses.ts <span class="n">251 línies</span></p>
+        <p>
+          Formes que no són entitats: resultats de cerca ràpida, la paperera,
+          usuaris, contrasenyes i combinacions de tecles. També hi viu
+          <span class="sig">usernameProblem(valor)</span> i els ajudants del
+          correu de farciment, que criden tant l'API com el navegador perquè un
+          nom d'usuari es jutgi amb la mateixa regla a les dues bandes.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 05 -->
+    <section id="c5">
+      <h2><span class="n"></span>La base de dades</h2>
+
+      <p>
+        SQLite, un fitxer, mode WAL, claus foranes actives. Drizzle per a
+        l'esquema i les consultes. Tota la història de les còpies de seguretat
+        és «copia el fitxer», i cada decisió d'aquí baixa de voler que continuï
+        sent així.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/db/schema.ts <span class="n">708 línies</span></p>
+        <p>
+          Una trentena de taules, i la cosa més útil per llegir primer.
+          Convencions que val la pena saber abans de recórrer-lo:
+        </p>
+        <ul>
+          <li><strong>Cada taula porta <code>auditColumns</code></strong> —
+            <code>createdAt</code>, <code>updatedAt</code>,
+            <code>deletedAt</code>. Les dates són enters Unix a la base de dades
+            i cadenes ISO a la frontera de l'API; la conversió passa en un sol
+            lloc.</li>
+          <li><strong>Les columnes de diners acaben en <code>_cents</code></strong>
+            i són enteres. No hi ha cap decimal a prop d'un preu.</li>
+          <li><strong>Els noms traduïts són columnes JSON</strong> del tipus
+            <code>TranslatedText</code>. Afegir un quart idioma no necessita cap
+            migració — aquesta és exactament la raó.</li>
+          <li><strong>Els pares desnormalitzats són a posta.</strong> Una
+            variant porta <code>conceptId</code> a més d'<code>analogousId</code>,
+            i un article porta tots dos. És redundant, pot desincronitzar-se, i
+            val la pena: el navegador d'Articles filtra per concepte sense dos
+            <em>joins</em>. La desincronització la impedeix la regla 6 — tornar
+            a lligar actualitza en massa els descendents en una transacció.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/client.ts <span class="n">18 línies</span></p>
+        <p>
+          Obre la base de dades i posa dos pragmes que SQLite <em>no</em> et
+          posa: <code>foreign_keys = ON</code> (desactivat per defecte, cosa que
+          vol dir un esquema ple de referències que no imposen res) i
+          <code>journal_mode = WAL</code> (perquè un lector no bloquegi mai un
+          escriptor). Tots dos són per connexió, així que aquest és l'únic lloc
+          on es pot obrir una connexió. També crea el directori de dades,
+          perquè una instal·lació nova no hagi de preparar res.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/drizzle/*.sql <span class="n">9 migracions</span></p>
+        <p>
+          Generades per <code>drizzle-kit</code> i desades al repositori, perquè
+          una migració que només existeix a l'ordinador del programador no és
+          una migració. S'apliquen a l'arrencada des d'
+          <code>api/src/index.ts</code>, que és el que fa que un
+          <code>docker run</code> sobre un volum buit funcioni sense cap pas de
+          preparació. Llegir-ne els noms és una història decent del producte:
+          <code>0004_supplier_entity</code> és el dia que els proveïdors van
+          deixar de ser text, <code>0007_equipment</code> són els instruments,
+          <code>0008_fast_keys</code> és la combinació de tecles.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/seed.ts <span class="n">584 línies</span></p>
+        <p>
+          Dades de demostració, i estan dissenyades, no abocades. Inclou a
+          posta un concepte baix d'estoc i un a zero, perquè els avisos de la
+          pantalla d'Inici tinguin de què avisar el moment que l'obres; un
+          instrument i un document, perquè els cicles de vida no consumibles es
+          puguin ensenyar en absolut; i un grup amb història real, perquè el
+          recompte vulgui dir alguna cosa. Es nega a executar-se sobre una base
+          de dades que no estigui buida.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/reset.ts <span class="n">~60 línies</span></p>
+        <p>
+          Buida les 26 taules del domini i <strong>conserva les
+          d'autenticació</strong>. Aquesta excepció està escrita amb sang:
+          esborrar el fitxer de la base de dades per «començar net» va deixar
+          l'amo fora de la seva pròpia aplicació dues vegades, perquè els
+          comptes se n'anaven amb ell. Reiniciar les dades no t'hauria de costar
+          mai poder entrar.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/auth-schema.ts <span class="n">~45 línies</span></p>
+        <p>
+          Les quatre taules pròpies de better-auth (<code>user</code>,
+          <code>session</code>, <code>account</code>, <code>verification</code>),
+          declarades amb Drizzle perquè visquin al mateix fitxer i a les
+          mateixes migracions que tota la resta. La columna <code>role</code> és
+          nostra, afegida pels <code>additionalFields</code> de better-auth amb
+          <code>input: false</code> perquè un client no es pugui assignar mai un
+          rol a si mateix.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== data model -->
+    <section id="c21">
+      <h2><span class="n"></span>El model de dades, dibuixat</h2>
+
+      <p>
+        Trenta taules són massa per tenir-les al cap, però la forma és petita.
+        Tot penja d'un sol tipus de fila — <code>items</code> — i tota la resta
+        o bé és una manera de parlar d'articles o bé és el registre d'una cosa
+        que els ha passat.
+      </p>
+
+      <h3>L'espinada</h3>
+<pre><code>  types ──────┐                    locations ──┐   (self-parented tree)
+  (user-defined│                     code, level │
+   fields)     │                                 │
+               ▼                                 ▼
+  concepts ─→ analogous ─→ variants ─────→ <span class="c">items</span> ←── the only physical thing
+   "wood glue"   "1 L amber"  "Corvid 34873"   supplyAA042
+      ▲            ▲             ▲            │  status · quantity_remaining
+      └────────────┴─────────────┘            │  estimated_used · price_cents
+        denormalised onto items and           │
+        variants (concept_id, analogous_id)   │
+                                              ├─→ item_links     (manual, spare)
+                                              ├─→ maintenance_plans
+                                              └─→ history        (append-only)</code></pre>
+      <p>
+        Llegeix-ho cap avall. Els tres nivells de sobre d'<code>items</code> són
+        descripcions cada cop menys generals: què necessites (<em>cola de fusta</em>),
+        quins productes servirien (<em>ampolla topazi d'1 L</em>), el producte
+        exacte (<em>Sigma 34873</em>). Només la fila de baix existeix
+        físicament. L'estoc es calcula d'aquella fila i de res més, i per això
+        els nivells es poden saltar del tot (el Quick Add et construeix la
+        cadena sencera al darrere) sense que cap número canviï de significat.
+      </p>
+      <p>
+        Els dos pares puntejats són la redundància deliberada del: un
+        article porta <code>conceptId</code> i <code>analogousId</code> a més de
+        <code>variantId</code>. Es pot desincronitzar; el mantenen honest les
+        transaccions d'actualització massiva de <code>routes/variants.ts</code>.
+      </p>
+
+      <h3>Què els passa</h3>
+<pre><code>requests ──(triage)──→ lot_lines ──(receive)──→ <span class="c">items</span>   created automatically
+   concept              variant                       humanId, price, expiry
+
+actions ──(record)──→ charges the open item of each concept in its map
+   ▲                        │
+   │                        ├─→ quantity_remaining  clamped at 0 → stock
+   └── log_lines            └─→ estimated_used      uncapped → the gap
+
+pools ──(events)──→ pool_units          commissioned FROM an item
+   "20 mL vials"      available/in_use/dirty        (cupboard → rotation)</code></pre>
+      <p>
+        Aquests són els quatre circuits operatius del, i també es troben a
+        <code>items</code>. Comprar crea articles; les activitats els gasten;
+        els grups els treuen de l'armari i els posen a rotar; el log fa a escala
+        el que una persona faria a mà. Aquí no hi ha cap inventari separat.
+      </p>
+      <div class="note tip">
+        <span class="lbl">L'única asimetria que cal recordar</span>
+        <p>
+          <strong>Una mostra no té ubicació pròpia.</strong> Segueixes el
+          material on seu — la safata, el vial — així que moure una safata mou
+          quaranta kits sense actualitzar ni una fila. Per això existeix
+          <code>occupancies</code> i per això els kits no són articles.
+        </p>
+      </div>
+
+      <h3>Qui és amo de qui</h3>
+      <p>
+        Esborrar segueix la propietat, amb una excepció que importa:
+      </p>
+      <ul>
+        <li>Un concepte és amo dels seus anàlegs, que ho són de les seves
+          variants, que ho són dels seus articles. Esborrar cap amunt fa
+          cascada, amb una vista prèvia abans (, <code>cascade.ts</code>).</li>
+        <li><strong>Una ubicació no és amo de res.</strong> Un prestatge no és
+          amo de l'ampolla que hi seu, així que esborrar un lloc no esborra mai
+          el que hi havia — simplement s'hi nega mentre hi hagi alguna cosa.</li>
+        <li>L'historial no és amo de res i ningú n'és amo. Sobreviu a la purga
+          de la fila que descriu, i per això en desa l'identificador humà.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================== 06 -->
+    <section id="c6">
+      <h2><span class="n"></span>Qui ets</h2>
+
+      <p>
+        L'autenticació és better-auth sobre el mateix fitxer SQLite. Quatre
+        fitxers fan que es comporti com necessita un taller i no com
+        necessita un servei per subscripció.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/auth.ts <span class="n">~90 línies</span></p>
+        <p>La configuració, i tres decisions a dins:</p>
+        <ul>
+          <li><strong>El registre es tanca després del primer compte.</strong>
+            El <em>hook</em> <code>databaseHooks.user.create.before</code> fa
+            administrador el primer usuari i llança un error per a tothom
+            després. La pantalla d'Usuaris ha de crear comptes per la mateixa
+            API, així que activa <code>adminCreateBypass</code> al voltant de la
+            seva crida — segur, perquè Node executa el gestor de manera
+            síncrona fins a l'<code>await</code>.</li>
+          <li><strong>El validador de noms d'usuari està substituït.</strong>
+            better-auth només accepta <code>[a-zA-Z0-9_.]</code>, cosa que
+            rebutja <code>Müller</code>. El nostre és
+            <span class="sig">usernameProblem</span> del paquet compartit, que
+            només prohibeix el que trenca coses de debò.</li>
+          <li><strong><code>trustedOrigins</code> només importa en
+            desenvolupament</strong>, on el navegador és al <code>:5173</code> i
+            l'API al <code>:3001</code>. En producció un sol port serveix tots
+            dos, així que tota petició és del mateix origen — inclús per la
+            xarxa local per IP.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/secret.ts <span class="n">38 línies</span></p>
+        <p>
+          Genera un cop la clau que signa les galetes i la desa al costat de la
+          base de dades. Aquest fitxer existeix per un error que només va
+          aparèixer dins d'un contenidor de debò: better-auth es nega a fer
+          servir la clau per defecte quan <code>NODE_ENV=production</code>, així
+          que la imatge es construïa, arrencava, imprimia un avís i
+          <strong>es moria a la primera petició autenticada</strong>. Demanar-li
+          a l'usuari que definís una variable d'entorn hauria estat la solució
+          fàcil i la dolenta — la promesa és «baixa-ho, executa una ordre, obre
+          el navegador». <code>BETTER_AUTH_SECRET</code> continua manant si el
+          poses.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/middleware/auth.ts <span class="n">~70 línies</span></p>
+        <p>
+          <span class="sig">requireRole('manager')</span>, com a middleware de
+          ruta. Resol la sessió des de la galeta, posa l'usuari al context i
+          compara amb <code>roleAtLeast</code> — la mateixa funció que fa servir
+          la barra lateral per decidir què ensenya, de manera que la pantalla i
+          el servidor no poden discrepar sobre què pot fer un encarregat. La
+          pantalla és educació; això és la barrera.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/fast-login-plugin.ts <span class="n">~110 línies</span></p>
+        <p>
+          Entrar amb una combinació de tecles, com a connector de better-auth i
+          no com a ruta nostra. La raó és estreta i decisiva: només better-auth
+          pot encunyar una galeta de sessió vàlida, i falsificar-ne una al
+          costat seria una segona implementació de l'única cosa que val la pena
+          tenir una sola vegada. L'endpoint és
+          <code>POST /api/auth/sign-in/fast-key</code>.
+        </p>
+        <p>
+          Una combinació vol dir tres coses segons qui hi hagi ja identificat —
+          entrar, canviar d'usuari, sortir — i per això no hi ha una segona
+          combinació per recordar. Canviar d'usuari esborra la sessió anterior
+          en comptes de deixar-la rondant per una màquina compartida. Els
+          intents estan limitats a dotze per minut, perquè l'espai és de només
+          unes 4.700 combinacions.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/fastkeys.ts <span class="n">~150 línies</span></p>
+        <p>
+          Generar una combinació que una mà pugui fer de debò. Les tecles no
+          surten de l'alfabet sinó de la geometria del teclat: una tecla per
+          columna, tres columnes veïnes d'una mateixa mà, mai dos dits a més
+          d'una fila de distància. Aquesta única restricció és el que descarta
+          <code>a y ñ</code> i produeix <code>z x d</code>. Els dos grups
+          prefereixen mans oposades, perquè alternar és més ràpid de prémer i
+          més fàcil de recordar com a ritme.
+        </p>
+        <p>
+          La combinació es desa <strong>tal com és, no xifrada</strong>, i això
+          és una decisió, no un descuit: entrar vol dir trobar l'amo
+          <em>a partir</em> de la combinació, cosa que un resum amb sal no pot
+          fer, i l'amo ha de poder tornar-la a mirar després de les vacances. És
+          el que sempre havia de ser — una identificació, no una contrasenya. Les contrasenyes continuen xifrades i continuen
+          servint.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">api/src/routes/public.ts <span class="n">~200 lines</span></p>
+        <p>Les úniques dades sense autenticar del producte, i expressament amb encaminador propi en comptes d'un <code>requireRole</code> relaxat sobre els de debò. Serveix dues coses: la marca del taller, que la pantalla d'entrada necessita abans que ningú hi entri, i una vista d'estoc de només lectura, escrita a mà, per a la pàgina d'inici sense sessió.</p>
+        <p>El que surt d'aquest fitxer és una llista fixa — noms de concepte, quantitats, unitats, mínims i l'arbre d'ubicacions. Cap fila d'article, i per tant cap número de sèrie, cap preu, cap nota i cap nom de persona. Un sol endpoint en comptes de versions públiques de <code>/concepts</code>, <code>/items/metrics</code> i <code>/locations</code>, perquè quatre endpoints relaxats són quatre coses per equivocar-se més endavant i cada un accepta filtres que aquesta vista no ha de respondre. Afegir-hi un camp és decidir publicar-lo a tothom de la xarxa.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/lib/device.ts <span class="n">~90 lines</span></p>
+        <p>La reclamació de «recorda aquest ordinador»: una nota al <code>localStorage</code> que diu quin compte ha adoptat aquest navegador. No és una credencial —la galeta de sessió és el que et manté dins— sinó el registre de <em>per què</em> aquella galeta es va fer duradora, i de qui és.</p>
+        <p>La llegeixen dues coses. L'entrada demana <code>rememberMe</code> a better-auth només quan qui entra és qui va reclamar la màquina, i per això un company que premi la seva combinació a la teva taula té una sessió normal. I el temporitzador d'inactivitat es fa enrere del tot. Buidar l'emmagatzematge del navegador desfà la reclamació, que és el sentit correcte de fallar: et queda el comportament prudent, no el permissiu.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/IdleTimer.tsx <span class="n">~100 lines</span></p>
+        <p>Vint minuts de silenci acaben una sessió en un ordinador compartit. El problema que resol és l'atribució, no el robatori: un navegador que es queda obert fa que cada buidatge sembli feina de qui va marxar l'últim, i l'historial és l'única cosa d'aquí que ha de ser de fiar.</p>
+        <p>La comprovació és contra el <em>rellotge</em>, mai contra un compte enrere — els temporitzadors no van de manera fiable amb un portàtil suspès, i un comptador que baixa tornaria d'una tapa tancada convençut que no ha passat el temps. L'interval d'un segon només llegeix <code>Date.now()</code> i compara. Comprovat amb el rellotge simulat de Playwright a <code>scripts/verify-ui.mjs</code>, perquè la prova de debò dura vint minuts.</p>
+      </div>
+
+    <!-- ============================================================== 07 -->
+    <section id="c7">
+      <h2><span class="n"></span>L'esquelet HTTP</h2>
+
+      <div class="file">
+        <p class="path">api/src/index.ts <span class="n">~45 línies</span></p>
+        <p>
+          El punt d'entrada: aplica migracions i després escolta. Imprimeix les
+          adreces de la xarxa local a més de <code>localhost</code>, que és una
+          cosa petita que estalvia una conversa real — el servidor està pensat
+          perquè s'hi arribi des de totes les màquines del taller, i
+          endevinar-ne l'adreça és el primer que va malament.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/app.ts <span class="n">~140 línies</span></p>
+        <p>
+          Munta els encaminadors, penja better-auth a
+          <code>/api/auth/*</code>, serveix l'especificació OpenAPI i el Swagger
+          UI, i — quan <code>SERVE_WEB=1</code> — serveix el navegador ja
+          construït amb la caiguda cap a l'SPA perquè els enllaços profunds
+          funcionin. Aquest indicador és el que converteix dos servidors de
+          desenvolupament en un sol port de producció, i és tota la diferència
+          entre les dues disposicions.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/router.ts <span class="n">~30 línies</span></p>
+        <p>
+          Una capa fina sobre <code>OpenAPIHono</code> que converteix l'error de
+          validació per defecte en la forma d'error uniforme de l'aplicació. Tot
+          encaminador es crea a través d'ell, que és com «tota entrada i sortida
+          està validada» continua sent cert sense que ningú se n'hagi de
+          recordar.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/openapi.ts <span class="n">~60 línies</span></p>
+        <p>
+          Ajudants perquè les definicions de ruta es puguin llegir:
+          <span class="sig">jsonBody(esquema)</span>,
+          <span class="sig">jsonContent(esquema)</span>,
+          <span class="sig">errorResponse('Not found')</span>. Sense ells cada
+          ruta arrossega quinze línies de burocràcia OpenAPI i ningú llegeix la
+          part interessant.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/middleware/error.ts <span class="n">~80 línies</span></p>
+        <p>
+          Una sola forma d'error per a tota l'API:
+          <code>{ error: { code, message, details? } }</code>. <code>ApiError</code>
+          més els constructors amb nom <span class="sig">notFoundError</span> i
+          <span class="sig">conflictError</span>. El camp
+          <code>details</code> és el que fa que una negativa sigui útil i no
+          definitiva — un esborrat bloquejat hi torna la vista prèvia de la
+          cascada, i el navegador converteix aquella negativa en una oferta
+          («això també esborrarà 2 variants i 3 articles»).
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/serialize.ts <span class="n">~50 línies</span></p>
+        <p>
+          La frontera entre els tipus de la base de dades i el JSON: dates a
+          cadenes ISO, cèntims a decimal, nuls conservats. Existeix perquè cap
+          ruta no s'inventi mai un format de data pel seu compte, que és
+          exactament com dos endpoints acaben discrepant sobre com és una data.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/lib/csv.ts <span class="n">~120 línies</span></p>
+        <p>
+          Un lector i un escriptor RFC-4180 fets a mà — sense dependència,
+          perquè el format són cent línies i una dependència és per sempre. La
+          importació és primer una prova en sec i després tot-o-res en una
+          transacció, de manera que una fila dolenta a la línia 400 no pot
+          deixar 399 files importades.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== trace -->
+    <section id="c22">
+      <h2><span class="n"></span>Una petició, de punta a punta</h2>
+
+      <p>
+        La manera més ràpida d'entrar en un codi desconegut és seguir una sola
+        cosa fins al final. Això és <em>prémer «Esgotat» a la pantalla
+        d'Inici</em> — l'acció interessant més petita del producte, perquè és el
+        moment en què una persona declara que un envàs s'ha acabat, i aquella
+        declaració és l'única cosa de la qual es fia tota la previsió.
+      </p>
+
+<pre><code><span class="c">1.</span> HomePage.tsx          the button calls useDepleteItem()
+<span class="c">2.</span> api/entities.ts       useMutation → api('/items/&lt;id&gt;/deplete', { method: 'POST' })
+<span class="c">3.</span> api/client.ts         fetch, credentials: 'include', JSON headers
+<span class="c">   ·</span> vite proxy            /api → :3001   (development only; one port in production)
+<span class="c">4.</span> app.ts                routes it to itemsRouter
+<span class="c">5.</span> middleware/auth.ts    requireRole('operator') → session from cookie → c.set('user')
+<span class="c">6.</span> lib/router.ts         validates the params against idParam
+<span class="c">7.</span> routes/items.ts       the handler — twelve lines, and it delegates
+<span class="c">8.</span>   └─ statusChange()   db.transaction(() =&gt; {
+<span class="c">9.</span>        getActiveItem      404 if it is gone
+<span class="c">10.</span>       assertValidStatus  the Type must allow 'depleted'
+<span class="c">11.</span>       requireCurrent     409 unless it was in_stock or open
+<span class="c">12.</span>       reconcileOnClose   the signed gap, written here and nowhere else
+<span class="c">13.</span>       db.update(items)   status='depleted', quantity_remaining=0
+<span class="c">14.</span>       logEvent()         same connection ⇒ same transaction
+<span class="c">15.</span>     })
+<span class="c">16.</span> lib/serialize.ts      timestamps → ISO, cents → decimal
+<span class="c">17.</span> api/entities.ts       onSuccess → invalidate ['items'] and ['history']
+<span class="c">18.</span> HomePage.tsx          stock re-renders; a toast offers Undo</code></pre>
+
+      <p>
+        Divuit passos i només dos pensen. Del 1 al 6 tot és transport, i del 16
+        al 18 és transport de tornada. El producte viu als passos 8 a 14, dins
+        d'una transacció, en un sol fitxer.
+      </p>
+      <h3>Què té permès fer cada capa</h3>
+      <ul>
+        <li><strong>La pantalla</strong> no pot saber que un estat és una
+          cadena de text. Crida un <em>hook</em>.</li>
+        <li><strong>El hook</strong> no pot saber que una URL és una URL. Crida
+          <code>api()</code> i declara què s'ha d'invalidar després.</li>
+        <li><strong>La ruta</strong> no pot calcular. Mira el pas 7: llegeix
+          l'identificador, diu quin és l'estat nou, i delega. Dotze línies.</li>
+        <li><strong>La transacció</strong> és on viu la correcció — i fixa't en
+          l'ordre: totes les negatives (9, 10, 11) passen <em>abans</em> de la
+          primera escriptura.</li>
+      </ul>
+      <h3>Quan va malament</h3>
+
+<pre><code>throw notFoundError('item', id)        →  middleware/error.ts
+                                       →  { error: { code: 'not_found', … } }  404
+                                       →  api/client.ts throws ApiRequestError
+                                       →  the component catches it and says so</code></pre>
+
+      <p>
+        Una sola forma, fins a fora. Això és el que permet que un component
+        converteixi una negativa en una oferta en comptes d'una caixa vermella
+        — el circuit d'esborrar captura exactament això i en llegeix
+        <code>details.cascade</code>.
+      </p>
+      <div class="note tip">
+        <span class="lbl">El segon recorregut, per fer-lo tu</span>
+        <p>
+          Segueix <code>POST /api/v1/actions/record</code> de la mateixa manera,
+          per <code>services/actions.ts</code>. És el mateix esquelet amb un
+          centre més difícil: una activitat s'obre cap a diversos conceptes,
+          cadascun busca el seu envàs obert, i les dues xifres per envàs se
+          separen. Si entens aquest, entens el producte.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 08 -->
+    <section id="c8">
+      <h2><span class="n"></span>Els serveis — on hi ha el pensament</h2>
+
+      <p>
+        Si has de llegir un sol directori, llegeix aquest. Les rutes són
+        canonades; les opinions de debò del producte viuen aquí.
+      </p>
+
+      <div class="file">
+        <p class="path">api/src/services/ids.ts <span class="n">~90 línies</span></p>
+        <p>
+          Encunya els identificadors llegibles: <code>CON006</code>,
+          <code>supplyAA042</code>. Una taula de registre guarda el comptador
+          per prefix, i l'increment passa <em>dins</em> de la mateixa transacció
+          que la inserció — de manera que una inserció fallida no pot cremar un
+          identificador, i dues creacions simultànies no poden rebre el mateix.
+          La forma amb lletres passa d'<code>AA999</code> a <code>AB001</code>,
+          cosa que està provada perquè passarà un cop cada tres anys i serà
+          desconcertant.
+        </p>
+        <p>
+        El salt de lletres, que són tres línies i desconcertarà algú un cop cada
+        tres anys:
+      </p>
+<pre><code>if (!row) {
+  letterPart = style === 'lettered' ? 'AA' : '';
+  numberPart = 1;
+} else {
+  letterPart = row.letterPart;
+  numberPart = row.numberPart + 1;
+  if (style === 'lettered' &amp;&amp; numberPart &gt; 999) {
+    letterPart = nextLetters(letterPart);   <span class="c">// AA999 → AB001</span>
+    numberPart = 1;
+  }
+}</code></pre>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/history.ts <span class="n">~80 línies</span></p>
+        <p>
+          <span class="sig">logEvent(event)</span> — una fila per mutació. Desa
+          l'identificador humà al costat de l'uuid, perquè una fila purgada
+          continuï llegint-se com una frase.
+        </p>
+        <p>
+          La part interessant és el que <em>no</em> rep: la transacció. Escriu
+          pel mateix gestor global <code>db</code> que tota la resta, i tot i
+          així es desfà amb la mutació que registra — perquè
+          <code>better-sqlite3</code> és síncron i hi ha exactament una
+          connexió, oberta a <code>db/client.ts</code>, i una transacció de
+          SQLite pertany a la seva connexió. Cridar-lo dins d'un
+          <code>db.transaction()</code> ja n'hi ha prou.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Fràgil</span>
+          <p>
+            És una garantia de debò que descansa sobre una condició implícita.
+            Introdueix un conjunt de connexions, o fes asíncrona qualsevol part
+            d'això, i l'historial deixaria de formar part de la transacció en
+            silenci — la continuaria escrita i ja no seria certa. Si
+            això canvia mai, <code>logEvent</code> ha de rebre la transacció
+            explícitament.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/stock.ts <span class="n">52 línies</span></p>
+        <p>
+          L'única definició de «quant en tenim», i val la pena veure-la sencera
+          perquè és més petita del que la gent espera. Res més al codi suma una
+          quantitat.
+        </p>
+<pre><code>const ACTIVE_STOCK_STATUSES: ItemStatus[] = ['in_stock', 'open'];
+
+export function stockByConcept(locationIds?: string[]): Record&lt;string, number&gt; {
+  const rows = db
+    .select({ conceptId: items.conceptId, stock: sum(items.quantityRemaining) })
+    .from(items)
+    .where(
+      and(
+        inArray(items.status, ACTIVE_STOCK_STATUSES),
+        isNull(items.deletedAt),
+        isNotNull(items.conceptId),
+        locationIds ? inArray(items.locationId, locationIds) : undefined,
+      ),
+    )
+    .groupBy(items.conceptId)
+    .all();
+  …
+}</code></pre>
+        <p>
+          En aquest sol <code>where</code> es decideixen tres coses. Només
+          compten <code>in_stock</code> i <code>open</code>. Suma
+          <code>quantityRemaining</code> i no la quantitat original, així una
+          ampolla mig gastada compta com a mitja. I el
+          <code>locationIds</code> opcional — un subarbre de
+          <code>subtreeIds()</code> — és el que fa que l'arbre d'Inici sigui un
+          <em>filtre</em> i no navegació: la mateixa agregació, una condició
+          més.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Corregit el 2026-08-08</span>
+          <p>
+            Un esborrany anterior d'aquest manual atribuïa a aquest fitxer dues
+            coses que no fa. Excloure els tipus amb
+            <code>countsAsStock = false</code> passa a
+            <code>routes/concepts.ts</code> (el filtre <code>stockOnly</code>) i
+            a <code>services/forecast.ts</code>; derivar els comptes d'un grup
+            de <code>pool_units</code> passa a <code>routes/pools.ts</code>. Els
+            dos es van trobar anant a buscar el codi per citar-lo, que és
+            precisament l'argument per citar codi.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/actions.ts <span class="n">370 línies</span></p>
+        <p>
+          Registrar una activitat, i el fitxer on el producte va canviar
+          d'opinió. La deia que les estimacions no mouen mai
+          l'estoc. Era incorrecta, i val la pena conservar per què ho era:
+          confonia la <em>recepta</em> («una anàlisi de pH gasta 5 mL» — una
+          previsió) amb <em>l'acte de registrar-ne una</em> («he fet una anàlisi
+          de pH» — un fet). Fer-ho a mà hauria mogut l'estoc set vegades, així
+          que registrar-ho també el mou.
+        </p>
+        <p>
+          El que <em>no</em> va canviar és l'altra meitat: <strong>només una
+          persona declara que un envàs s'ha acabat.</strong> Es guarden dues
+          xifres per envàs — <code>quantityRemaining</code>, retallada a zero i
+          sumada a l'estoc, i <code>estimatedUsed</code>, sense sostre. La seva
+          diferència en tancar l'envàs és la distància amb signe entre el que
+          deia la recepta i el que hi havia a l'ampolla, i aquesta distància és
+          el número més valuós que produeix el sistema.
+        </p>
+        <p>
+          <span class="sig">openContainerFor(conceptId)</span> viu aquí i el
+          comparteix el pont del log. Es va reescriure després de dos defectes
+          que només van aparèixer en ús real: un envàs que marcava zero però
+          seguia obert absorbia totes les càrregues mentre una ampolla plena
+          seia al costat, i un envàs amb quantitat nul·la guanyava per ser el
+          més vell i s'empassava el consum sense que es veiés.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/cascade.ts <span class="n">253 línies</span></p>
+        <p>
+          Calcula què s'enduria un esborrat, i ho fa en una transacció si hi
+          estàs d'acord. La regla interessant és l'excepció: <strong>esborrar
+          una ubicació no esborra mai els articles que hi ha a sobre.</strong> A
+          tot arreu un pare és amo dels seus fills; un prestatge no és amo de
+          l'ampolla que hi seu, i una interfície que t'esborrés l'inventari en
+          silenci perquè has endreçat l'arbre d'ubicacions seria indefensable.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/purchasing.ts <span class="n">290 línies</span></p>
+        <p>
+          Peticions i lots. Rebre una línia de lot és l'estalvi de feina més
+          gran del producte: crea els articles automàticament — identificadors,
+          preu, ubicació, caducitat — de manera que arriben dotze ampolles sense
+          escriure dotze articles.
+        </p>
+        <p>
+          Una línia té dues cares i cap de les dues es sobreescriu mai. Demanades
+          5 × A, rebudes 4 × B: editar la línia perquè digui «4 × B» destruiria
+          exactament la dada interessant. Els articles es creen per a la variant
+          que ha arribat de debò, i la discrepància es guarda — acumulades, es
+          converteixen en «serveix curt el 8% de les línies» i «11 dies de
+          mitjana», i aquest segon número és el que necessita la previsió. La
+          previsió millora només per fer servir el circuit de compra, sense res
+          a configurar.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/forecast.ts <span class="n">245 línies</span></p>
+        <p>
+          «Què s'acabarà abans no el pugui tornar a demanar.» El consum es mesura
+          a partir dels <strong>esgotaments reals</strong>, no de les activitats
+          registrades, i això és a posta: la previsió funciona per a un
+          taller que no registri mai cap activitat, i millora si en
+          registren. El termini d'entrega s'aprèn per proveïdor, de la data de
+          comanda a la de recepció.
+        </p>
+        <div class="note warn">
+          <span class="lbl">Correcció</span>
+          <p>
+            Una versió anterior d'aquest manual deia
+            que el ritme diari de consum no assignat alimenta
+            <code>daysRemaining</code>. No ho fa, ni ho ha fet mai — mira
+            <code>forecast.ts</code>, on <code>daysRemaining</code> només fa
+            servir <code>rate.monthlyRate</code>. La xifra diària és informativa
+            i alimenta el cost real.
+          </p>
+        </div>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/logbridge.ts <span class="n">503 línies</span></p>
+        <p>
+          Llegeix la sortida línia a línia del controlador de la màquina. El sostenen quatre
+          decisions:
+        </p>
+        <ul>
+          <li><strong>Les quantitats viuen en un diccionari amb data, mai al
+            log.</strong> El log diu <em>què ha passat</em>; quant costa això és
+            cosa nostra, i versionar-ho per data vol dir que la història es pot
+            tornar a processar quan es corregeix un mapa.</li>
+          <li><strong>Els esdeveniments desconeguts són una pantalla de
+            configuració, no una llista d'errors.</strong> Apareix un nom nou,
+            dius què fa, i no torna a aparèixer — la configuració com un cicle
+            de resposta en comptes d'una pàgina en blanc.</li>
+          <li><strong>Els objectes desconeguts, asimètricament.</strong> Un
+            actiu que no es reconeix s'aparca i es pregunta; crear-lo
+            automàticament és com acabes amb 400 prestatgeries fantasma d'una
+            errada d'escriptura. Una mostra que no es reconeix es crea en
+            silenci — n'hi haurà milers i són passatgeres.</li>
+          <li><strong>Mode ombra abans d'activar.</strong> Una regla nova
+            registra què <em>faria</em> durant un dia; ho revises; l'actives.</li>
+        </ul>
+        <p>
+          La ingesta és idempotent — cada línia fa efecte exactament un cop,
+          comprovat per la suite tornant a llegir el mateix fitxer. El detector
+          de silenci s'adona que no arriba cap línia des de fa hores en horari
+          de feina, perquè un log que s'atura no crida; els números simplement
+          deixen de ser certs en silenci.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/maintenance.ts <span class="n">176 línies</span></p>
+        <p>
+          Els plans compten dies, usos, o tots dos, i <strong>toca vol dir el
+          que s'acabi primer</strong> — que és el que vol dir de debò «cada 6
+          mesos o 500 injeccions». <code>nextDueAt</code> es recalcula a cada
+          canvi perquè «què toca» sigui una sola consulta indexada. Si no s'ha
+          fet mai, el rellotge comença el dia que es va escriure el pla: l'única
+          suposició honesta, i visiblement equivocada d'una manera que algú
+          corregirà.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 09 -->
+    <section id="c9">
+      <h2><span class="n"></span>Les rutes</h2>
+
+      <p>
+        Setze fitxers, un patró. Cadascun declara les seves rutes amb
+        <code>createRoute</code> (mètode, camí, middleware, esquema de la
+        petició, i totes les respostes que pot produir) i després hi registra un
+        gestor. Els esquemes vénen de <code>@inventory/shared</code>, mai escrits al
+        moment, de manera que l'especificació OpenAPI d'<code>/api/docs</code>
+        es genera dels mateixos objectes que validen i no pot allunyar-se de la
+        realitat.
+      </p>
+
+      <p>
+        Una ruta, sencera, perquè les altres cent tenen aquesta pinta:
+      </p>
+<pre><code>const listRoute = createRoute({
+  method: 'get',
+  path: '/concepts',
+  tags: ['concepts'],
+  middleware: [requireRole('viewer')] as const,
+  request: {
+    query: paginationQuerySchema.extend({
+      search: z.string().optional(),
+      <span class="c">/** Home passes this: instruments and documents are not stock. */</span>
+      stockOnly: z.enum(['true', 'false']).optional(),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Paginated concepts with computed stock',
+      ...jsonContent(listResponseSchema(conceptWithStockSchema)),
+    },
+    401: errorResponse('Not signed in'),
+  },
+});</code></pre>
+      <p>
+        Tot el que necessita qui la crida està declarat, no implícit: el rol, la
+        forma de la consulta, i <em>totes</em> les respostes que pot produir. La
+        pàgina OpenAPI d'<code>/api/docs</code> es genera d'aquest objecte — el
+        mateix que valida — així que la documentació no pot allunyar-se del
+        comportament. El gestor de sota sol tenir cinc línies.
+      </p>
+      <p>
+        Fixa't en el comentari de <code>stockOnly</code>. Aquest sol indicador
+        és on els instruments i els documents marxen de la pantalla d'Inici, i
+        la regla és més fina del que sembla: un concepte compta com a estoc si
+        <em>algun</em> dels seus articles vius és d'un tipus que compta — <strong>i
+        un concepte sense cap article es queda</strong>, perquè simplement encara
+        no s'ha fet servir i amagar-lo faria que els conceptes nous semblessin
+        trencats.
+      </p>
+      <p>
+        I la imatge del mirall a l'altra banda. La clau de consulta és
+        <code>['concepts', 'list', params]</code>, així que una mutació que
+        invalidi <code>['concepts']</code> refresca totes les variacions de
+        totes les llistes sense anomenar-ne cap.
+      </p>
+<pre><code>export function useConcepts(params: ConceptListParams) {
+  return useQuery({
+    queryKey: ['concepts', 'list', params],
+    queryFn: () =&gt;
+      api&lt;{ data: ConceptWithStock[]; meta: PaginationMeta }&gt;('/concepts', {
+        query: { page: params.page ?? 1, search: params.search || undefined, … },
+      }),
+    placeholderData: keepPreviousData, <span class="c">// old page stays while the next loads</span>
+  });
+}</code></pre>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Fitxer</th><th>Línies</th><th>Val la pena saber</th></tr></thead>
+          <tbody>
+            <tr><td><code>items.ts</code></td><td>835</td><td>El més moguts. Navegador filtrat, endpoints d'acció (obrir, esgotar, moure, ajustar), creació de N còpies i la cadena de trobar-o-crear del Quick Add. El seu <code>PATCH</code> no pot canviar <code>status</code>, perquè l'esquema compartit d'actualització no té aquest camp.</td></tr>
+            <tr><td><code>lots.ts</code></td><td>1138</td><td>El fitxer més gran del repositori: esborrany, cua de peticions, línies, comanda, recepció, discrepàncies.</td></tr>
+            <tr><td><code>pools.ts</code></td><td>1115</td><td>Grups comptats i identificats, esdeveniments, recomptes, posada en circulació des de l'estoc.</td></tr>
+            <tr><td><code>equipment.ts</code></td><td>672</td><td>Vincles entre articles i manteniment. <code>linkQuery</code> resol l'altre extrem en totes dues direccions.</td></tr>
+            <tr><td><code>logbridge.ts</code></td><td>613</td><td>Fonts, analitzadors, diccionari, ingesta i la cua d'esdeveniments desconeguts.</td></tr>
+            <tr><td><code>actions.ts</code></td><td>567</td><td>Definicions d'activitat i registre, més la reconciliació.</td></tr>
+            <tr><td><code>requests.ts</code></td><td>463</td><td>Demanda a nivell de concepte; els duplicats es tornen un +1, no una segona fila.</td></tr>
+            <tr><td><code>concepts.ts</code></td><td>415</td><td>CRUD més <code>/concepts/stock</code>, l'endpoint sobre el qual està construïda la pantalla d'Inici.</td></tr>
+            <tr><td><code>trash.ts</code></td><td>341</td><td>Tot el que es pot esborrar, restauració de pare a fill, i purga permanent per a encarregats.</td></tr>
+            <tr><td><code>variants.ts</code> · <code>analogous.ts</code></td><td>322 · 289</td><td>Les actualitzacions massives de la desnormalització, amb un recompte tornat perquè la interfície pugui avisar abans.</td></tr>
+            <tr><td><code>users.ts</code></td><td>286</td><td>Creació de comptes, contrasenyes, rols i gestió de les combinacions de tecles.</td></tr>
+            <tr><td><code>transfer.ts</code></td><td>270</td><td>Importació i exportació CSV.</td></tr>
+            <tr><td><code>locations.ts</code></td><td>263</td><td>L'arbre, amb guardes de subarbre i codis suggerits per als fills.</td></tr>
+            <tr><td><code>types.ts</code></td><td>220</td><td>Tipus definits per l'usuari, inclòs el canvi de clau d'un camp amb migració de dades.</td></tr>
+            <tr><td><code>forecast.ts</code></td><td>207</td><td>Prim — l'aritmètica és al servei.</td></tr>
+            <tr><td><code>history.ts</code></td><td>180</td><td>Només lectura, filtrat, paginat. Aquí no escriu res.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note tip">
+        <span class="lbl">Afegir un endpoint</span>
+        <p>
+          Esquema a <code>@inventory/shared</code> → <code>createRoute</code> amb
+          totes les respostes llistades → gestor que crida un servei →
+          <em>hook</em> a <code>web/src/api/</code>. Si el gestor comença a
+          calcular en comptes de delegar, la lògica va a
+          <code>services/</code>.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">api/src/routes/items.ts — ordering <span class="n">~40 lines</span></p>
+        <p>L'ordenació és un paràmetre de consulta, així que la fa l'SQLite sobre totes les files que encaixen. Ordenar les 25 files que ja són al navegador seria mentida: «l'article més barat» voldria dir «el més barat dels 25 que han arribat més recentment». Cada encaminador declara la seva llista de claus, i així una clau desconeguda és un 400 a la vora i no un ordre silenciós que ningú no ha demanat.</p>
+        <p>Hi ha dos detalls que aguanten pes. Els noms traduïts són columnes JSON, així que s'ordenen amb <code>json_extract</code> en l'idioma de qui llegeix i amb l'anglès de reserva — la mateixa regla que <code>resolveText()</code> aplica al navegador. I els NULL van forçats al final en tots dos sentits: l'SQLite els posa primer, i una pàgina d'articles sense preu s'obriria amb una columna de guions.</p>
+      </div>
+
+    <!-- ============================================================== 10 -->
+    <section id="c10">
+      <h2><span class="n"></span>L'esquelet del navegador</h2>
+
+      <div class="file">
+        <p class="path">web/src/main.tsx <span class="n">34 línies</span></p>
+        <p>
+          La pila de proveïdors, i el seu ordre no és arbitrari: client de
+          consultes → tema → idioma → avisos → encaminador. El tema queda fora
+          de l'idioma perquè un color no es tradueix; els avisos queden a dins
+          perquè el seu text sí; l'encaminador queda al centre perquè tot el que
+          hi ha a sobre ha de sobreviure la navegació.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/App.tsx <span class="n">~70 línies</span></p>
+        <p>
+          La taula de rutes, i una cosa que en queda fora a posta: el
+          <code>FastLoginListener</code>. Una combinació de tecles ha de
+          funcionar a la pantalla d'entrada <em>i</em> enmig de la taula
+          d'Articles, així que no pot viure dins la disposició autenticada.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/RequireAuth.tsx <span class="n">~35 línies</span></p>
+        <p>
+          Redirigeix cap a <code>/login</code> quan no hi ha sessió i — la part
+          que importa — no dibuixa res mentre la sessió encara s'està
+          consultant. Sense això, cada recàrrega ensenya un instant la pantalla
+          d'entrada a algú que ja hi és dins.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/Layout.tsx <span class="n">225 línies</span></p>
+        <p>
+          La closca: barra lateral, navegació, selector d'idioma, menú de tema,
+          i els diàlegs de contrasenya i de combinació. La navegació és una sola
+          llista d'objectes, filtrada per rol amb el mateix
+          <code>roleAtLeast</code> que fa servir el servidor, i partida en tres
+          bandes — el que tens, el que li passa, i configuració i registre. Al
+          mòbil el mateix marcatge es torna un calaix, que és per què es dibuixa
+          dues vegades i per què el motor de visites guiades ha de triar la
+          còpia <em>visible</em>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 -->
+    <section id="c11">
+      <h2><span class="n"></span>Parlar amb l'API</h2>
+
+      <div class="file">
+        <p class="path">web/src/api/client.ts <span class="n">~70 línies</span></p>
+        <p>
+          Una sola capa sobre <code>fetch</code>. Envia les galetes, posa les
+          capçaleres JSON i — la part útil — reconverteix la forma d'error
+          uniforme de l'API en un <code>ApiRequestError</code> que porta
+          <code>code</code>, <code>message</code> i <code>details</code>. Per
+          això un esborrat bloquejat es pot capturar dins d'un component i
+          convertir-lo en «això també esborrarà 3 articles — tiro endavant?» en
+          comptes d'una caixa vermella.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/api/{concepts,entities,history,operations}.ts <span class="n">~1.500 línies</span></p>
+        <p>
+          Totes les interaccions amb el servidor, com a <em>hooks</em> de
+          TanStack Query, agrupades per àrea i no per entitat —
+          <code>operations.ts</code> és tot el sencer perquè aquelles
+          funcions es fan servir juntes. Dues convencions es mantenen a tot
+          arreu:
+        </p>
+        <ul>
+          <li><strong>Les claus de consulta són
+            <code>[entitat, 'list', filtres]</code></strong>, així invalidar
+            <code>['items']</code> refresca totes les llistes i tots els
+            detalls d'un article sense anomenar-los.</li>
+          <li><strong>Cada mutació invalida la seva entitat <em>i</em>
+            l'historial</strong>, mitjançant un petit ajudant
+            <code>useInvalidator</code> — perquè cada mutació escriu historial,
+            i si no una pàgina d'historial obsoleta està garantida.</li>
+        </ul>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/api/auth.ts <span class="n">21 línies</span></p>
+        <p>
+          El client React de better-auth amb el connector de noms d'usuari, més
+          <span class="sig">asSessionUser</span> — una conversió de tipus que
+          existeix per documentar un buit real: el servidor afegeix
+          <code>role</code> com a camp addicional i el tipus generat del client
+          no ho sap. Una conversió en un sol lloc és millor que
+          <code>as any</code> escampat.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 12 -->
+    <section id="c12">
+      <h2><span class="n"></span>Tres colors</h2>
+
+      <div class="file">
+        <p class="path">web/src/styles/index.css <span class="n">~200 línies</span></p>
+        <p>
+          Tot el tema deriva de <strong>tres</strong> propietats
+          personalitzades — primari, secundari, accent — mitjançant
+          <code>color-mix(in oklab, …)</code>. Superfícies, vores, text apagat i
+          tintes són totes mescles del primari amb el fons, que és per què
+          canviar una variable a les eines del navegador retenyeix tota
+          l'aplicació i no la meitat.
+        </p>
+        <p>
+          Fer servir <code>oklab</code> i no sRGB és el detall que ho fa
+          funcionar: mesclar en un espai perceptual manté que una tinta del 14%
+          sembli una tinta del 14% a qualsevol to, on l'sRGB tornaria el violeta
+          tèrbol i l'ambre fluorescent. Els colors d'estat — vermell, ambre,
+          verd — a posta <em>no</em> deriven. «Estoc baix» ha de ser el mateix
+          vermell hagi triat el que hagi triat cadascú com a primari.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/theme/ThemeProvider.tsx <span class="n">~120 línies</span></p>
+        <p>
+          Llegeix els tres colors del <code>localStorage</code> i els escriu a
+          <code>documentElement</code>. Els valors per defecte viuen al CSS i no
+          aquí, així que la primera càrrega no ensenya un instant la paleta
+          equivocada. També hi ha l'ajudant de contrast: donat un primari
+          triat, calcula la luminància relativa i tria negre o blanc per al text
+          a sobre, de manera que qui triï un groc pàl·lid rebi botons llegibles
+          i no la suposició d'un dissenyador.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">web/src/lib/palette.ts <span class="n">~250 lines</span></p>
+        <p>Treure un tema d'un logotip. Ningú no vol triar tres valors hexadecimals, i gairebé tothom ja té un logotip — que és una decisió de color que algú va prendre expressament, així que la drecera honesta és tornar-la a llegir.</p>
+        <p>Els píxels s'agrupen per to, 24 calaixos de 15°, en comptes de fer-ne un agrupament de debò: un logotip té tres o quatre colors plans, no el degradat d'una fotografia, i un k-means seria més codi per llegir per a una resposta que no és millor. Els píxels transparents, grisos, gairebé negres i gairebé blancs es descarten — són el paper, no la marca, i conservar-los donaria a tots els logotips del món el mateix tema gris.</p>
+        <p>El que sobreviu de la imatge és el <strong>to</strong>; la saturació i la claror es tornen a fixar de tres maneres (<em>Suau</em>, <em>Viu</em>, <em>Fosc</em>). No és una llicència: les superfícies de l'aplicació són fosques i tenyides pel primari, així que un blau marí de marca tal com ve desapareixeria contra el fons i un pastel de marca el rentaria. Un logotip d'un sol color obté els altres dos tons girant per la roda, que és una tríada i no una excusa.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/services/settings.ts <span class="n">~35 lines</span></p>
+        <p>Una taula de clau i valor en comptes d'una fila amb una columna per opció: si no, cada opció nova seria una migració, i les opcions són justament el que s'afegeix un dimarts a la tarda. El valor és JSON, validat per un esquema Zod a la ruta — la forma viu al sistema de tipus, no al DDL.</p>
+        <p>El logotip viatja com a URI <code>data:</code> dins d'aquell JSON, amb un límit d'uns 300 KB. És a la base de dades a posta: la còpia de seguretat d'aquest producte és un fitxer, i una carpeta uploads/ al costat seria la primera cosa que es perdria. Un JSON desat que ja no valida cau cap a l'aspecte de fàbrica en comptes de llançar un error — un logotip dolent no pot poder tombar tota l'aplicació.</p>
+      </div>
+
+    <!-- ============================================================== 13 -->
+    <section id="c13">
+      <h2><span class="n"></span>Dues capes d'idioma</h2>
+
+      <p>
+        El text de la interfície i les dades de l'usuari es tradueixen amb
+        mecanismes diferents, i confondre'ls és l'error clàssic.
+      </p>
+
+      <div class="file">
+        <p class="path">web/src/i18n/index.tsx <span class="n">~90 línies</span></p>
+        <p>
+          <span class="sig">t('items.title')</span> sobre tres diccionaris JSON,
+          caient cap a l'anglès i després cap a la clau mateixa — de manera que
+          una traducció que falta ensenya <code>items.title</code>, cosa que és
+          lletja a posta i s'acaba arreglant. Interpola
+          (<code>t('lots.itemsCreated', { n: 6 })</code>) deixant intactes els
+          marcadors desconeguts, així les cadenes que ja contenien claus no es
+          van trencar el dia que es va afegir la interpolació.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/i18n/{en,ca,de}.json <span class="n">691 claus cadascun</span></p>
+        <p>
+          Afegir un idioma és afegir un fitxer. No hi ha cap clau en un que
+          falti en un altre — i això es comprova, no s'espera.
+        </p>
+      </div>
+
+      <p>
+        La segona capa són les dades: el nom d'un concepte és una columna JSON
+        <code>{"en": …, "de": …, "ca": …}</code> dibuixada per
+        <span class="sig">resolveText(nom, idioma)</span> del paquet compartit.
+        Per això afegir un quart idioma no necessita cap migració, i per això
+        existeix <code>MultilangInput.tsx</code> — un camp de tres pestanyes amb
+        l'anglès obligatori.
+      </p>
+    </section>
+
+    <!-- ============================================================== 14 -->
+    <section id="c14">
+      <h2><span class="n"></span>Les peces bàsiques</h2>
+
+      <div class="file">
+        <p class="path">web/src/components/ui.tsx <span class="n">283 línies</span></p>
+        <p>
+          Botó, camp, etiqueta, desplegable, àrea de text, filador, calaix,
+          finestra modal, paginació, insígnies d'estat i de rol. A l'estil de
+          shadcn, fets amb <code>class-variance-authority</code>, i només fan
+          servir fitxes del tema — <code>bg-primary</code>,
+          <code>text-muted</code>, <code>border-line</code> — mai un color
+          literal. Aquesta és la regla que fa que el sistema de tres colors
+          arribi de debò a tots els racons.
+        </p>
+        <p>
+          <code>Drawer</code> i <code>Modal</code> comparteixen un
+          <span class="sig">useEscape</span> i tots dos porten
+          <code>role="dialog"</code>, <code>aria-modal</code> i un atribut
+          <code>data-ui</code>. L'atribut no és estil: és com les suites del
+          navegador adrecen un diàleg sense dependre de noms de classe que
+          canvien.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/toast.tsx <span class="n">~90 línies</span></p>
+        <p>
+          Avisos amb una acció opcional, que és el que fa honestes les accions
+          ràpides optimistes de la pantalla d'Inici: «supplyAA042 → esgotat ·
+          Desfés?». Sense el desfer, un clic accidental al mòbil seria
+          irrecuperable, i els botons haurien de ser més petits i més lents.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/lib/{cn,format}.ts</p>
+        <p>
+          <code>cn()</code> fusiona classes de Tailwind perquè el
+          <code>className</code> de qui crida guanyi al del component en comptes
+          de barallar-s'hi. <code>format.ts</code> dibuixa dates, quantitats i
+          diners segons l'idioma — el mirall de <code>parseMoneyInput</code>, i
+          la raó per què un preu no es dibuixa mai concatenant text.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 15 -->
+    <section id="c15">
+      <h2><span class="n"></span>Les pantalles</h2>
+
+      <p>
+        Divuit pantalles. La majoria tenen la mateixa forma — filtres, una
+        taula, un calaix — i es llegeixen soles. Cinc mereixen un paràgraf.
+      </p>
+
+      <div class="file">
+        <p class="path">web/src/pages/HomePage.tsx <span class="n">472 línies</span></p>
+        <p>
+          La pantalla per la qual es jutja l'aplicació. Una tira de mètriques,
+          un arbre d'ubicacions que actua com a <em>filtre</em> i no com a
+          navegació, targetes de concepte amb jerarquia desplegable, el
+          manteniment endarrerit per sobre de l'estoc (una màquina descalibrada
+          atura la feina d'una manera que una ampolla baixa no), i accions
+          ràpides optimistes amb desfer. Els articles solts — els que no tenen
+          variant — tenen la seva pròpia targeta, perquè Inici parla en
+          conceptes i altrament serien invisibles.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/ItemsPage.tsx <span class="n">476 línies</span></p>
+        <p>
+          Filtres de múltiples estats, de tipus, de concepte, de subarbre
+          d'ubicació i de text. L'estat buit mereix menció: distingeix «no tens
+          cap article» de «res no coincideix amb aquests filtres» i ofereix un
+          clic per netejar-los. Aquella distinció era un defecte real — el
+          filtre per defecte és <code>in_stock</code>+<code>open</code>, un
+          instrument és <code>in_service</code>, i buscar la teva pròpia balança
+          t'informava amb tota confiança que no existia.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/LogPage.tsx <span class="n">797 línies</span></p>
+        <p>
+          La pantalla més gran, perquè el pont del log és el que té més coses a
+          configurar: fonts, el constructor d'analitzadors, el diccionari, els
+          esdeveniments desconeguts i l'informe d'ingesta. El constructor és la
+          part interessant — enganxes una línia real, l'aplicació n'etiqueta els
+          trossos, i tu dius quin és la data, quin l'objecte i quin
+          l'esdeveniment. Ningú escriu una expressió regular.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/PoolsPage.tsx <span class="n">651 línies</span></p>
+        <p>
+          Els vasos en circulació, els seus estats, el recompte i la posada en
+          circulació des de l'armari. La pantalla de recompte és l'aparell de
+          mesura de la mortalitat: ningú registra mai un trencament, només
+          compten el que hi ha, i la diferència <em>és</em> la taxa de pèrdua.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/pages/LocationsPage.tsx <span class="n">417 línies</span></p>
+        <p>
+          L'arbre servia per descriure llocs que existeixen però no sabia
+          respondre mai «què hi ha en aquest armari» — la pregunta que té de
+          debò algú dret davant de l’armari. Triar un node ara en llista el
+          contingut, amb un interruptor de subarbre, un filtre per tipus i una
+          cerca.
+        </p>
+      </div>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>La resta</th><th>En una línia</th></tr></thead>
+          <tbody>
+            <tr><td><code>ConceptsPage</code> · <code>AnalogousPage</code> · <code>VariantsPage</code></td><td>Els tres nivells de dalt, amb l'avís de relligat abans d'una actualització massiva.</td></tr>
+            <tr><td><code>TypesPage</code></td><td>El constructor de camps amb vista prèvia en viu — veus el formulari que rebran els teus usuaris mentre el fas.</td></tr>
+            <tr><td><code>RequestsPage</code> · <code>LotsPage</code></td><td>Demanar, i després comprar. La cua de peticions viu dins del lot esborrany, que és on es pren la decisió.</td></tr>
+            <tr><td><code>ForecastPage</code></td><td>Una llista, no un gràfic: «aquests 6 s'acabaran abans no els puguis tornar a demanar» i un botó per demanar-los tots.</td></tr>
+            <tr><td><code>ActionsPage</code></td><td>Definicions d'activitat i registre; els mapes de consum porten data perquè la història es pugui reprocessar.</td></tr>
+            <tr><td><code>HistoryPage</code> · <code>TrashPage</code> · <code>UsersPage</code></td><td>El registre, la paperera, els comptes.</td></tr>
+            <tr><td><code>LoginPage</code></td><td>Nom d'usuari i contrasenya, més el senyal que una combinació de tecles funcionarà.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============================================================== 16 -->
+    <section id="c16">
+      <h2><span class="n"></span>Components que pensen</h2>
+
+      <div class="file">
+        <p class="path">web/src/components/QuickAddModal.tsx <span class="n">295 línies</span></p>
+        <p>
+          La funció que fa ignorable la jerarquia de quatre nivells, que és la
+. Escriu un nom, tria un tipus i una quantitat, prem
+          retorn: la cadena de trobar-o-crear del servidor et construeix
+          Concepte → Anàleg → Variant al darrere, en una transacció. La finestra
+          es queda oberta i recorda l'últim tipus i ubicació, perquè l'ús real
+          són vint articles seguits després d'una entrega. Lligada a
+          <code>q</code>.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/ItemDrawer.tsx <span class="n">489 línies</span></p>
+        <p>
+          Tot d'un article: els camps propis dibuixats des del seu Tipus, els
+          botons d'acció, la seva pestanya d'historial i el panell d'equipament.
+          El detall que més importa és petit — esgotar l'<em>últim</em> article
+          d'un concepte ofereix «demana'n més» allà mateix, dins l'avís. Aquesta
+          és l'entrada a tot el circuit de compra, capturada al segon que
+          l'humà ho sap, en comptes d'en una pantalla que s'hauria de recordar
+          de visitar.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/Tour.tsx <span class="n">421 línies</span> · web/src/tours.ts</p>
+        <p>
+          El manual interactiu: quatre visites guiades que assenyalen la
+          pantalla real. Un pas anomena el seu objectiu amb un atribut
+          <code>data-tour</code>, <strong>mai una classe</strong> — una visita
+          que es trenca quan algú recanvia l'estil d'un botó és una visita que
+          ningú manté.
+        </p>
+        <p>
+          Dues correccions d'aquí van sortir de provar-ho al mòbil. La barra
+          lateral es dibuixa dues vegades (escriptori i calaix), així que
+          <code>querySelector</code> triava alegrement la còpia amagada i
+          assenyalava el no-res; el motor ara busca el primer objectiu amb una
+          caixa de mida no nul·la. I engegar una visita tancava justament el
+          calaix del qual parlava el pas, així que un pas pot declarar
+          <code>needsNav</code> i el motor l'obre abans.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/lib/chord.ts <span class="n">220 línies</span></p>
+        <p>
+          Llegir una combinació de tecles del teclat. Les tecles s'identifiquen
+          per <code>event.code</code> — posició, no caràcter — que és el que fa
+          que el mateix gest funcioni en un teclat català, alemany o anglès.
+        </p>
+        <p>
+          Dues regles s'hi guanyen el lloc. <strong>Un grup s'acaba quan els
+          dits s'aixequen, no quan salta el temporitzador</strong>: cada tecla
+          nova reinicia el rellotge, i el grup és el que encara està premut quan
+          la mà para, així que una mà lenta no es llegeix com dos grups. I
+          <strong>el detector calla mentre escrius</strong> — llevat que un camp
+          hi torni a entrar amb <code>data-chord-ok</code>, cosa que fa el
+          formulari d'entrada, perquè és exactament on va el cursor tot sol i
+          una combinació ignorada en silenci allà trencaria l'única pantalla per
+          la qual existeix la funció.
+        </p>
+        <p>
+          <span class="sig">suspendChords()</span> és un comptador i no un
+          interruptor, perquè el panell de pràctica pugui desactivar l'escoltador
+          general sense que un segon el torni a armar. Sense això, aprendre't la
+          teva pròpia combinació et faria sortir cada cop que l'encertessis.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/EquipmentPanel.tsx <span class="n">648 línies</span></p>
+        <p>
+          Articles vinculats i plans de manteniment, tots dos genèrics i no
+          tancats darrere d'un tipus que es digui «instrument» — el mateix
+          argument que va fer que els Tipus els definís l'usuari. Un armari té
+          un interval de servei; una clau dinamomètrica té un certificat de calibratge; la
+          llista de coses que un taller penja d'una màquina no es pot saber
+          per endavant.
+        </p>
+      </div>
+
+      <div class="file group">
+        <p class="path">web/src/components/{LotLineForm,ReceiveModal,SupplierPicker,LocationPicker,CustomFields,DeleteDialog,CsvModal,LabelSheet,MultilangInput,PasswordModal,RequestModal,FastKeyModal,FastLogin,ThemeMenu,LocationTree}.tsx</p>
+        <p>
+          El repartiment de suport. Tres mereixen una frase: el
+          <code>LotLineForm</code> ensenya l'aritmètica de l'envàs en comptes
+          d'aplicar-la en silenci («necessites 500 mL · l'ampolla és d'1 L ·
+          quantitat 1»); <code>CustomFields</code> dibuixa i valida camps que no
+          existien quan es va escriure el codi, guiat pel Tipus; i
+          <code>LabelSheet</code> genera etiquetes QR al navegador amb un full
+          d'estil d'impressió, així no hi ha ni viatge al servidor ni imatges
+          desades.
+        </p>
+      </div>
+    </section>
+
+
+      <div class="file">
+        <p class="path">web/src/components/Combobox.tsx <span class="n">~230 lines</span></p>
+        <p>Un <code>&lt;select&gt;</code> on pots escriure. Les barres de filtres eren desplegables normals, que van bé amb vuit opcions i no serveixen amb dues-centes — i a més la llista estava limitada a una pàgina de resultats, així que un concepte de la pàgina 2 semblava un concepte que no existia.</p>
+        <p>Dos detalls el sostenen. La caixa conté <em>el que estàs escrivint</em> mentre la llista és oberta i <em>el que has triat</em> quan és tancada; barrejar-ho és el que fa que la majoria de comboboxos fets a mà semblin espatllats. I la coincidència ignora els accents amb normalització <code>NFD</code>, perquè ningú no escriu l'accent amb pressa i <code>Cola de fusta</code> ha de ser trobable escrivint <code>hepta</code>.</p>
+      </div>
+
+      <div class="file">
+        <p class="path">web/src/components/ResizablePanel.tsx <span class="n">~120 lines</span></p>
+        <p>L'amplada de l'arbre d'ubicacions, arrossegada i recordada. Els oients van a la finestra i no a la nansa de 6 px — un cop comença l'arrossegament el punter surt de la nansa contínuament, i un <code>mousemove</code> limitat a la nansa el deixaria anar al primer moment. L'amplada s'escriu a l'emmagatzematge quan acaba l'arrossegament, no a cada fotograma, i les fletxes també la canvien, perquè un control que només accepta ratolí és un control que mitja sala no pot fer servir.</p>
+      </div>
+
+    <!-- ============================================================== 17 -->
+    <section id="c17">
+      <h2><span class="n"></span>L'aplicació d'escriptori</h2>
+
+      <div class="file">
+        <p class="path">desktop/src-tauri/src/main.rs <span class="n">220 línies</span></p>
+        <p>
+          Una finestra cap a un servidor — <strong>no</strong> una segona còpia
+          de l'aplicació. Aquesta és la decisió de disseny, i val la pena dir-la
+          clara perquè el contrari és l'opció òbvia: aquest producte és un
+          servidor amb un fitxer que comparteix tot el taller, així que un
+          instal·lador que portés la seva pròpia API i la seva pròpia base de
+          dades donaria en silenci a cada taula un inventari privat, que és
+          precisament el que l'aplicació existeix per evitar.
+        </p>
+        <p>
+          El que guanya sobre una pestanya de navegador és una finestra sense
+          barra d'adreces per on marxar, sense pestanya per tancar sense voler,
+          i amb un teclat que el sistema operatiu li dona directament — que és
+          el que fa pràctica la combinació de tecles en una taula compartida.
+        </p>
+        <p>
+          Tres camins d'arrencada: sense servidor desat obre la pantalla de
+          connexió; amb un de bo obre l'aplicació; i un servidor desat que
+          s'hagi mogut cau <em>enrere</em> cap a la pantalla de connexió
+          ensenyant què ha provat, en comptes d'un rectangle en blanc. Consulta
+          <code>/api/v1/health</code> des de Rust i no des de la pàgina, cosa
+          que evita completament el problema del CORS.
+          <span class="sig">normalize()</span> accepta el que una persona
+          escriuria de debò — <code>workshop-pc:3000</code>,
+          <code>192.168.1.20:3000</code>, amb esquema o sense — i les seves
+          proves unitàries van trobar un error real a la primera execució:
+          retallar les barres finals abans de mirar l'esquema convertia un
+          <code>http://</code> pelat en <code>http://http:</code>, una URL
+          perfectament vàlida d'un servidor que no té ningú.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">desktop/ui/index.html <span class="n">~180 línies</span></p>
+        <p>
+          La pantalla de connexió, i l'única interfície que és pròpia de
+          l'aplicació d'escriptori. Un sol fitxer estàtic sense empaquetador ni
+          dependències, cridant <code>window.__TAURI__</code> directament — tota
+          la resta del que ensenya ve del servidor.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 18 -->
+    <section id="c18">
+      <h2><span class="n"></span>Construir i publicar</h2>
+
+      <div class="file group">
+        <p class="path">web/vite.config.ts · api/tsup.config.ts</p>
+        <p>
+          Vite reenvia <code>/api</code> cap al <code>:3001</code> en
+          desenvolupament, que és l'única raó per què dos servidors semblen una
+          sola aplicació. tsup empaqueta l'API en un sol
+          <code>dist/index.js</code> i hi inclou <code>@inventory/shared</code>,
+          perquè aquell paquet no té sortida compilada pròpia.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">Dockerfile <span class="n">52 línies</span></p>
+        <p>
+          De diverses etapes. L'etapa de construcció instal·la un compilador de
+          C perquè <code>better-sqlite3</code> és un mòdul natiu; l'etapa
+          d'execució copia només el que cal i engega
+          <code>node dist/index.js</code> amb <code>SERVE_WEB=1</code>, així un
+          sol port serveix l'SPA, l'API, la documentació i els manuals.
+        </p>
+        <p>
+          <strong>La disposició del monorepo es conserva en comptes
+          d'aplanar-la</strong>, cosa que sembla malbaratar espai i no ho és:
+          npm no puja <code>better-auth</code> al <code>node_modules</code> de
+          l'arrel, i aplanar trenca la resolució de mòduls en execució — una
+          fallada que només apareix dins del contenidor.
+        </p>
+        <div class="note warn">
+          <span class="lbl">La lliçó de la primera execució real</span>
+          <p>
+            <code>NODE_ENV=production</code> està definit exactament en un lloc
+            d'aquest repositori — aquí — i res més s'executa amb ell. Tot el que
+            es comporta diferent en producció no s'havia executat mai, per tant.
+            El primer <code>docker run</code> ho va trobar: el contenidor
+            arrencava, imprimia un avís i es moria a la primera petició
+            autenticada (, <code>lib/secret.ts</code>).
+          </p>
+        </div>
+      </div>
+
+      <div class="file group">
+        <p class="path">docs/build-manuals.mjs · docs/build-artifacts.mjs</p>
+        <p>
+          Converteixen <code>docs/manual.css</code> més
+          <code>docs/content/*.html</code> en documents autònoms — inclòs el que
+          estàs llegint. Les tipografies van incrustades com a URI de dades, de
+          manera que un manual funciona sense xarxa: es pot enviar per correu,
+          copiar a un llapis USB, o servir-lo la mateixa aplicació a
+          <code>/api/v1/manual/:locale</code>, que és el que obre el
+          <code>?</code> de la barra lateral.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== day to day -->
+    <section id="c23">
+      <h2><span class="n"></span>Treballar-hi, dia a dia</h2>
+
+      <h3>El cicle</h3>
+<pre><code>npm install
+npm run db:seed                  <span class="c"># demo data; refuses on a non-empty database</span>
+npm run dev                      <span class="c"># API :3001, web :5173</span>
+npm run typecheck                <span class="c"># every workspace, including the Rust no-op</span></code></pre>
+      <p>
+        Dos servidors en desenvolupament, un sol port en producció — l'única
+        diferència és <code>SERVE_WEB=1</code>. Les migracions corren a
+        l'arrencada, així que no hi ha cap pas separat per oblidar.
+      </p>
+
+      <h3>Canviar l'esquema</h3>
+<pre><code><span class="c"># 1. edit packages/api/src/db/schema.ts</span>
+cd packages/api
+npx drizzle-kit generate --name what_it_does
+<span class="c"># 2. read drizzle/00NN_what_it_does.sql before you trust it</span>
+<span class="c"># 3. restart — index.ts applies it at boot. Commit the .sql file.</span></code></pre>
+      <p>
+        No escriguis mai una migració a mà ni n'editis una que ja s'hagi
+        aplicat. Llegeix l'SQL generat abans de fiar-te'n:
+        <code>drizzle-kit</code> és bo, però SQLite no pot treure una columna
+        sense reconstruir la taula, i això val la pena veure-ho.
+      </p>
+
+      <h3>Afegir una entitat, en l'ordre que funciona</h3>
+<pre><code>shared/src/schemas/thing.ts       schema + create + update, exported from index.ts
+api/src/db/schema.ts              the table, with auditColumns
+api/drizzle/                      generated migration, committed
+api/src/services/thing.ts         only if it needs to think
+api/src/routes/thing.ts           createRoute × N, registered in app.ts
+web/src/api/entities.ts           useThings / useCreateThing / useUpdateThing
+web/src/pages/ThingsPage.tsx      the screen, + a route in App.tsx
+web/src/i18n/{en,ca,de}.json      all three, or the key shows through</code></pre>
+      <p>
+        Vuit fitxers, i l'ordre importa perquè cadascun està tipat contra el de
+        sobre. Comença per qualsevol altre lloc i et barallaràs amb el
+        compilador durant una hora.
+      </p>
+
+      <h3>Quan alguna cosa va malament</h3>
+<pre><code>curl -s localhost:3001/api/v1/concepts/stock | python3 -m json.tool
+open localhost:3001/api/docs                  <span class="c"># every endpoint, try it live</span>
+sqlite3 packages/api/data/inventory.db 'select * from history order by created_at desc limit 20'</code></pre>
+      <p>
+        En aquest ordre. Pregunta primer a l'API, perquè la majoria d'errors de
+        «la pantalla està malament» són la pantalla tenint raó sobre dades
+        dolentes. El Swagger UI d'<code>/api/docs</code> et deixa disparar
+        qualsevol endpoint amb una sessió real. I la taula d'historial és el més
+        semblant a una caixa negra: totes les mutacions hi són, en ordre, amb qui
+        les ha fet.
+      </p>
+
+      <h3>Tres costums que et salvaran</h3>
+      <ul>
+        <li><strong>Executa una suite abans de començar</strong>, per saber què
+          ja estava trencat. <code>verify-rules.mjs</code> triga noranta segons
+          i no necessita navegador.</li>
+        <li><strong>Apunta-la a una còpia.</strong> Totes les suites escriuen.
+          Mira el — i fes servir el <em>backup</em> de sqlite, no
+          <code>cp</code>.</li>
+        <li><strong>Si has afegit un text, afegeix-lo tres vegades.</strong> Una
+          clau que falta es dibuixa com <code>items.title</code> a la pantalla
+          d'algú.</li>
+      </ul>
+
+      <div class="file group">
+        <p class="path">api/drizzle.config.ts · api/scripts/create-user.mts · web/src/pages/Placeholder.tsx</p>
+        <p>
+          Els tres fitxers dels quals cap altre lloc necessitava dir res,
+          llistats perquè «cada fitxer» sigui veritat. La configuració de
+          drizzle apunta el generador als dos fitxers d'esquema;
+          <code>create-user.mts</code> crea un compte des del terminal, saltant
+          el registre tancat igual que ho fa la pantalla d'Usuaris; i
+          <code>Placeholder.tsx</code> és un tros buit que es guarda per a rutes
+          esbossades i no construïdes.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 19 -->
+    <section id="c19">
+      <h2><span class="n"></span>Les suites</h2>
+
+      <p>
+        Nou guions a <code>packages/web/scripts/</code>. No són proves
+        unitàries: condueixen l'aplicació de debò en un navegador de debò, o
+        piquen a l'API de debò, perquè gairebé tots els defectes que ha trobat
+        aquest projecte vivien entre components correctes i no dins d'un.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Guió</th><th>Què condueix</th><th>Comprovacions</th></tr></thead>
+          <tbody>
+            <tr><td><code>acceptance.mjs</code></td><td>La definició d'«acabat» del, de punta a punta</td><td>8</td></tr>
+            <tr><td><code>verify-gaps.mjs</code></td><td>Paperera, cascada, CSV, etiquetes, contrasenyes</td><td>12</td></tr>
+            <tr><td><code>verify-operations.mjs</code></td><td>Tot el</td><td>28</td></tr>
+            <tr><td><code>verify-equipment.mjs</code></td><td>Instruments, manteniment, ubicacions</td><td>9</td></tr>
+            <tr><td><code>verify-tour.mjs</code></td><td>Les visites guiades, en tres idiomes</td><td>8</td></tr>
+            <tr><td><code>verify-rules.mjs</code></td><td>Els invariants, a l'API — sense navegador</td><td>50</td></tr>
+            <tr><td><code>verify-limits.mjs</code></td><td>Rols, compres, concurrència, CSV</td><td>18</td></tr>
+            <tr><td><code>verify-fastkey.mjs</code></td><td>Accés ràpid, amb un teclat de debò</td><td>12</td></tr>
+            <tr><td><code>verify-ui.mjs</code></td><td>Graella, filtres amb cerca, ordenació per columna, marca i regles de sessió</td><td>39</td></tr>
+            <tr><td><code>verify-sessions.mjs</code></td><td>Comptes, rols, sortida, chords i ordinadors reclamats — amb dues persones alhora</td><td>51</td></tr>
+            <tr><td><code>verify-docker.mjs</code></td><td>La història de publicació, contra un contenidor</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note stop">
+        <span class="lbl">Abans d'executar-ne un</span>
+        <p>
+          <strong>Escriuen a la base de dades on apunti l'API</strong>, i
+          l'argument que diu <em>quina</em> base de dades no és a la mateixa
+          posició a tots els guions — <code>verify-equipment</code> i
+          <code>verify-tour</code> prenen primer el directori de sortida i
+          l'URL l'últim. Llegeix la capçalera. Copia la base de dades amb el
+          <em>backup</em> del mateix sqlite i no amb <code>cp</code>: va en mode
+          WAL, i una còpia només del <code>.db</code> pot quedar trencada.
+        </p>
+      </div>
+
+      <p>
+        Dues costums fan que valguin la pena. <strong>Surten amb codi
+        diferent de zero</strong>, així es poden creure sense llegir la
+        sortida. I es poden <strong>tornar a executar</strong> — cosa que sembla
+        òbvia i no ho era: una versió primerenca de <code>verify-rules</code>
+        assumia que hi havia un envàs obert amb contingut, passava un cop, i
+        fallava a totes les execucions següents. Una suite que només funciona
+        sobre dades verges és una suite que ningú executa dues vegades.
+      </p>
+    </section>
+
+    <!-- ============================================================== 20 -->
+    <section id="c20">
+      <h2><span class="n"></span>On són enterrats els morts</h2>
+
+      <p>
+        Les coses que et mossegaran, totes en un lloc. La majoria es van trobar
+        fent servir l'aplicació, no llegint-la.
+      </p>
+
+      <h3>Paranys al codi</h3>
+      <ul>
+        <li><strong>Les dues bandes d'un moviment s'han de moure el
+          mateix.</strong> El <code>pools.ts</code> retallava l'origen a zero
+          mentre acreditava el destí sencer, així que un <em>agafa</em> massa
+          gran s'inventava vasos del no-res — 692 d'un sol clic, i justament al
+          número contra el qual el recompte mesura la mortalitat. Qualsevol
+          transferència entre dos comptadors és sospitosa fins que hagis mirat
+          les dues bandes.</li>
+        <li><strong>Les columnes derivades poden ser correctes a la pantalla i
+          incorrectes a la base de dades.</strong> Els comptes d'un grup
+          identificat es calculen a partir de les seves unitats en llegir, així
+          que un esdeveniment massiu escrivia disbarats a les columnes desades i
+          ningú ho veia. Si un valor es deriva en llegir, nega't a escriure'l.</li>
+        <li><strong>Un filtre per defecte és una afirmació.</strong> La pantalla
+          d'Articles venia amb <code>in_stock</code>+<code>open</code> i deia
+          «Encara no hi ha res» — informant-te que el teu instrument no
+          existia. Un estat buit ha de distingir «res» de «res que hi
+          coincideixi».</li>
+        <li><strong>Dibuixar el mateix dues vegades trenca
+          <code>querySelector</code>.</strong> La barra lateral existeix com a
+          columna d'escriptori i com a calaix de mòbil; qualsevol cosa que hi
+          busqui un element ha de triar el visible.</li>
+        <li><strong><code>localhost</code> és un origen privilegiat, i aquesta
+          aplicació no s'hi executa mai a la vida real.</strong> Dos taps s'hi
+          van amagar durant mesos: <code>crypto.randomUUID()</code> no existeix
+          fora d'un context segur, així que el primer compte no es podia crear
+          des de cap altra màquina; i better-auth marca la seva galeta
+          <code>Secure</code> en producció, cosa que el navegador descarta per
+          http pla, així que ningú es mantenia identificat més enllà d'una
+          recàrrega. Qualsevol canvi que toqui el navegador vol una passada
+          contra <code>http://&lt;ip-de-xarxa&gt;:3000</code>.</li>
+        <li><strong>L'historial és dins la transacció per accident de
+          l'arquitectura, no per disseny explícit.</strong>
+          <code>logEvent()</code> no rep cap transacció i escriu pel gestor
+          global; només es desfà amb la seva mutació perquè
+          <code>better-sqlite3</code> és síncron i hi ha exactament una
+          connexió. Un conjunt de connexions, o un camí asíncron, trencaria la
+ en silenci deixant-la escrita igualment.</li>
+        <li><strong>Els identificadors de pare desnormalitzats poden
+          desincronitzar-se.</strong> Els mantenen correctes les transaccions
+          d'actualització massiva de <code>variants.ts</code> i
+          <code>analogous.ts</code>. Escriure un <code>conceptId</code> en
+          qualsevol altre lloc és com deixen de ser certs.</li>
+      </ul>
+
+      <h3>Versions triades que val la pena saber</h3>
+      <ul>
+        <li>Zod v4, no v3 — <code>@hono/zod-openapi</code> ho requereix. La
+          regla de debò (una sola versió a tot el monorepo) es manté.</li>
+        <li>React Router v8, no v7; TypeScript 7 (<code>tsgo</code> natiu).</li>
+        <li><code>items.createdBy</code> és text pla i no una clau forana:
+          esborrar un usuari no ha de trencar mai un article.</li>
+        <li>Docker conserva la disposició del monorepo en comptes d'aplanar-la
+.</li>
+      </ul>
+
+      <h3>No construït, a posta</h3>
+      <ul>
+        <li><strong>Vigilància automàtica del log.</strong> Tota la resta del
+          pont existeix; la ingesta s'engega amb un botó o enganxant. El
+          detector de silenci ja hi és per acompanyar un vigilant.</li>
+        <li><strong>Un efecte de log que compti execucions de màquina.</strong>
+          <code>POST /items/:id/uses</code> existeix; l'entrada de diccionari
+          que deixaria que una línia del controlador de la màquina pugés el comptador, no.</li>
+        <li><strong>Aprovació abans de comprar.</strong> Aturat perquè depèn de
+          si el taller vol un pas de signatura en absolut.</li>
+        <li><strong>Una aplicació d'escriptori amb el seu propi servidor.</strong>
+          La meitat client està feta; el <em>sidecar</em> necessita un
+          <code>node</code> i un <code>better-sqlite3</code> per plataforma, i és
+          una decisió de producte més que més feina d'aquesta.</li>
+      </ul>
+
+      <h3>Mai provat contra la realitat</h3>
+      <p>
+        El pont del log no s'ha connectat mai a un controlador de la màquina de debò. Funciona amb
+        línies enganxades i amb la font que crea la suite, i el disseny es va
+        tancar amb detall — però el dia que apunti a la sortida real d'un
+        instrument serà el primer dia, i el primer dia sempre és diferent.
+      </p>
+
+      <div class="note tip">
+        <span class="lbl">Si agafes això</span>
+        <p>
+          Llegeix primer <code>db/schema.ts</code>, i després
+          <code>services/stock.ts</code> i <code>services/actions.ts</code>.
+          Aquestes quatre coses són el producte; tota la resta és com arriba a
+          una pantalla.
+        </p>
+      </div>
+    
+      <h3>Un ordinador reclamat no caduca mai sol</h3>
+      <p><code>session.expiresIn</code> és un any, i no és mandra. Quant dura una sessió ho decideix la <em>galeta</em>: una màquina compartida té una galeta de sessió de navegador més la regla dels vint minuts, i una de reclamada té una galeta duradora i ha de sobreviure a les apagades. Amb una caducitat de trenta dies al servidor, la màquina reclamada fotria fora algú després d'unes vacances llargues per un motiu que cap usuari no podria explicar. Acabar una sessió reclamada és, doncs, sempre deliberat: sortir, o <code>POST /users/sessions/revoke-all</code>.</p>
+      <h3>Una línia de lot pot crear la variant que demana</h3>
+      <p><code>POST /lots/:id/lines</code> accepta <em>o bé</em> un <code>orderedVariantId</code> <em>o bé</em> un <code>newVariantName</code>, imposat per un refinament de Zod. El segon camí fa la mateixa cadena de cerca-o-crea que l'Alta ràpida, dins de la transacció de la línia, de manera que una línia fallida no pot deixar cap producte solt. Existeix perquè les peticions són a nivell de concepte per disseny, i això vol dir que la primera comanda de qualsevol concepte nou no té cap variant per triar — i abans d'això el formulari simplement s'encallava en una llista buida.</p>
+</section>
+
+  </main>
+
+  <footer class="footer">
+    Manual d'arquitectura a l'agost del 2026, contra unes 28.000 línies.
+    El que fa l'aplicació per als seus usuaris és al
+    <a href="manual.ca.html">manual d'usuari</a>.
+  </footer>
+
+</div>

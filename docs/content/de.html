@@ -1,0 +1,2116 @@
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">Handbuch · v0.2 · August 2026</span>
+    <h1>Inventar</h1>
+    <p>
+      Alles, was die Anwendung heute kann, in der Reihenfolge, in der du es
+      brauchst: vom Löschen der Demodaten über den Aufbau deines eigenen
+      Inventars bis zum Alltag — und die Grenzen, die sie noch hat.
+    </p>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Inhalt">
+      <p>Inhalt</p>
+      <ol>
+        <li><a href="#s1"><span class="n">01</span> Wie die App denkt</a></li>
+        <li><a href="#s2"><span class="n">02</span> Starten und anmelden</a></li>
+        <li><a href="#s3"><span class="n">03</span> Demodaten entfernen</a></li>
+        <li><a href="#s4"><span class="n">04</span> Tutorial von Grund auf</a></li>
+        <li><a href="#s5"><span class="n">05</span> Schnell hinzufügen</a></li>
+        <li><a href="#s6"><span class="n">06</span> Der Alltag eines Artikels</a></li>
+        <li><a href="#s7"><span class="n">07</span> Die Startseite</a></li>
+        <li><a href="#s8"><span class="n">08</span> Artikel durchsuchen</a></li>
+        <li><a href="#s9"><span class="n">09</span> Die drei oberen Ebenen</a></li>
+        <li><a href="#s10"><span class="n">10</span> Verlauf</a></li>
+        <li><a href="#s11"><span class="n">11</span> Benutzer und Rechte</a></li>
+        <li><a href="#s12"><span class="n">12</span> Sprache und Farben</a></li>
+        <li><a href="#s13"><span class="n">13</span> Löschen und Wiederherstellen</a></li>
+        <li><a href="#s14"><span class="n">14</span> Sicherungen</a></li>
+        <li><a href="#s15"><span class="n">15</span> Die API</a></li>
+        <li><a href="#s17"><span class="n">16</span> Massenein- und -ausgabe</a></li>
+        <li><a href="#s18"><span class="n">17</span> Wie genau was verfolgt wird</a></li>
+        <li><a href="#s19"><span class="n">18</span> Bedarf</a></li>
+        <li><a href="#s20"><span class="n">19</span> Bestellungen: kaufen und annehmen</a></li>
+        <li><a href="#s21"><span class="n">20</span> Prognose</a></li>
+        <li><a href="#s22"><span class="n">21</span> Tätigkeiten und Realkosten</a></li>
+        <li><a href="#s23"><span class="n">22</span> Umlaufbestand und Zählung</a></li>
+        <li><a href="#s24"><span class="n">23</span> Die Log-Brücke</a></li>
+        <li><a href="#s26"><span class="n">24</span> Geräte und Wartung</a></li>
+        <li><a href="#s27"><span class="n">25</span> Nach Ort stöbern</a></li>
+        <li><a href="#s28"><span class="n">26</span> Anmelden mit einem Tastengriff</a></li>
+        <li><a href="#s25"><span class="n">27</span> Was noch fehlt</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ============================================================== 01 -->
+    <section id="s1">
+      <h2><span class="n"></span>Wie die App denkt</h2>
+
+      <p>
+        Bevor du irgendetwas anfasst, lohnt sich eine einzige Idee, denn alles
+        andere folgt daraus: <strong>jedes physische Ding, das du besitzt, ist
+        ein Artikel</strong> — und Artikel betrachtet man aus vier verschiedenen
+        Höhen.
+      </p>
+
+      <div class="levels">
+        <div class="lv"><span class="name">Konzept</span><span class="ex">Was ich brauche · <em>„Filament PLA schwarz“</em></span></div>
+        <div class="lv"><span class="name">Analog</span><span class="ex">Welche Optionen mir gleichwertig dienen · <em>„Filament PLA schwarz 1,75 mm“</em></span></div>
+        <div class="lv"><span class="name">Variante</span><span class="ex">Was ich konkret kaufe · <em>„Prusament PLA schwarz, 1-kg-Spule“</em></span></div>
+        <div class="lv"><span class="name">Artikel</span><span class="ex">Welche Einheit ich in der Hand halte · <em>Spule <span class="hid">filamentAA007</span></em></span></div>
+      </div>
+
+      <p>
+        Die oberen drei Ebenen sind <em>Katalog</em>: sie beschreiben Dinge. Nur
+        die unterste Ebene ist <em>Wirklichkeit</em>: jeder Artikel ist ein
+        konkreter Gegenstand, den du anfassen kannst, mit eigenem Standort,
+        eigener Restmenge und eigenem Preis.
+      </p>
+
+      <h3>Die goldene Regel: Bestand wird nie eingetippt</h3>
+      <p>
+        Nirgends in der App gibt es ein Feld, in das du „ich habe 4 kg Filament“
+        schreibst. Der Bestand wird <strong>berechnet</strong>, indem die
+        Restmengen aller Artikel summiert werden, die vorrätig oder geöffnet
+        sind. Wenn die Zahl auf der Startseite nicht stimmt, liegt die Antwort
+        immer bei den Artikeln: entweder wurde einer nicht aufgebraucht, oder
+        einer wurde nie erfasst.
+      </p>
+
+      <h3>Die Hierarchie darf man ignorieren</h3>
+      <p>
+        Die vier Ebenen sind da, wenn du sie brauchst — nicht, um dich durch sie
+        hindurchzuzwingen. Mit <a href="#s5">Schnell hinzufügen</a> tippst du
+        einen Namen, wählst Typ und Menge, und das System legt Konzept, Analog
+        und Variante still im Hintergrund an. Du kannst dein gesamtes Inventar
+        führen, ohne diese Seiten je zu öffnen, und später verfeinern, falls es
+        doch einmal zählt.
+      </p>
+
+      <h3>Typen machen die App zu deiner</h3>
+      <p>
+        Ein <strong>Typ</strong> legt fest, welche eigenen Felder seine Artikel
+        haben, welche Status sie annehmen dürfen und ob sie eine Menge führen.
+        Ein Modellbahnsammler definiert „Spurweite“ und „Epoche“; eine
+        3D-Druck-Werkstatt definiert „Material“ und „Durchmesser“. Dieselbe App,
+        keine Codeänderung.
+      </p>
+
+      <div class="note tip">
+        <span class="lbl">Wenn Sie es lieber gezeigt bekommen</span>
+        <p>
+          Hinter dem <strong>?</strong> unten in der Seitenleiste liegen dieses
+          Handbuch und mehrere <strong>geführte Touren</strong>. Sie zeigen
+          Schritt für Schritt auf den echten Bildschirm und dauern je etwa zwei
+          Minuten. Alles, was sie zeigen, steht auch hier — fangen Sie an, wo es
+          Ihnen lieber ist.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 02 -->
+    <section id="s2">
+      <h2><span class="n"></span>Starten und anmelden</h2>
+
+      <h3>In der Entwicklung</h3>
+      <pre><code>npm run dev</code></pre>
+      <p>
+        Startet beide Hälften gleichzeitig: die API auf Port 3001 und die
+        Weboberfläche auf 5173. Öffne <code>http://localhost:5173</code>. Zum
+        Beenden <code>Strg+C</code>.
+      </p>
+
+      <h3>Mit Docker</h3>
+      <pre><code>docker build -t inventoryspace .
+docker run -d -p 3000:3000 \
+  -v ./inventory-data:/data \
+  -e BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
+  inventoryspace</code></pre>
+      <p>
+        Hier läuft alles über einen einzigen Port:
+        <code>http://localhost:3000</code> liefert die Oberfläche, die API und
+        die Dokumentation. Datenbankmigrationen laufen beim Start von selbst, ein
+        leeres Volume funktioniert also auf Anhieb.
+      </p>
+
+      <h3>Das erste Konto</h3>
+      <p>
+        Auf der Anmeldeseite gibt es den Link <em>„Erster Start? Admin-Konto
+        erstellen“</em>. <strong>Das erste Konto, das du registrierst, wird zum
+        Administrator — und unmittelbar danach schließt die öffentliche
+        Registrierung.</strong> Ab dann legt der Administrator die Konten auf der
+        Seite Benutzer an.
+      </p>
+      <p>
+        <strong>Du meldest dich mit einem Benutzernamen an, nicht mit einer
+        E-Mail.</strong> Er ist frei: <code>anna</code>,
+        <code>Anna Müller</code>, <code>nachtschicht</code>, <code>jm</code> —
+        Buchstaben, Leerzeichen und Umlaute eingeschlossen. Groß- und
+        Kleinschreibung spielt keine Rolle, <code>Anna</code> und
+        <code>anna</code> sind dieselbe Person. Nicht enthalten sein dürfen nur
+        ein <code>@</code>, doppelte Leerzeichen oder Leerzeichen am Rand. Eine
+        E-Mail-Adresse ist <em>optional</em> und nur dafür da, ein Konto
+        irgendwann an ein Postfach zu binden; geschickt wird nie etwas.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Achtung</span>
+        <p>
+          Ohne gesetztes <code>BETTER_AUTH_SECRET</code> erzeugt der Server bei
+          jedem Start ein neues, und alle werden bei jedem Neustart abgemeldet.
+          In der Entwicklung egal; im Produktivbetrieb unbedingt setzen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 03 -->
+    <section id="s3">
+      <h2><span class="n"></span>Demodaten entfernen</h2>
+
+      <p>
+        Die Entwicklungsdatenbank kommt mit Beispieldaten aus einem Werkstatt: 5 Typen, ein Standortbaum, 6 Konzepte und 9 Artikel — so angelegt,
+        dass die Startseite alle drei Warnzustände zeigt (in Ordnung, niedriger
+        Bestand, nicht vorrätig). Für <em>dein</em> Inventar hast du zwei Wege.
+      </p>
+
+      <h3>Schneller Weg: alles auf einmal löschen</h3>
+      <pre><code><span class="c"># vorher den Server beenden</span>
+rm packages/api/data/inventory.db*
+npm run dev</code></pre>
+      <p>
+        Beim Start wird das leere Schema neu angelegt. Führe
+        <code>npm run db:seed</code> <em>nicht</em> aus, und du hast eine wirklich
+        leere Datenbank: keine Typen, keine Standorte, keine Artikel. Das erste
+        registrierte Konto wird wieder Administrator.
+      </p>
+      <div class="note stop">
+        <span class="lbl">Unwiderruflich</span>
+        <p>
+          Damit verschwinden auch die Benutzerkonten und der gesamte Verlauf.
+          Unter Docker entspricht das dem Leeren des Volumes
+          <code>./inventory-data</code>.
+        </p>
+      </div>
+
+      <h3>Manueller Weg: aus der Anwendung heraus löschen</h3>
+      <p>
+        Wenn du es lieber von Hand machst, um das Verhalten zu sehen, musst du
+        <strong>von unten nach oben</strong> vorgehen. Die App blockiert jede
+        Löschung, die etwas verwaist zurückließe, und sagt dir genau, warum:
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Um zu löschen…</th><th>musst du zuerst…</th><th>sonst</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Konzept</th><td>seine Analoggruppen löschen</td><td>„N Analoggruppe(n) verweisen noch darauf“</td></tr>
+            <tr><th>Analog</th><td>seine Varianten löschen</td><td>„N Variante(n) verweisen noch darauf“</td></tr>
+            <tr><th>Variante</th><td>ihre Artikel löschen</td><td>„N Artikel verweisen noch darauf“</td></tr>
+            <tr><th>Typ</th><td>die Artikel dieses Typs löschen</td><td>„N Artikel verwenden diesen Typ“</td></tr>
+            <tr><th>Standort</th><td>ihn leeren und seine Unterstandorte löschen</td><td>„N Artikel an diesem Standort oder darunter“</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Die tatsächliche Reihenfolge lautet also: <strong>Artikel → Varianten →
+        Analoge → Konzepte</strong>, danach Standorte (vom Blatt zur Wurzel) und
+        Typen.
+      </p>
+      <p>
+        Keine Löschung ist wirklich zerstörend: alles ist ein <em>weiches
+        Löschen</em>. Die Zeile bleibt mit einem Löschzeitpunkt in der Datenbank
+        und verschwindet aus den Listen. Der Verlauf wird nie gelöscht. Lies
+        <a href="#s13"></a>, bevor du dich zu sehr darauf verlässt — das
+        Zurückholen ist über die Oberfläche noch nicht bequem.
+      </p>
+    </section>
+
+    <!-- ============================================================== 04 -->
+    <section id="s4">
+      <h2><span class="n"></span>Tutorial: dein Inventar aufbauen</h2>
+
+      <p>
+        Bauen wir das Inventar einer <strong>3D-Druck-Werkstatt</strong> aus
+        einer leeren Datenbank auf. Für eine Sammlung, eine Kosmetikmanufaktur
+        oder ein Ersatzteillager gilt dasselbe: nur die Namen ändern sich.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Definiere deine Typen</h4>
+          <p>
+            Das kommt zuerst, weil alles andere darauf aufbaut. Gehe zu
+            <strong>Typen</strong> (nur Administrator) und klicke <em>Neuer
+            Typ</em>. Unsere Werkstatt braucht zwei bewusst verschiedene.
+          </p>
+          <p><strong>Filament</strong> — etwas, das verbraucht wird:</p>
+          <ul>
+            <li><strong>Name</strong>: „Filament“. Das Feld hat die Reiter
+              <span class="pill role">EN</span> <span class="pill role">DE</span>
+              <span class="pill role">CA</span>: Englisch ist Pflicht, der Rest
+              optional.</li>
+            <li><strong>Schlüssel</strong>: <code>filament</code>. Das ist die
+              interne Kennung und <strong>lässt sich nie wieder ändern</strong>.</li>
+            <li><strong>ID-Präfix</strong>: <code>filament</code>. Die Artikel
+              heißen dann <span class="hid">filamentAA001</span>,
+              <span class="hid">filamentAA002</span>…</li>
+            <li><strong>Führt eine Menge</strong>: ja (eine Spule wird nach und
+              nach aufgebraucht).</li>
+            <li><strong>Gültige Status</strong>: <code>in_stock</code>,
+              <code>open</code>, <code>depleted</code>, <code>discarded</code>.</li>
+            <li><strong>Eigene Felder</strong>: dreimal <em>Feld hinzufügen</em>:
+              <code>material</code> (Auswahl mit den Optionen <em>PLA, PETG, ABS,
+              TPU</em>), <code>color</code> (Text), <code>diameter</code> (Zahl,
+              Einheit <em>mm</em>).</li>
+          </ul>
+          <p>
+            Rechts zeigt dir die <strong>Vorschau des Anlage-Formulars</strong>
+            live, wie das Artikelformular für diesen Typ aussehen wird. So prüfst
+            du vor dem Speichern, ob du wirklich definiert hast, was du meintest.
+          </p>
+          <p><strong>Drucker</strong> — eine Maschine, die nicht verbraucht wird:</p>
+          <ul>
+            <li>Schlüssel <code>printer</code>, Präfix <code>printer</code>.</li>
+            <li><strong>Führt eine Menge</strong>: nein.</li>
+            <li><strong>Gültige Status</strong>: <code>in_service</code>,
+              <code>maintenance</code>, <code>out_of_service</code>,
+              <code>retired</code>.</li>
+            <li>Eigene Felder: <code>manufacturer</code> (Text),
+              <code>nextService</code> (Datum).</li>
+          </ul>
+          <div class="note tip">
+            <span class="lbl">Eigene Status</span>
+            <p>
+              Artikel dieses Typs sind nie «offen» oder «aufgebraucht» — ihr
+              Lebenszyklus ist ein anderer. In ihrer Detailansicht liegt ein
+              Auswahlfeld <em>Status setzen</em> mit genau den Status, die du
+              definiert hast.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h4>Zeichne, wo die Dinge liegen</h4>
+          <p>
+            Gehe zu <strong>Standorte</strong>. Der Baum hat vier feste Ebenen
+            —<em>Werkstatt → Raum → Zone → Fläche</em>— aber die Namen bestimmst du;
+            für eine Werkstatt lies sie als <em>Gebäude → Raum → Schrank →
+            Regalbrett</em>.
+          </p>
+          <p>
+            Klicke <em>Neues Werkstatt</em>: der Code <code>L01</code> ist schon
+            vorgeschlagen, nenne ihn „Werkstatt“. Fährst du nun mit der Maus über
+            die Zeile, erscheint ein <em>+</em> für einen Unterstandort — auch
+            dessen Code wird berechnet (<code>L01R01</code>). Baue etwa:
+          </p>
+          <pre><code>L01            Werkstatt
+  L01R01       Druckraum
+    L01R01Z01  Materialschrank
+      ...S01   Regalbrett A
+    L01R01Z02  Druckertisch</code></pre>
+          <p>
+            Die Zahl rechts in jeder Zeile ist, <strong>wie viele Artikel in
+            diesem Knoten und allem darunter liegen</strong>. Dieser Baum ist
+            nicht bloß Beschriftung: auf der Startseite dient er als Filter.
+          </p>
+        </li>
+
+        <li>
+          <h4>Erfasse die ersten Dinge</h4>
+          <p>
+            Ab hier zwei Wege. Für die allermeisten Fälle ist
+            <a href="#s5">Schnell hinzufügen</a> der richtige: drücke die Taste
+            <code>q</code> oder die Schaltfläche <em>Schnell hinzufügen</em> auf
+            der Startseite, tippe „Prusament PLA schwarz“, wähle den Typ
+            Filament, einen Standort, Menge <code>1</code>, Einheit
+            <code>kg</code> — und speichern. Der Artikel ist da, und Konzept,
+            Analog und Variante wurden von selbst angelegt.
+          </p>
+          <p>
+            Wiederhole das ein paar Mal: das Fenster bleibt mit geleertem Namen
+            offen und merkt sich den letzten Typ und Standort, denn zehn Dinge
+            hintereinander zu erfassen ist der Normalfall.
+          </p>
+        </li>
+
+        <li>
+          <h4>Verfeinere den Katalog nur, wenn nötig</h4>
+          <p>
+            Angenommen, du kaufst nun schwarzes PLA einer zweiten Marke und
+            möchtest, dass die App versteht: <em>beide sind dir gleich recht</em>.
+            Genau jetzt — und nur jetzt — lohnen sich die Katalogseiten:
+          </p>
+          <ul>
+            <li>Gehe zu <strong>Varianten</strong> und benenne die von Schnell
+              hinzufügen erzeugte so um, dass sie das echte Handelsprodukt nennt:
+              „Prusament PLA schwarz, 1-kg-Spule“. Trage gleich Marke, Lieferant,
+              Katalognummer, Gebindegröße und -einheit ein.</li>
+            <li>Klicke <em>Neue Variante</em>, hänge sie an <strong>dieselbe
+              Analoggruppe</strong> und trage die andere Marke ein.</li>
+          </ul>
+          <p>
+            Ab jetzt addiert der Bestand des Konzepts beide Marken, und auf der
+            Startseite siehst du sie unter demselben Konzept, aber in getrennten
+            Zeilen.
+          </p>
+        </li>
+
+        <li>
+          <h4>Lass dich warnen, bevor es knapp wird</h4>
+          <p>
+            Gehe zu <strong>Konzepte</strong>, bearbeite „Filament PLA schwarz“
+            und setze <strong>Mindestbestand</strong> auf 2. Fällt die Summe unter
+            2 kg, färbt sich die Karte auf der Startseite bernsteinfarben und
+            klappt sich von selbst auf. Bei null rot. Ohne Schwellenwert warnt ein
+            Konzept nie.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============================================================== 05 -->
+    <section id="s5">
+      <h2><span class="n"></span>Schnell hinzufügen, im Detail</h2>
+
+      <p>
+        Das ist der Weg für den Moment, in dem du im Lager stehst und das Ding in
+        der Hand hältst. Er öffnet sich mit der Taste <code>q</code> (wenn du
+        gerade in keinem Feld tippst) oder über die Schaltfläche <em>Schnell
+        hinzufügen</em>, die es auf der Startseite und bei Artikel gibt.
+      </p>
+
+      <h3>Das Namensfeld ist eine Suche</h3>
+      <p>
+        Während du tippst, erscheinen darunter Treffer — <strong>über alle
+        Sprachen gleichzeitig</strong> — und was passiert, hängt von deiner Wahl
+        ab:
+      </p>
+      <ul>
+        <li><strong>Du wählst eine Variante</strong> (sie stehen oben, das ist der
+          kürzeste Weg): der Artikel hängt direkt an diesem Produkt. Die
+          Typauswahl verschwindet, denn die Variante kennt ihren Typ bereits.</li>
+        <li><strong>Du wählst ein Konzept</strong>: es wird als Bezugspunkt der
+          Suche vermerkt.</li>
+        <li><strong>Du wählst nichts</strong>: beim Speichern legt das System mit
+          dem getippten Namen die Kette Konzept → Analog → Variante an und hängt
+          den Artikel daran. <strong>Alles in einer einzigen Transaktion</strong>:
+          entweder entsteht alles, oder nichts.</li>
+      </ul>
+      <div class="note tip">
+        <span class="lbl">Warum das wichtig ist</span>
+        <p>
+          Diese Suche ist das Einzige, was zwischen dir und einer Datenbank voller
+          Dubletten steht. Es lohnt sich, drei Buchstaben zu tippen und einen
+          Blick auf die Liste zu werfen, bevor du etwas Neues anlegst.
+        </p>
+      </div>
+
+      <h3>Der Rest des Formulars</h3>
+      <ul>
+        <li><strong>Typ</strong> — merkt sich den zuletzt benutzten.</li>
+        <li><strong>Standort</strong> — ebenfalls gemerkt; öffnet den Baum.</li>
+        <li><strong>Menge und Einheit</strong> — wirken nur, wenn der Typ eine
+          Menge führt.</li>
+        <li><strong>Preis</strong> — schreib ihn, wie es dir natürlich vorkommt
+          (<code>22.40</code> oder <code>22,40</code>).</li>
+        <li><strong>Kopien</strong> — 1 bis 100. Kommen drei gleiche Spulen an,
+          trag 3 ein: es entstehen drei Artikel mit fortlaufenden Kennungen.</li>
+        <li>Hat der Typ <strong>Pflichtfelder</strong> unter den eigenen Feldern,
+          erscheinen sie hier. Optionale nur im vollständigen Formular.</li>
+      </ul>
+      <p>
+        Beim Speichern bestätigt eine Meldung die angelegten Kennungen. Wurde eine
+        neue Kette erzeugt, bietet sie einen Link <em>Verfeinern →</em> zu den
+        Varianten an, falls du gleich Marke und Lieferant nachtragen willst. Tust
+        du es nicht, passiert nichts: Verfeinern bleibt für immer freiwillig.
+      </p>
+    </section>
+
+    <!-- ============================================================== 06 -->
+    <section id="s6">
+      <h2><span class="n"></span>Der Alltag eines Artikels</h2>
+
+      <p>
+        Klicke eine beliebige Zeile unter <strong>Artikel</strong> an, und die
+        Detailansicht fährt von rechts herein, mit zwei Reitern:
+        <em>Details</em> und <em>Verlauf</em>. Oben stehen die Aktionen.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Aktion</th><th>Was genau passiert</th><th>Mindestrolle</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Öffnen</th>
+              <td>Wechselt von <span class="pill ok">in stock</span> nach <span class="pill warn">open</span> und vermerkt das Öffnungsdatum.</td>
+              <td><span class="pill role">Operator</span></td>
+            </tr>
+            <tr>
+              <th>Aufbrauchen</th>
+              <td>Wechselt nach <span class="pill bad">depleted</span>, vermerkt das Datum und <strong>setzt die Restmenge auf null</strong>.</td>
+              <td><span class="pill role">Operator</span></td>
+            </tr>
+            <tr>
+              <th>Verschieben</th>
+              <td>Öffnet den Standortbaum; woher und wohin wird protokolliert.</td>
+              <td><span class="pill role">Operator</span></td>
+            </tr>
+            <tr>
+              <th>Menge anpassen</th>
+              <td>Korrigiert die Restmenge. <strong>Verlangt eine schriftliche Begründung</strong>, die in den Verlauf wandert.</td>
+              <td><span class="pill role">Operator</span></td>
+            </tr>
+            <tr>
+              <th>Bearbeiten</th>
+              <td>Standort, Einheit, Seriennummer, Charge, Notizen und eigene Felder.</td>
+              <td><span class="pill role">Operator</span></td>
+            </tr>
+            <tr>
+              <th>Löschen</th>
+              <td>Weiches Löschen: verschwindet aus den Listen, der Verlauf bleibt.</td>
+              <td><span class="pill role">Manager</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Die Status jenseits von Öffnen und Aufbrauchen</h3>
+      <p>
+        <em>Öffnen</em> und <em>Aufbrauchen</em> erscheinen nur, wenn sie passen.
+        Für jeden weiteren Status, den der Typ erlaubt, gibt es das Auswahlfeld
+        <strong>Status setzen</strong>: so bringst du einen Drucker von
+        <code>in_service</code> nach <code>maintenance</code> oder ein Dokument
+        von <code>active</code> nach <code>archived</code>. Angeboten werden immer
+        nur die gültigen Status dieses Typs.
+      </p>
+
+      <h3>Warum sich der Status nicht von Hand ändern lässt</h3>
+      <p>
+        Mit Absicht. Statuswechsel laufen ausschließlich über die
+        Aktionsschaltflächen, und jede prüft, ob der Zielstatus zu den vom Typ
+        erlaubten gehört. Deshalb kannst du einen aufgebrauchten Artikel nicht
+        „wieder öffnen“: du bekommst <em>„Wechsel von depleted nach open nicht
+        möglich“</em>. Die Menge ist eine Schätzung; dass du ihn geöffnet oder
+        aufgebraucht hast, ist eine Tatsache — und Tatsachen werden festgehalten.
+      </p>
+
+      <h3>Preise werden eingefroren</h3>
+      <p>
+        Legst du einen Artikel mit Preis an, ist dieser Preis <strong>für immer
+        gesperrt</strong> und das Feld beim Bearbeiten deaktiviert. Preisänderungen
+        wirken nie rückwirkend: was du letzten Monat für diese Spule gezahlt hast,
+        bleibt, was du gezahlt hast. Hast du das Feld leer gelassen, kannst du es
+        später nachtragen.
+      </p>
+      <p>
+        Intern sind Preise ganze Cent-Beträge, niemals Dezimalzahlen — so bleiben
+        Rundungsfehler außen vor.
+      </p>
+    </section>
+
+    <!-- ============================================================== 07 -->
+    <section id="s7">
+      <h2><span class="n"></span>Die Startseite</h2>
+
+      <p>
+        Die Startseite spricht in <strong>Konzepten</strong>, nicht in Artikeln.
+        Sie beantwortet drei Fragen: was habe ich, wird etwas knapp, und lass mich
+        schnell handeln.
+      </p>
+
+      <h3>Die Leiste oben</h3>
+      <p>
+        Vier Zahlen: aktive Konzepte, aktive Artikel, offene Artikel und wie viele
+        Konzepte unter ihrem Mindestbestand liegen. Die letzte färbt sich rot,
+        sobald eines bei null steht.
+      </p>
+
+      <h3>Der Baum links ist ein Filter</h3>
+      <p>
+        Klicke eine Zone an, und <strong>alles</strong> — die Zahlen oben, der
+        Bestand jeder Karte und ihre Artikellisten — beschränkt sich auf diesen
+        Ast und alles darunter. Ein Chip zeigt den aktiven Code; ein Klick darauf
+        hebt den Filter auf. So macht man Inventur an einem einzelnen Schrank.
+      </p>
+
+      <h3>Die Konzeptkarten</h3>
+      <ul>
+        <li>Name, Kennung und der Bestand groß in Mono-Schrift, daneben der
+          Mindestbestand, falls gesetzt.</li>
+        <li>Linke Kante bernsteinfarben bei niedrigem Bestand, rot bei null — und
+          in diesem Fall <strong>klappt die Karte sich selbst auf</strong>.</li>
+        <li>Aufgeklappt zeigt sie die Hierarchie: gruppiert nach Variante, und
+          darunter die Artikel mit Kennung, Status, Standort und Menge.</li>
+        <li>Hat ein Artikel ein Datumsfeld, das nach Verfall aussieht, und bleiben
+          weniger als 90 Tage, erscheint ein Hinweis
+          <span class="pill warn">exp 34d</span>.</li>
+        <li>Rechts neben jedem Artikel die Schaltfläche, die jetzt passt:
+          <em>Öffnen</em>, wenn er vorrätig ist, <em>Aufbrauchen</em>, wenn er
+          offen ist.</li>
+      </ul>
+
+      <div class="note tip">
+        <span class="lbl">Rückgängig</span>
+        <p>
+          Nach jeder Schnellaktion erscheint unten rechts eine Meldung mit
+          <strong>Rückgängig</strong>. Sie setzt den Artikel auf den vorherigen
+          Status zurück — und auch diese Rücknahme landet im Verlauf, denn der
+          Verlauf wird nie geändert, nur ergänzt.
+        </p>
+      </div>
+
+      <h3>Artikel ohne Konzept</h3>
+      <p>
+        Ein Artikel ohne Variante gehört zu keinem Konzept und kann deshalb auf
+        keiner Karte erscheinen. Diese sind unten in einer Karte
+        <strong>Eigenständige Artikel</strong> zusammengefasst, die nur auftaucht,
+        wenn es welche gibt.
+      </p>
+
+      <p>
+        Aufgebrauchte Artikel sind standardmäßig ausgeblendet; oben rechts gibt es
+        das Kästchen <em>Aufgebrauchte anzeigen</em>.
+      </p>
+
+      <h3>Die Anordnung: ein Raster und ein Baum zum Ziehen</h3>
+      <p>
+        Die Karten liegen in einem <strong>Raster, das sich selbst
+        auffüllt</strong>: auf einem breiten Monitor drei oder vier Spalten, auf
+        einem Laptop zwei, auf dem Telefon eine. Nichts davon wird eingestellt —
+        der Browser bringt so viele Spalten unter, wie das Fenster zulässt, und
+        ordnet sie beim Verändern der Größe neu.
+      </p>
+      <p>
+        Der Ortsbaum hat am rechten Rand einen <strong>Ziehgriff</strong>. Zieh
+        ihn auf die Breite, die deine Ortsnamen brauchen, und dort bleibt er, auf
+        diesem Rechner, von jetzt an. Doppelklick setzt ihn zurück; mit der
+        Tastatur: anfokussieren und die Pfeiltasten benutzen.
+      </p>
+      <p>
+        Eine offene Karte scrollt ab etwa zehn Artikeln in sich selbst, damit ein
+        sehr volles Konzept nicht seine ganze Rasterzeile in die Länge zieht.
+      </p>
+    </section>
+
+    <!-- ============================================================== 08 -->
+    <section id="s8">
+      <h2><span class="n"></span>Artikel durchsuchen</h2>
+
+      <p>
+        Die Seite <strong>Artikel</strong> ist die vollständige Liste, mit einer
+        Filterleiste, deren Filter sich kombinieren lassen:
+      </p>
+      <ul>
+        <li><strong>Status</strong>: Pillen zum An- und Ausschalten.
+          Voreingestellt sind <span class="pill ok">in stock</span> und
+          <span class="pill warn">open</span>; um alles zu sehen, schalte alle
+          ein.</li>
+        <li><strong>Typ</strong> und <strong>Konzept</strong>: Auswahllisten.</li>
+        <li><strong>Standort</strong>: schließt Unterstandorte immer mit ein.</li>
+        <li><strong>Freitext</strong>: durchsucht Kennung, Seriennummer,
+          Chargennummer und Notizen.</li>
+      </ul>
+      <p>
+        Die Tabelle zeigt Kennung, Typ, Konzept, Status, Standort, Rest,
+        Empfangsdatum und Preis. Jede Zeile öffnet die Detailansicht.
+      </p>
+
+      <h3>Das vollständige Anlageformular</h3>
+      <p>
+        Die Schaltfläche <em>Artikel anlegen</em> öffnet das lange Formular, für
+        volle Kontrolle. Der Clou steckt im ersten Feld: <strong>mit der Wahl des
+        Typs baut sich das Formular neu auf</strong>, und die Felder erscheinen,
+        die du für diesen Typ definiert hast. Du kannst auch eine Variante wählen
+        (dann erbt der Artikel Einheit und Gebindegröße) oder das Feld leer lassen
+        und einen eigenständigen Artikel ohne Katalog dahinter anlegen.
+      </p>
+    </section>
+
+
+      <h3>Filter, in die man tippen kann</h3>
+      <p>
+        Die Filter für Typ, Konzept und Variante sind Suchfelder, nicht bloß
+        Auswahllisten: tippen, und die Liste wird enger. Akzente und
+        Groß­schreibung sind egal, <code>hepta</code> findet also <em>Heptà</em>,
+        und mit den Pfeiltasten plus Enter wählt man ohne Maus.
+      </p>
+      <p>
+        Sie schränken sich auch gegenseitig ein. Wähle ein Konzept, und die
+        Variantenliste bietet nur dessen Produkte; wechsle den Typ, und der
+        Variantenfilter leert sich von selbst — eine Variante gehört zu genau
+        einem Typ, und die alte stehen zu lassen würde ohne sichtbaren Grund eine
+        leere Tabelle zeigen.
+      </p>
+
+      <h3>Nach einer Spalte sortieren</h3>
+      <p>
+        Klick auf eine Überschrift sortiert danach, nochmal kehrt um, beim
+        dritten Mal gilt wieder die eigene Reihenfolge der Tabelle (neueste
+        zuerst). Der Pfeil in der Überschrift sagt, in welche Richtung.
+      </p>
+      <ul>
+        <li>Namen und Orte sortieren <strong>alphabetisch, in der Sprache, in der
+          du liest</strong> — wer auf Katalanisch liest, bekommt katalanische
+          Reihenfolge, nicht die der Sprache, die im Datensatz zufällig vorne
+          steht.</li>
+        <li>Mengen, Daten und Preise sortieren als <strong>Zahlen und
+          Daten</strong>, kleinste beziehungsweise älteste zuerst.</li>
+        <li>Zeilen ohne Wert in dieser Spalte sinken immer nach unten, in beide
+          Sortierrichtungen.</li>
+      </ul>
+      <p>
+        Sortiert wird auf dem Server, über <strong>alle Artikel, die zu deinen
+        Filtern passen</strong> — nicht nur über die Seite vor dir. „Das
+        billigste Isopropylalkohol, das wir haben“ ist ein Klick, egal wo in der Liste
+        es steht.
+      </p>
+    <!-- ============================================================== 09 -->
+    <section id="s9">
+      <h2><span class="n"></span>Die drei oberen Ebenen</h2>
+
+      <p>
+        Diese drei Seiten sind der Katalog. Wenn du ausschließlich Schnell
+        hinzufügen benutzt, wirst du sie vielleicht nie öffnen.
+      </p>
+
+      <h3>Konzepte</h3>
+      <p>
+        Eine Tabelle mit dem berechneten Bestand, dem Mindestbestand, der Zahl der
+        Analoggruppen und einem farbigen Punkt für den Zustand. Bearbeiten kannst
+        du Name (mehrsprachig), funktionale Einheit, Mindestbestand und Notizen.
+      </p>
+
+      <h3>Analoge</h3>
+      <p>
+        Eine Analoggruppe ist <strong>eine Menge von Dingen, die dir gleichwertig
+        dienen</strong>. Ihr Sinn zeigt sich, sobald ein Konzept mehrere davon hat:
+        „Nitrilhandschuhe“ mit einer Gruppe je Größe, oder „PLA-Filament“ mit einer
+        je Durchmesser. Innerhalb einer Gruppe wechselst du die Marke, ohne
+        nachzudenken; zwischen Gruppen nicht.
+      </p>
+
+      <h3>Varianten</h3>
+      <p>
+        Eine Variante ist <strong>ein konkretes Handelsprodukt</strong>: das, was
+        du tatsächlich kaufst. Hier stehen Marke, Lieferant, Katalognummer,
+        Format, Gebindegröße und -einheit, Reinheit und Konzentration.
+      </p>
+
+      <h3>Dinge im Baum verschieben</h3>
+      <p>
+        Du kannst eine Analoggruppe einem anderen Konzept zuordnen oder eine
+        Variante einer anderen Analoggruppe. Das Formular warnt dich vorher:
+      </p>
+      <div class="note warn">
+        <span class="lbl">Umhänge-Warnung</span>
+        <p>Dies verknüpft 2 Variante(n) und 7 Artikel neu mit dem Konzept.</p>
+      </div>
+      <p>
+        Und beim Speichern geschieht die Aktualisierung aller Nachfahren in einer
+        einzigen Transaktion: entweder wandert alles mit, oder nichts. Nie zeigen
+        Artikel in die eine und ihr Produkt in die andere Richtung.
+      </p>
+    </section>
+
+    <!-- ============================================================== 10 -->
+    <section id="s10">
+      <h2><span class="n"></span>Verlauf</h2>
+
+      <p>
+        Alles, was passiert, hinterlässt eine Spur — und die Spur wird
+        <strong>innerhalb derselben Transaktion</strong> geschrieben wie die
+        Änderung: wird die Änderung gespeichert, auch der Eintrag; schlägt sie
+        fehl, keines von beidem.
+      </p>
+      <p>Diese Aktionen werden festgehalten:</p>
+      <ul>
+        <li><code>created</code>, <code>updated</code> (ein Eintrag je geändertem
+          Feld, mit Wert davor und danach)</li>
+        <li><code>status_changed</code>, <code>moved</code>,
+          <code>quantity_adjusted</code></li>
+        <li><code>soft_deleted</code>, <code>restored</code></li>
+      </ul>
+      <p>
+        Auf der Seite <strong>Verlauf</strong> kannst du nach Entitätstyp, Aktion, Benutzer (als Administrator) und Kennung filtern. Jede Zeile nennt, wer es getan hat und wann.
+      </p>
+      <p>
+        Zusätzlich hat die Detailansicht jedes Artikels einen eigenen
+        Verlaufsreiter — dieselbe Information, gefiltert auf diesen Artikel:
+        nützlich für die Frage „und diese Spule, woher kam sie und wer hat sie
+        angefasst?“.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Nur anfügen</span>
+        <p>
+          Verlaufseinträge werden nie bearbeitet oder gelöscht, auch dann nicht,
+          wenn du die Entität löschst, auf die sie sich beziehen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 -->
+    <section id="s11">
+      <h2><span class="n"></span>Benutzer und Rechte</h2>
+
+      <p>
+        Es gibt vier Rollen, aufeinander aufbauend: jede kann alles, was die
+        vorige kann, plus ein wenig mehr.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Rolle</th><th>Darf</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th><span class="pill role">Betrachter</span></th>
+              <td>Sieht schlicht alles. Ändert nichts.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">Operator</span></th>
+              <td>+ Artikel anlegen, öffnen, aufbrauchen, verschieben, Mengen anpassen, Artikel bearbeiten.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">Manager</span></th>
+              <td>+ Konzepte, Analoggruppen, Varianten und Standorte anlegen und bearbeiten; Artikel löschen.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">Admin</span></th>
+              <td>+ Typen und Benutzer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Die Philosophie lautet <em>alles sichtbar, nicht alles änderbar</em>:
+        selbst ein Betrachter öffnet jede Datenseite; er bekommt nur die
+        Schaltflächen nicht. Und das ist nicht bloß Kosmetik — der Server prüft
+        die Berechtigung bei jeder Anfrage erneut. Die Schaltfläche zu verstecken
+        ist also nicht die Sicherheit, sondern nur gute Umgangsform.
+      </p>
+
+      <h3>Konten anlegen</h3>
+      <p>
+        Da die öffentliche Registrierung nach dem ersten Konto schließt, legt der
+        Administrator die übrigen unter <strong>Benutzer</strong> → <em>Neuer
+        Benutzer</em> an: Name, Benutzername, optionale E-Mail, temporäres
+        Passwort und Rolle. Die Rolle lässt sich später über die Auswahlliste in
+        der Tabelle ändern — mit einer Ausnahme: <strong>die eigene Rolle kannst
+        du nicht ändern</strong>, denn das wäre der einfachste Weg, sich selbst aus
+        der Verwaltung auszusperren.
+      </p>
+      <h3>Passwörter</h3>
+      <p>
+        Das Schlüsselsymbol neben deinem Namen in der Seitenleiste öffnet
+        <strong>Passwort ändern</strong>. Das aktuelle musst du eingeben; beim
+        Speichern werden deine anderen Geräte abgemeldet, dieses nicht.
+      </p>
+      <p>
+        Hat jemand seins vergessen, setzt eine Administratorin es unter
+        <strong>Benutzer</strong> → Schaltfläche <em>Passwort</em> in der
+        jeweiligen Zeile zurück. Das alte muss man dafür nicht kennen; die Person
+        wird überall abgemeldet und braucht das neue.
+      </p>
+
+      <p>Es geht auch über das Terminal:</p>
+      <pre><code>cd packages/api
+npx tsx --env-file-if-exists=.env scripts/create-user.mts \
+  seinbenutzername "das-passwort" "Sein Name" operator</code></pre>
+    </section>
+
+    <!-- ============================================================== 12 -->
+    <section id="s12">
+      <h2><span class="n"></span>Sprache und Farben</h2>
+
+      <h3>Drei Sprachen, zwei Schichten</h3>
+      <p>
+        Unten in der Seitenleiste steht <strong>EN / DE / CA</strong>. Das wechselt
+        die Oberflächentexte sofort und wird gemerkt.
+      </p>
+      <p>
+        Es gibt aber eine zweite Schicht: <strong>auch die Namen deiner eigenen
+        Daten sind mehrsprachig</strong>. Jedes Namensfeld (Konzepte, Analoge,
+        Varianten, Standorte, Typen, Bezeichnungen eigener Felder) hat die drei
+        Reiter. Englisch ist Pflicht und dient als Rückfallebene: schaust du die
+        App auf Deutsch an und etwas hat keinen deutschen Namen, siehst du den
+        englischen statt einer Lücke.
+      </p>
+
+      <h3>Die Farben</h3>
+      <p>
+        Das Paletten-Symbol neben den Sprachen öffnet die Auswahl. Das gesamte
+        Erscheinungsbild entsteht aus <strong>drei Farben</strong>:
+      </p>
+      <ul>
+        <li><strong>Primär</strong> — Schaltflächen, Links, aktive Navigation und
+          der Grundton der Hintergründe.</li>
+        <li><strong>Sekundär</strong> — Akzente und Chips.</li>
+        <li><strong>Akzent</strong> — warme Details.</li>
+      </ul>
+      <p>
+        Die dunklen Flächen sind mit der Primärfarbe eingefärbt; sie zu ändern
+        wechselt also nicht nur die Schaltflächen, sondern verwandelt die ganze
+        App. Es gibt vier fertige Paletten und eine Schaltfläche zurück zum
+        Original. Die Schrift auf Schaltflächen wird automatisch neu berechnet,
+        damit sie lesbar bleibt — egal ob du eine helle oder dunkle Farbe wählst.
+      </p>
+      <p>
+        Die Statusfarben — Rot für nicht vorrätig, Bernstein für Warnung, Grün für
+        in Ordnung — <strong>ändern sich nie</strong>. Eine Warnung muss wie eine
+        Warnung aussehen, auch wenn du dir ein rosa Theme baust.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Gut zu wissen</span>
+        <p>
+          Sprache und Farben werden im Browser gespeichert, nicht im Konto.
+          Meldest du dich an einem anderen Rechner an, siehst du wieder die
+          Voreinstellungen.
+        </p>
+      </div>
+
+      <h3>Das Logo des der Werkstatt</h3>
+      <p>
+        Ein <strong>Admin</strong> kann im selben Dialog das Logo des der Werkstatt
+        hinterlegen. Bild wählen — PNG, JPEG, WebP oder SVG — und es erscheint in
+        der Seitenleiste, auf der Anmeldeseite und auf der öffentlichen
+        Bestandstafel. Große Bilder werden vor dem Speichern automatisch
+        verkleinert; ein SVG bleibt unangetastet, weil es ohnehin skaliert.
+      </p>
+      <p>
+        Das Logo liegt <strong>in der Datenbankdatei</strong>, nicht in einem
+        Ordner daneben. Das ist Absicht: Die Sicherung dieses Produkts ist eine
+        Datei, und ein Logo, das woanders wohnt, wäre das Erste, was fehlt, wenn
+        jemand die Datenbank auf einen Stick kopiert.
+      </p>
+
+      <h3>Farben aus dem Logo gelesen</h3>
+      <p>
+        Sobald ein Bild geladen ist, liest die App die Farben heraus und bietet
+        <strong>drei Schemata</strong> an — <em>Ruhig</em>, <em>Kräftig</em> und
+        <em>Tief</em>. Dieselben Farben aus deinem Logo, dreimal anders
+        ausgeleuchtet; zum Ansehen mit der Maus darüber, zum Behalten klicken.
+      </p>
+      <p>
+        Übernommen wird der <strong>Farbton</strong> — das, was Leute als „unsere
+        Farbe“ erkennen — und dann angepasst, wie kräftig und wie hell er ist:
+        Die Oberflächen der App sind dunkel, und ein Marken-Marineblau würde roh
+        übernommen im Hintergrund verschwinden. Graue, schwarze, weiße und
+        durchsichtige Pixel zählen nicht mit; sie sind das Papier, nicht die
+        Marke.
+      </p>
+
+      <h3>Für das Werkstatt, oder nur für dich</h3>
+      <p>
+        Der Dialog hat zwei Hälften, und sie beantworten verschiedene Fragen.
+      </p>
+      <ul>
+        <li><strong>Für das ganze Werkstatt speichern</strong> (nur Admins) legt
+          Logo, Name und Farben in der Datenbank ab. Jeder Rechner im Haus
+          übernimmt sie, auch die, auf denen nie jemand diesen Dialog
+          öffnet.</li>
+        <li><strong>Nur auf diesem Rechner</strong> ist das bisherige Verhalten:
+          deine eigenen drei Farben, in diesem Browser gespeichert, und sie gehen
+          denen des der Werkstatt vor. Der Zurücksetzen-Knopf führt zum Aussehen des
+          der Werkstatt, nicht zum Auslieferungszustand.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================== 13 -->
+    <section id="s13">
+      <h2><span class="n"></span>Löschen und Wiederherstellen</h2>
+
+      <p>
+        Nichts, was du über die Oberfläche löschst, wird wirklich entfernt. Die
+        Zeile wird mit einem Löschzeitpunkt markiert, und jede Abfrage überspringt
+        sie. Ein versehentliches Löschen ist also kein Datenverlust.
+      </p>
+      <h3>Der Papierkorb</h3>
+      <p>
+        In der Seitenleiste, für Verwaltende und Administratoren, liegt der
+        <strong>Papierkorb</strong>: alles, was je gelöscht wurde, gleich welcher
+        Art, mit Datum und einer Schaltfläche <em>Wiederherstellen</em>. Alles
+        heißt alles — Artikel, Konzepte und Orte, aber ebenso Bedarfe,
+        Bestellungen, Lieferanten, Tätigkeiten und Umlaufgruppen.
+      </p>
+
+      <h3>Endgültig löschen</h3>
+      <p>
+        Manchmal soll die Zeile wirklich weg: ein Lieferant, der durch einen
+        Tippfehler entstanden ist, ein doppelter Typ, eine Testbestellung. Im
+        Papierkorb gibt es für Verwaltende und Administratoren
+        <strong>Endgültig löschen</strong> — Sie müssen die Kennung eintippen,
+        bevor irgendetwas passiert.
+      </p>
+      <div class="note stop">
+        <span class="lbl">Das hier ist wirklich endgültig</span>
+        <p>
+          Es gibt kein Zurück, und die App verweigert es, solange noch etwas auf
+          die Zeile zeigt — sie sagt Ihnen, was. Was bleibt, ist die
+          <strong>Historie</strong>: dass die Sache existiert hat und dass
+          jemand sie vernichtet hat, wird nie entfernt.
+        </p>
+      </div>
+      <p>
+        Die einzige Regel lautet: <strong>Eltern kommen vor Kindern zurück</strong>.
+        Eine Variante kann nicht in eine Analoggruppe zurück, die selbst noch
+        gelöscht ist — und die Liste sagt es dir, bevor du es versuchst: statt der
+        Schaltfläche steht dort <em>„zuerst Analog wiederherstellen“</em>. Arbeite
+        von oben nach unten, und alles landet wieder an seinem Platz, mit
+        automatisch neu berechnetem Bestand.
+      </p>
+
+      <h3>Kaskadierendes Löschen</h3>
+      <p>
+        Löschst du etwas, an dem noch etwas hängt, weigert sich die App nicht
+        einfach: sie zeigt dir genau, was im Weg steht, und bietet an,
+        <strong>alles auf einmal mitzunehmen</strong>.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Beispiel</span>
+        <p>Beim Löschen verschwindet außerdem: <strong>1 × Analoge · 2 × Varianten · 3 × Artikel</strong></p>
+      </div>
+      <p>
+        Die Kaskade läuft in einer einzigen Transaktion, und alles landet im
+        Papierkorb, von wo es der Reihe nach zurückgeholt werden kann. Die eine
+        bewusste Ausnahme sind Standorte: ein Regal zu löschen löscht
+        <strong>nie</strong>, was darauf steht. Eine Standortkaskade nimmt nur
+        leere Unterstandorte mit; liegen dort Artikel, verschiebe sie zuerst.
+      </p>
+    </section>
+
+    <!-- ============================================================== 14 -->
+    <section id="s14">
+      <h2><span class="n"></span>Sicherungen</h2>
+
+      <p>
+        Die gesamte Datenbank ist <strong>eine einzige Datei</strong>. Das ist die
+        große Bequemlichkeit dieses Entwurfs: eine Sicherung ist eine Kopie einer
+        Datei.
+      </p>
+      <ul>
+        <li>In der Entwicklung: <code>packages/api/data/inventory.db</code></li>
+        <li>Unter Docker: <code>inventory-data/inventory.db</code> im Volume</li>
+      </ul>
+      <p>
+        Daneben findest du <code>inventory.db-wal</code> und <code>inventory.db-shm</code> —
+        Arbeitsdateien von SQLite. Am sichersten ist es, <strong>den Server vor dem
+        Kopieren zu beenden</strong>; dann sind offene Änderungen in der
+        Hauptdatei eingearbeitet und das Kopieren von <code>inventory.db</code> genügt.
+        Kopierst du im laufenden Betrieb, nimm alle drei mit.
+      </p>
+      <p>
+        Zurückspielen geht umgekehrt: beenden, Datei ersetzen, wieder starten.
+      </p>
+    </section>
+
+    <!-- ============================================================== 15 -->
+    <section id="s15">
+      <h2><span class="n"></span>Die API</h2>
+
+      <p>
+        Alles, was die Oberfläche tut, tut sie über eine ganz normale REST-API —
+        und die dokumentiert sich selbst. Öffne <code>/api/docs</code> —
+        <code>http://localhost:3001/api/docs</code> in der Entwicklung, oder
+        <code>:3000</code> unter Docker — und du hast die vollständige Liste der
+        Operationen samt Parametern und kannst sie gleich dort ausprobieren.
+      </p>
+      <p>
+        Das ist für dreierlei gut: Massenerfassung automatisieren (etwa hundert
+        Artikel aus einer Tabelle), ein anderes Werkzeug anbinden, oder das Projekt
+        jemandem übergeben, der es weiterführen soll. Fehler haben immer dieselbe
+        Form:
+      </p>
+      <pre><code>{ "error": { "code": "concept_in_use",
+             "message": "Cannot delete: 1 analogous group(s)…" } }</code></pre>
+    </section>
+
+    <!-- ============================================================== 16 -->
+    <section id="s17">
+      <h2><span class="n"></span>Massenein- und -ausgabe</h2>
+
+      <p>
+        Zwei Werkzeuge auf der Seite <strong>Artikel</strong> für die Momente, in
+        denen Stück für Stück keinen Sinn ergibt.
+      </p>
+
+      <h3>CSV exportieren und importieren</h3>
+      <p>
+        <em>Export</em> lädt alle Artikel als CSV herunter, mit Status, Standort,
+        Mengen, Preis und eigenen Feldern. Öffnet sich in Excel, LibreOffice oder
+        was auch immer du benutzt.
+      </p>
+      <p>
+        <em>Import</em> (Rolle Manager) geht den umgekehrten Weg, und zwar in zwei
+        Schritten: beim Wählen der Datei liest der Server sie,
+        <strong>ohne etwas zu schreiben</strong>, und sagt dir, wie viele Zeilen
+        er verstanden hat und welche scheitern würden und warum. Erst wenn du
+        <em>Import</em> drückst, wird geschrieben — und zwar
+        <strong>alles oder nichts</strong>: eine Tabelle mit einer schlechten
+        Zeile importiert gar nichts.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Der Kniff</span>
+        <p>
+          Exportiere zuerst, auch wenn du noch nichts hast: so siehst du die
+          erwarteten Spalten. Das Minimum ist <code>type</code>, dazu
+          <code>variant</code>, wenn es an den Katalog gebunden sein soll.
+          Standorte gibst du über ihren Code an (<code>L01R01Z02</code>).
+        </p>
+      </div>
+
+      <h3>Etiketten mit QR-Code</h3>
+      <p>
+        Jede Zeile der Artikeltabelle hat ein Kästchen. Hake ein paar an, und es
+        erscheint eine Leiste mit <em>Etiketten drucken</em>.
+      </p>
+      <p>
+        Jedes Etikett trägt die Kennung, den Namen, den Standort und einen
+        <strong>QR-Code, der auf diesen Artikel in deiner App zeigt</strong>.
+        Scannst du ihn mit der Handykamera, öffnet sich seine Seite: so weißt du,
+        was in einer Kiste liegt, ohne sie zu öffnen. Beim Drucken verschwindet
+        die ganze Oberfläche, und nur der Etikettenbogen landet auf dem Papier, in
+        Schwarzweiß und ohne dass ein Etikett zwischen zwei Seiten zerrissen wird.
+      </p>
+    </section>
+
+    
+
+
+    <!-- ============================================================== 18 -->
+    <section id="s18">
+      <h2><span class="n"></span>Wie genau was verfolgt wird</h2>
+
+      <p>
+        Nicht alles im Werkstatt verdient dieselbe Aufmerksamkeit. Deshalb trägt
+        jedes <strong>Konzept</strong> seine eigene Verfolgungstiefe, und ein
+        Werkstatt fährt problemlos alle drei gleichzeitig.
+      </p>
+
+      <h3>Stufe 1 — manuell</h3>
+      <p>
+        Sie buchen Anbruch und Verbrauch, mehr nicht. Sie setzen Ihre eigene
+        Schwelle (<em>melde dich, wenn noch 5 Schachteln da sind</em>).
+        <strong>Das ist eine vollwertige Art, die App zu nutzen</strong>, keine
+        Zwischenstufe.
+      </p>
+
+      <h3>Stufe 2 — geschätzter Verbrauch</h3>
+      <p>
+        Sie tragen ein, was Sie pro Monat zu verbrauchen glauben. Das gibt es,
+        damit die App am ersten Tag — ganz ohne Historie — beantworten kann:
+        <em>wie lange reicht, was ich habe?</em>
+      </p>
+      <p>
+        Sobald echte Verbräuche vorliegen, übernimmt die Messung — aber
+        <strong>Ihre Schätzung wird nie gelöscht</strong>. Sie steht daneben:
+      </p>
+      <blockquote>
+        Ihre Angabe: <s>800</s>/Monat. Gemessen: 500/Monat (3 Schachteln in
+        2 Monaten). Verwendet: 500.
+      </blockquote>
+      <p>
+        Dieser Moment ist Absicht. Die eigene Schätzung von der Wirklichkeit
+        korrigiert zu sehen, macht die Zahl glaubwürdig.
+      </p>
+
+      <h3>Stufe 3 — Tätigkeiten verbrauchen es</h3>
+      <p>
+        Sie geben an, was jede Tätigkeit verbraucht; beim Erfassen
+        <strong>nimmt die App diese Menge aus dem angebrochenen Gebinde</strong>.
+ erklärt das.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Die Regel, die nie bricht</span>
+        <p>
+          Eine Tätigkeit bewegt die Menge. <strong>Nur ein Mensch erklärt ein
+          Gebinde für leer.</strong> Die App sagt Ihnen, dass eine Flasche leer
+          sein müsste; sie sagt es nie an Ihrer Stelle — denn der Unterschied
+          zwischen dem, was das Rezept vorhersagte, und dem, was wirklich in der
+          Flasche war, ist die wertvollste Zahl, die diese App erzeugt.
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="lbl">Das hat sich im August 2026 geändert</span>
+        <p>
+          Frühere Fassungen dieses Handbuchs sagten, keine Schätzung bewege je
+          den Bestand. Das war falsch — und zwar so falsch, dass Sie die Arbeit
+          doppelt machen mussten. <em>„Ich habe sieben pH-Messungen gemacht“</em>
+          zu erfassen ist keine Vermutung: da sagt ein Mensch, was passiert ist.
+          Die Vermutung ist das <em>Rezept</em> — 5 mL je Messung — und die App
+          hält beides auseinander. Genau das misst der Abgleich in.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 19 -->
+    <section id="s19">
+      <h2><span class="n"></span>Bedarf</h2>
+
+      <p>
+        Ein Bedarf ist <em>„wir brauchen Holzleim“</em>. Mehr nicht. Es steckt
+        keine Kaufentscheidung darin: wer Holzleim braucht, muss nicht wissen
+        welche Marke — deshalb wird der Bedarf auf dem <strong>Konzept</strong>
+        gemeldet.
+      </p>
+
+      <h3>Wo er entsteht</h3>
+      <p>
+        Der beste Ort, um etwas anzufordern, ist nicht die Bedarfsseite: es ist
+        die Sekunde, in der Sie merken, dass es leer ist — mit der leeren Flasche
+        in der Hand. Deshalb öffnet die App <strong>beim Verbrauchen des letzten
+        Artikels eines Konzepts</strong> das Bedarfsformular von selbst, mit
+        vorausgefülltem Konzept.
+      </p>
+      <p>
+        Ebenso über <em>Bedarf → Bedarf melden</em> oder aus der Prognose
+        mit einem Klick für eine ganze Liste.
+      </p>
+
+      <h3>Was ausgefüllt wird</h3>
+      <ul>
+        <li><strong>Was</strong> und <strong>wie viel</strong>. Pflicht.</li>
+        <li><strong>Dringlichkeit</strong>: normal oder blockierend. Bewusst nur
+          zwei Stufen — bei fünf ist nach einem Monat alles dringend.</li>
+        <li>Eine <strong>Notiz</strong>, wenn Sie dem Einkauf etwas mitgeben
+          wollen.</li>
+      </ul>
+
+      <h3>Wenn es schon jemand gemeldet hat</h3>
+      <p>
+        Beim Auswählen des Konzepts sagt die App, falls bereits ein offener
+        Bedarf besteht, und bietet <em>Mich dazunehmen</em> statt einer zweiten
+        Zeile an.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Warum</span>
+        <p>
+          Drei gleiche Meldungen sind keine Information; eine Meldung mit drei
+          Personen dahinter schon. Sie zeigt die <strong>Intensität</strong> des
+          Bedarfs, nicht nur, dass er existiert.
+        </p>
+      </div>
+
+      <h3>Was danach passiert</h3>
+      <p>
+        Der Bedarf wandert von <em>Offen</em> über <em>In Bestellung</em> und
+        <em>Bestellt</em> zu <em>Angekommen</em>, und wer ihn gemeldet hat, sieht
+        das in der eigenen Liste, ohne jemanden fragen zu müssen. Ohne Mailserver
+        ist das die Rückmeldung.
+      </p>
+    </section>
+
+
+      <h3>Auswählen, was wirklich bestellt wird</h3>
+      <p>
+        Wenn Anfragen zu einer Position werden, öffnet das Formular mit der
+        Antwort, die es schon herleiten kann:
+      </p>
+      <ul>
+        <li>Hat die anfragende Person ein bevorzugtes Produkt genannt, ist
+          <strong>dieses ausgewählt</strong> und als ihr Vorschlag markiert. Ihre
+          Angabe stand längst in der Anfrage; es gibt keinen Grund, sie noch
+          einmal zu fragen.</li>
+        <li>Sonst ist das ausgewählt, was <strong>beim letzten Mal</strong>
+          gekauft wurde, zum Preis von damals.</li>
+        <li>Bereits gekaufte Produkte stehen oben; solche, die bloß existieren,
+          stehen unter <em>Nie bestellt</em> — damit „das Übliche“ und „haben wir
+          erfasst“ nie verwechselt werden.</li>
+      </ul>
+
+      <h3>Ein Produkt an Ort und Stelle benennen</h3>
+      <p>
+        Ein Konzept, das nie jemand bestellt hat, hat gar kein Produkt unter sich
+        — und genau dieses Konzept hat jemand gerade angefragt. <strong>Neues
+        Produkt</strong> lässt dich es hier benennen: wie der Lieferant es nennt,
+        die Marke, die Packungsgröße. Es entsteht als echte Variante unter diesem
+        Konzept; beim nächsten Mal ist es ein Klick, und der Preis, den du heute
+        einträgst, ist der „letzte Preis“ von morgen.
+      </p>
+
+      <h3>Die Menge, und wann sie sich nicht ausrechnen lässt</h3>
+      <p>
+        Ein gewähltes Produkt schlägt eine Menge vor: das Angefragte, geteilt
+        durch die Packungsgröße, aufgerundet. Die Rechnung wird gezeigt, nicht
+        versteckt — „du brauchst 500 mL, die Packung hat 1 L, also 1“.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Verschiedene Einheiten</span>
+        <p>
+          Steht die Anfrage in <strong>mL</strong> und die Packung in
+          <strong>L</strong>, führt die App diese Division nicht aus. Sie sagt es
+          und lässt die Menge in Ruhe — 500 durch 1 zu teilen und fünfhundert
+          Flaschen zu bestellen wäre eine viel schlechtere Antwort, als dich
+          hinschauen zu lassen.
+        </p>
+      </div>
+    <!-- ============================================================== 20 -->
+    <section id="s20">
+      <h2><span class="n"></span>Bestellungen: kaufen und annehmen</h2>
+
+      <div class="note tip">
+        <span class="lbl">Wo die beiden Hälften sich berühren</span>
+        <p>
+          Eine Anfrage nennt ein <strong>Konzept</strong> — „Holzleim, 500 mL“ —,
+          weil wer es braucht nicht wissen muss, welche Marke. Eine Bestellung
+          nennt ein <strong>Produkt</strong>, denn das ist es, was ein Lieferant
+          tatsächlich schicken kann. Die Bestellposition ist die Stelle, an der
+          jemand diese Lücke überquert, und das Formular ist so gebaut, dass man
+          sie einmal überquert und es gemerkt wird.
+        </p>
+      </div>
+
+      <p>
+        Eine <strong>Bestellung</strong> geht an einen Lieferanten. Sie läuft in
+        drei Schritten: zusammenstellen, bestellen, annehmen.
+      </p>
+
+      <h3>Zusammenstellen</h3>
+      <p>
+        <em>Bestellungen → Neue Bestellung</em>, Lieferant wählen, dann
+        Positionen hinzufügen. Jede Position ist der Schritt vom
+        <strong>Konzept zur Variante</strong>: sie kommt als <em>„Holzleim,
+        500 mL“</em> herein und muss als <em>„1 × 1-L-Flasche der Marke X,
+        41,80 €“</em> hinausgehen.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Die Bestellnummer kommt später</span>
+        <p>
+          Hier wird nicht danach gefragt, weil es sie noch nicht gibt: der Shop
+          gibt sie Ihnen <em>nach</em> der Bestellung. Gefragt wird beim Schritt
+          <em>als bestellt markieren</em> — dann haben Sie sie auch.
+        </p>
+      </div>
+      <p>
+        <strong>Lieferanten werden gemerkt.</strong> Sie tippen los, und die App
+        schlägt die vor, die Sie schon nutzen, mit der Zahl der Bestellungen und
+        dem zuletzt gezahlten Preis. Ein Name, der sich nur in der
+        Groß­schreibung unterscheidet, legt keinen zweiten Shop an:
+        <em>SensLab</em> und <em>SensLAb</em> sind ein Lieferant mit einer
+        Preishistorie.
+      </p>
+
+      <h3>Bedarfe hereinholen</h3>
+      <p>
+        Ein Bestellentwurf zeigt die <strong>offenen Bedarfe</strong>, nach
+        Konzept gruppiert und mit den Menschen dahinter. Haken Sie an, was diese
+        Bestellung abdeckt, und daraus werden Positionen — schon mit der
+        angeforderten Menge.
+      </p>
+      <p>
+        Genau dafür sind Bedarfe da: jemand hat gefragt, Sie kaufen, und keiner
+        von beiden musste eine E-Mail schreiben. Was Sie nicht anhaken, bleibt
+        für die nächste Bestellung offen.
+      </p>
+      <p>
+        Der Bildschirm macht das fast automatisch, denn meist wird dasselbe
+        nachgekauft: er zeigt, <strong>was Sie früher gekauft haben</strong>, mit
+        Preis und Datum, und ein Klick füllt Variante und Preis. Passt das Gebinde
+        nicht zur Menge, zeigt er die Rechnung —
+        <em>benötigt 500 mL · Gebinde 1 L · Menge 1</em> — damit die Rundung
+        sichtbar ist statt still zu geschehen.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Der Preis im Moment der Entscheidung</span>
+        <p>
+          Weicht der eingetragene Preis vom zuletzt bezahlten ab, sagt es die
+          Position sofort: <em>+12 % seit der letzten Bestellung</em>. Die
+          Information dort, wo entschieden wird — nicht in einem Bericht, den
+          niemand öffnet.
+        </p>
+      </div>
+
+      <h3>Bestellen</h3>
+      <p>
+        <em>Als bestellt markieren</em> sperrt die Bestellung für Änderungen und
+        setzt alle zugehörigen Bedarfe auf <em>Bestellt</em>. Ab hier zählt die
+        App die Tage bis zur Lieferung.
+      </p>
+
+      <h3>Annehmen — der Teil, der alles rechtfertigt</h3>
+      <p>
+        Die Kiste kommt, Sie öffnen die Bestellung und geben je Position an, wie
+        viel gekommen ist. Beim Bestätigen <strong>legt die App die Artikel
+        selbst an</strong>: mit Kennung, Preis, Ort und Haltbarkeit. Zwölf
+        Flaschen, ohne zwölf Artikel zu tippen.
+      </p>
+      <ul>
+        <li><strong>Weniger gekommen?</strong> Normal. Die Position bleibt für den
+          Rest offen, und es gibt das Kästchen <em>der Rest kommt nicht
+          mehr</em>, um sie zu schließen.</li>
+        <li><strong>Etwas anderes geschickt?</strong> Haken bei <em>es kam etwas
+          anderes</em> und benennen, was ankam. Die Artikel entstehen aus dem
+          Produkt, das <strong>tatsächlich geliefert wurde</strong> — und wird
+          bei Bedarf gleich angelegt.</li>
+        <li><strong>Haltbarkeit</strong>: eine je Position, nicht zwölf
+          Datumsfelder.</li>
+      </ul>
+
+      <div class="note warn">
+        <span class="lbl">Was nie angetastet wird</span>
+        <p>
+          Eine Position hat <strong>zwei Seiten</strong>: das Bestellte und das
+          Gelieferte. Die erste wird nie überschrieben. <em>5 von A</em> in
+          <em>4 von B</em> zu ändern würde genau die interessante Information
+          vernichten.
+        </p>
+      </div>
+
+      <h3>Was von selbst herausfällt</h3>
+      <p>
+        Ohne jede Konfiguration sagt Ihnen die Bestellseite mit der Zeit das
+        <strong>Verhalten jedes Lieferanten</strong>: welcher Anteil der
+        Positionen unterliefert wird und wie viele Tage er im Mittel braucht.
+        Diese zweite Zahl ist genau das, was die Prognose braucht.
+      </p>
+    </section>
+
+    <!-- ============================================================== 21 -->
+    <section id="s21">
+      <h2><span class="n"></span>Prognose</h2>
+
+      <p>Die Seite ist kein Diagramm. Sie ist ein Satz und ein Knopf:</p>
+      <blockquote>
+        6 Dinge gehen aus, bevor Nachschub da sein kann. &nbsp; [ Alles anfordern ]
+      </blockquote>
+      <p>
+        Sie haken an, was Sie wollen, oder nehmen alles — daraus werden Bedarfe
+. Damit schließt sich der Kreis.
+      </p>
+
+      <h3>Woher die Zahlen kommen</h3>
+      <ul>
+        <li>Der <strong>Verbrauch</strong> wird aus <em>echten Verbräuchen</em>
+          gemessen, nicht aus Tätigkeiten. Die Prognose funktioniert also auch,
+          wenn nie jemand eine Tätigkeit erfasst — und wird besser, wenn doch.</li>
+        <li>Die <strong>Lieferzeit</strong> lernt sie aus Ihren eigenen
+          Bestellungen: aus den Tagen zwischen Bestellen und Annehmen. Ohne
+          Historie nimmt sie 14 Tage an und sagt das auch.</li>
+      </ul>
+
+      <h3>Ehrlichkeit</h3>
+      <p>
+        Mit drei Verbräuchen in drei Monaten lässt sich nichts vorhersagen, und
+        die App sagt <em>noch zu wenig Historie</em>, statt eine Zahl zu
+        erfinden. Wenn genug da ist, zeigt sie ihren Rechenweg:
+      </p>
+      <blockquote>4 Flaschen in 90 Tagen · 2 übrig · etwa 45 Tage</blockquote>
+    </section>
+
+    <!-- ============================================================== 22 -->
+    <section id="s22">
+      <h2><span class="n"></span>Tätigkeiten und Realkosten</h2>
+
+      <p>
+        Eine <strong>Tätigkeit</strong> ist etwas, das Sie tun und das Material
+        verbraucht: eine Analyse, ein Druckauftrag, eine Vorbereitung. Sie geben
+        an, was sie verbraucht — <em>ICP-Vorbereitung → 3 Röhrchen, 10
+        Spitzen</em> — und danach müssen Sie nur noch sagen, wie oft.
+      </p>
+
+      <h3>Erfassen</h3>
+      <p>
+        Drei Klicks: welche Tätigkeit, wie oft, speichern. Wäre es aufwendiger
+        als der Eintrag ins Werkstattbuch, täte es niemand.
+      </p>
+      <p>
+        Beim Erfassen <strong>nimmt die App das Material aus dem angebrochenen
+        Gebinde</strong> jedes Konzepts im Rezept. Keine Notiz neben dem
+        Bestand — der Bestand selbst. Ist bei einem Konzept <strong>nichts
+        angebrochen</strong>, sagt sie das, statt zu schweigen: der Verbrauch hat
+        dann keinen Ort.
+      </p>
+      <p>
+        Welches Gebinde? Das älteste, das angebrochen ist <em>und noch etwas
+        enthält</em>. Ein Gebinde mit Stand null wird übersprungen, sobald ein
+        anderes angebrochenes die Buchung aufnehmen kann — so schluckt eine
+        Flasche, die jemand offen liegen ließ, keinen Monat Verbrauch, während
+        daneben eine andere offen steht.
+      </p>
+      <div class="note">
+        <span class="lbl">Wenn die leere die einzige angebrochene ist</span>
+        <p>
+          Dann nimmt sie die Buchung doch auf — die App kann die nächste Flasche
+          nicht für Sie anbrechen —, aber nicht stillschweigend: sie meldet
+          <em>laut Rezept müsste das leer sein</em> jedes Mal, bis Sie es
+          bestätigen. Der Bestand bleibt bei null, die Überziehung zählt darunter
+          weiter, und die Differenz wird festgehalten, sobald Sie schließen.
+        </p>
+      </div>
+
+      <h3>Zwei Zahlen je Gebinde</h3>
+      <p>
+        Jedes angebrochene Gebinde trägt zwei Zahlen, und sie auseinanderzuhalten
+        ist es, was alles Weitere trägt:
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Zahl</th><th>Was sie ist</th><th>Untergrenze</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Rest</strong></td>
+              <td>Was die App in der Flasche vermutet. Das zählt als Bestand.</td>
+              <td>Nie unter null</td>
+            </tr>
+            <tr>
+              <td><strong>Belastet</strong></td>
+              <td>Alles, was die Rezepte je herausgerechnet haben.</td>
+              <td>Zählt über leer hinaus weiter</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Wenn das Rezept sagt, es müsste leer sein</h3>
+      <p>
+        Erreicht die belastete Menge den Inhalt des Gebindes, <strong>hebt die
+        App die Hand</strong>: <em>laut Rezept müsste supplyAA002 leer sein —
+        stimmt das?</em> Sie verbraucht nie von selbst. Sie entscheiden, mit der
+        Flasche in der Hand.
+      </p>
+      <p>
+        Und sie hört nicht auf zu zählen, während Sie entscheiden. Arbeiten Sie
+        weiter und die Rezepte belasten über leer hinaus, ist das kein Fehler,
+        über den man streiten müsste: die Flasche hat <strong>weniger</strong>
+        gereicht als das Rezept sagte. Sobald Sie sie als leer markieren, hält
+        die App die Differenz mit Vorzeichen fest:
+      </p>
+      <blockquote>
+        Rezepte sagten 500 mL · die Flasche fasste 500 mL · geschlossen bei 540 →
+        <strong>40 mL zu wenig</strong><br>
+        Rezepte sagten 500 mL · geschlossen mit 60 Rest →
+        <strong>60 mL zu viel</strong>
+      </blockquote>
+      <div class="note tip">
+        <span class="lbl">Warum niemand nach einer Zahl gefragt wird</span>
+        <p>
+          Weil Sie sie nicht kennen. Niemand misst den letzten Zentimeter einer
+          Flasche, bevor er sie wegwirft. Was Sie wissen, ist <em>sie ist jetzt
+          leer</em> — und dieser eine Klick reicht der App, um den Rest
+          auszurechnen.
+        </p>
+      </div>
+
+      <h3>Nicht zugeordneter Verbrauch</h3>
+      <p>
+        Hier hört es auf, ein gewöhnliches Inventar zu sein. Stellen Sie sich
+        eine Schachtel mit 400 Spitzen vor, ein Rezept mit 10 je Analyse und 30
+        erfasste Analysen: die Tätigkeiten erklären 300 — aber die Schachtel ist
+        leer. Die übrigen <strong>100</strong> sind nicht zugeordneter Verbrauch.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Warum wir es nicht „Verschwendung“ nennen</span>
+        <p>
+          Weil es nicht behauptet, sie seien verloren gegangen: nur, dass keine
+          Tätigkeit sie beansprucht hat. Oft heißt es schlicht, dass <em>ein
+          Rezept fehlt</em> — nützliche Information, kein Vorwurf.
+        </p>
+      </div>
+      <p>
+        Dieser Rest wird außerdem <strong>je Tag gezählt, den das Gebinde
+        offen war</strong>. Eine Schachtel, die 40 Tage offen stand und über die
+        Rezepte hinaus 100 Spitzen verlor, verlor zweieinhalb am Tag — an Hände,
+        die nichts erfasst haben. Diese gemessene Rate steht neben der
+        Vorhersage.
+      </p>
+      <div class="note">
+        <span class="lbl">Was sie nicht tut</span>
+        <p>
+          Sie steuert nicht die <em>„verbleibenden Bestandstage“</em>. Diese
+          Zahl stammt aus echten Verbräuchen — tatsächlich geleerten Flaschen —,
+          denn die Vorhersage muss auch in einem Werkstatt funktionieren, das nie
+          eine Tätigkeit erfasst. Die Rate steht als zweite Meinung
+          daneben, und sie macht aus theoretischen Kosten die realen weiter
+          unten.
+        </p>
+      </div>
+      <div class="note tip">
+        <span class="lbl">Warum je Tag und nicht je Tätigkeit</span>
+        <p>
+          Weil eine Verteilung auf die Tätigkeiten unterstellt, sie hätten es
+          verursacht — das Einzige, wovon Sie sicher wissen, dass es nicht
+          stimmt: sie haben ja bereits angegeben, was sie genommen haben. Eine
+          Rate je offenem Tag unterstellt nur, dass Zeit vergangen ist, und das
+          ist wahr.
+        </p>
+      </div>
+      <p>
+        Für die <strong>Kosten</strong> wird derselbe Rest den Tätigkeiten
+        zugerechnet, die dieses Konzept verbrauchen, gewichtet nach Menge — denn
+        Kosten müssen irgendwo landen. Daraus ergeben sich <strong>zwei Kosten je
+        Tätigkeit</strong>, immer nebeneinander:
+      </p>
+      <ul>
+        <li><strong>Theoretisch</strong> — Rezept mal Preis.</li>
+        <li><strong>Real</strong> — theoretisch plus der eigene Anteil am nicht
+          Zugeordneten.</li>
+      </ul>
+      <p>
+        Das Verhältnis (<em>läuft mit 1,33× des Theoretischen</em>) ist ein echtes
+        Maß dafür, wie der Prozess läuft. Über Monate ist es mehr wert als das
+        Inventar selbst.
+      </p>
+
+      <h3>Ein Rezept ändern</h3>
+      <p>
+        Ändern Sie ein Rezept, <strong>schreibt die App die Vergangenheit nicht
+        um</strong>: sie schließt die gültige Version und öffnet eine neue mit
+        Datum. Der März wird weiter mit dem März-Rezept gerechnet.
+        <em>Rezepthistorie</em> zeigt alle Versionen — nebenbei eine Dokumentation
+        davon, wann sich Ihre Verfahren geändert haben, von niemandem
+        geschrieben.
+      </p>
+    </section>
+
+    <!-- ============================================================== 23 -->
+    <section id="s23">
+      <h2><span class="n"></span>Umlaufbestand und Zählung</h2>
+
+      <p>
+        Mischbecher, Farbtöpfe oder Schalen sind weder Verbrauchsmaterial noch
+        Geräte: <strong>sie werden ausgegeben und kommen zurück</strong>. Wirklich
+        verbraucht wird nur, was zerbricht.
+      </p>
+      <p>
+        Deshalb sind sie keine Artikel. Ein Mischbecher trägt keine Nummer, und
+        niemand verfolgt eines einzeln. Wissen müssen Sie, <strong>wie viele
+        sauber sind</strong> und <strong>wie viele pro Monat verloren
+        gehen</strong> — beides braucht keine Einzelidentität.
+      </p>
+
+      <h3>Zwei Granularitäten</h3>
+      <ul>
+        <li><strong>Nur gezählt</strong> — die Gläser. Sie wissen, wie viele
+          verfügbar, im Einsatz und schmutzig sind. Nie welches.</li>
+        <li><strong>Gekennzeichnet</strong> — die Schalen mit Nummer. Jedes hat
+          eigenen Zustand und Ort.</li>
+      </ul>
+
+      <h3>Die Zählung ist das Messgerät</h3>
+      <p>
+        Niemand wird je <em>„mir ist ein Glas heruntergefallen“</em> erfassen.
+        Also driftet die Zahl immer nach oben. Die Korrektur ist: Schublade auf
+        und zählen.
+      </p>
+      <blockquote>
+        Erwartet 260 · gezählt 248 → <strong>12 seit der letzten Zählung
+        verloren</strong>
+      </blockquote>
+      <p>
+        Diese Differenz <strong>ist</strong> Ihr Bruch, gemessen. Zwei Zählungen
+        ergeben eine Monatsrate — und das ist das Einzige, was ein
+        Umlaufbestandsgegenstand zum Einkauf beiträgt: Sie kaufen im Takt des
+        Bruchs, <strong>ohne dass jemand je Bruch melden muss</strong>.
+      </p>
+
+      <h3>Die Umlaufgruppe aus dem Schrank auffüllen</h3>
+      <p>
+        Die Gläser im Umlauf sind nicht die einzigen, die Sie besitzen. Da ist
+        auch die ungeöffnete 250er-Schachtel im Schrank — und <strong>diese
+        Schachtel ist ein ganz normaler Artikel</strong>. Sie kaufen sie, nehmen
+        sie in einer Bestellung an, und sie taucht in der Vorhersage auf wie
+        alles andere.
+      </p>
+      <p>
+        Wird der Umlauf knapp, öffnen Sie die Gruppe und nutzen <em>In den
+        Umlauf</em>: Sie sagen wie viele, und die App nimmt sie aus der Schachtel
+        und legt sie in die Gruppe.
+      </p>
+      <blockquote>
+        60 in den Umlauf · <strong>440 bleiben im Schrank</strong>
+      </blockquote>
+      <p>
+        Das schließt den Kreis. Gläser gehen kaputt, der Umlauf sinkt, der
+        Schrank füllt ihn auf, der Schrank wird knapp, und der Einkauf sieht es —
+        ohne dass die Umlaufgruppe je wissen müsste, was Kaufen ist.
+      </p>
+
+      <h3>Wo eine Kit ist</h3>
+      <p>
+        Hat ein Schale nummerierte Plätze, können Sie Kits hineinstellen. Und
+        hier eine wichtige Entscheidung: <strong>eine Kit hat keinen eigenen
+        Ort</strong>. Ihre Position ist die des Schalen. Bewegen Sie das Schale, und
+        vierzig Kits folgen, ohne dass etwas aktualisiert wird — es kann nie
+        passieren, dass das Schale im Regal steht, die Kits sich aber im Werkstatt
+        wähnen.
+      </p>
+    </section>
+
+    <!-- ============================================================== 24 -->
+    <section id="s24">
+      <h2><span class="n"></span>Die Log-Brücke</h2>
+
+      <p>
+        Gibt es im Werkstatt ein System, das ohnehin weiß, was geschieht (etwa ein
+        Maschinensteuerung), und schreibt es Zeile für Zeile mit, kann die App das lesen und in
+        Lagerbewegungen übersetzen.
+      </p>
+      <p>
+        Die Verbindung ist <strong>einseitig</strong>: das Maschinensteuerung sagt, was
+        passiert ist, das Inventar entscheidet, was das bedeutet. Es antwortet
+        nie zurück.
+      </p>
+
+      <h3>1. Die Zeilenform — einmal eingerichtet</h3>
+      <p>
+        <em>Log-Brücke → Log verbinden</em>. Sie fügen <strong>eine echte
+        Zeile</strong> ein und sagen, was welcher Teil ist:
+      </p>
+      <pre><code>12:40:32  Mostra_DMK3-21099-2621703602  RegistreFeinaK
+   Zeit          Objekt und Kennung               Ereignis</code></pre>
+      <p>
+        Die App leitet das Muster ab und zeigt es auf Ihre eingefügten Zeilen
+        angewandt. <strong>Sie schreiben nie einen regulären Ausdruck.</strong>
+        Danach wird das nicht mehr angefasst.
+      </p>
+
+      <h3>2. Das Ereignis-Wörterbuch — die lebende Konfiguration</h3>
+      <p>
+        Hier sagen Sie, was jeder Name bewirkt. <em>RegistreFeinaK</em> →
+        <em>nimm ein Glas aus dem Bestand</em>. Da Sie die Namen selbst vergeben,
+        werden es im ganzen Werkstatt dreißig oder vierzig sein.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Mengen stehen hier, nie im Log</span>
+        <p>
+          Ein Ereignis, das drei Gläser nimmt, ist ein <strong>anderes Ereignis
+          mit eigenem Namen</strong> — keine Zahl in der Zeile. Genau das erlaubt
+          es Ihnen, ein falsches Rezept zu korrigieren und
+          <strong>die ganze Historie neu einzulesen</strong>. Stünde die Menge in
+          den Zeilen, bliebe die Vergangenheit für immer mit dem Fehler
+          eingefroren.
+        </p>
+      </div>
+      <p>
+        Aus demselben Grund öffnet eine Änderung der Wirkungen eine <strong>neue
+        datierte Version</strong>: ein erneutes Einlesen wendet das Rezept an,
+        das an jenem Tag galt.
+      </p>
+
+      <h3>3. Schattenmodus</h3>
+      <p>
+        Jede Regel beginnt <strong>im Schatten</strong>: sie zeichnet auf, was sie
+        <em>täte</em>, ohne es zu tun. Sie prüfen, dann aktivieren Sie. Auch die
+        Quelle hat ihren eigenen Schalter: <strong>ist eines von beiden zu, wird
+        nichts angewandt</strong>.
+      </p>
+
+      <h3>4. Unerklärte Ereignisse</h3>
+      <p>
+        Namen, die das Log verwendet hat und die noch nichts erklärt, sind keine
+        Fehlerliste: <strong>sie sind der Bildschirm, auf dem Sie die Regeln
+        bauen</strong>. Sie sehen einen, der 200-mal vorkommt, sagen direkt dort,
+        was er bewirkt — und er taucht nie wieder auf.
+      </p>
+
+      <h3>Wissenswertes</h3>
+      <ul>
+        <li><strong>Jede Zeile wirkt genau einmal.</strong> Lesen Sie dieselbe
+          Datei so oft ein, wie Sie mögen.</li>
+        <li><strong>Alte Logs lassen sich nachfahren.</strong> Zeigen Sie der App
+          das Protokoll des Vorjahres, und Sie haben echte Verbrauchshistorie ab
+          dem ersten Tag.</li>
+        <li><strong>Unbekannte Objekte werden anders behandelt</strong>: ein Schale,
+          das es nicht gibt, wird zurückgestellt und nachgefragt — automatisch
+          angelegte Anlagen sind der Weg zu 400 Geisterracks aus einem Tippfehler.
+          Eine neue Kit hingegen wird immer angelegt.</li>
+        <li><strong>Stille warnt.</strong> Hört das Log auf zu schreiben, bricht
+          nichts: die Zahlen stimmen nur still und leise nicht mehr. Deshalb
+          meldet sich die App, wenn zu lange keine Zeile kam.</li>
+      </ul>
+
+      <div class="note tip">
+        <span class="lbl">Wofür das Log wirklich gut ist</span>
+        <p>
+          Nicht zum „Verbrauch zählen“: der Bestand bewegt sich weiterhin nur,
+          wenn ein Mensch sagt, dass ein Gebinde leer ist. Es macht die
+          theoretische Zahl aus <em>dem, woran sich jemand erinnert hat</em>
+          nahezu exakt — und wenn das Theoretische exakt ist, ist der Rest nicht
+          mehr „was wir nicht erfasst haben“, sondern echter Verlust.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== 25 -->
+    <section id="s26">
+      <h2><span class="n"></span>Geräte: Handbücher, Ersatzteile und Wartung</h2>
+
+      <p>
+        Ein Messschieber ist ein Artikel, so wie eine Flasche Holzleim ein Artikel ist.
+        Aber er ist die einzige Art Ding, zu der <strong>andere Artikel
+        gehören</strong>, und die einzige, deren Pflege nach Plan läuft. Beides
+        liegt im Reiter <em>Ausrüstung</em> im Bereich jedes Artikels.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Es gibt keine „Geräte“-Funktion</span>
+        <p>
+          Keines von beidem ist einem Typ namens Gerät vorbehalten. Ein
+          Schrank hat ein Wartungsintervall; eine Drehmomentschlüssel hat ein
+          Kalibrierzertifikat; ein Drucker hat eine Ersatzdüse. Was ein Werkstatt an
+          eine Maschine hängt, lässt sich nicht im Voraus wissen — also ist der
+          Reiter überall da, und Sie nutzen ihn, wo er Sinn ergibt.
+        </p>
+      </div>
+
+      <h3>Dinge anhängen</h3>
+      <p>
+        <em>Anhängen</em>, sagen, was es ist, den Artikel suchen. Vier
+        Beziehungen:
+      </p>
+      <ul>
+        <li><strong>Dokument</strong> — die Anleitung, das Handbuch, das
+          Kalibrierzertifikat.</li>
+        <li><strong>Ersatzteil</strong> — der Brenner, die Lampe, die Säule in
+          der Schublade.</li>
+        <li><strong>Zubehör</strong> — der Gewichtssatz, der Probengeber.</li>
+        <li><strong>Verbrauchsmaterial</strong> — was sie im Betrieb frisst.</li>
+      </ul>
+      <p>
+        Die Verknüpfung liest sich von beiden Seiten. Der Messschieber listet seine Anleitung;
+        öffnen Sie die Anleitung, sagt sie Ihnen, welchen Messschieber sie beschreibt. Das ist
+        wichtig, weil die Anleitung im Montagebereich abgelegt ist und der Messschieber auf einer
+        Bank liegt — und was Sie gerade vor sich haben, ist Ihr Ausgangspunkt.
+      </p>
+
+      <h3>Wartungspläne</h3>
+      <p>
+        Ein Plan ist <em>was zu tun ist</em> und <em>wie oft</em>. Das „wie oft“
+        lässt sich zweifach zählen, und Sie können eines oder beides nutzen:
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Gezählt in</th><th>Passt zu</th><th>Beispiel</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Tagen</strong></td>
+              <td>Dingen, die am Kalender altern</td>
+              <td>Externe Kalibrierung, alle 365 Tage</td>
+            </tr>
+            <tr>
+              <td><strong>Nutzungen</strong></td>
+              <td>Dingen, die durch Arbeit altern</td>
+              <td>Interne Prüfung, alle 500 Läufe</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn">
+        <span class="lbl">Bei beidem: was zuerst eintritt</span>
+        <p>
+          <em>Alle 6 Monate oder 500 Injektionen</em> heißt, der Plan wird in dem
+          Moment fällig, in dem <strong>einer</strong> der beiden Zähler
+          ausläuft. Ein Plan, der nur eines von beiden zählen könnte, wäre für
+          die Hälfte der Ausrüstung jedes der Werkstatt falsch.
+        </p>
+      </div>
+      <p>
+        Tragen Sie <strong>zuletzt erledigt</strong> ein, wenn Sie den Plan
+        anlegen. Lassen Sie es leer, beginnt die Uhr heute — und das verdeckt
+        stillschweigend eine Maschine, die schon seit einem Jahr außerhalb der
+        Kalibrierung läuft.
+      </p>
+
+      <h3>Nutzungen zählen</h3>
+      <p>
+        <em>+1 Nutzung</em> zählt einen Lauf auf allen Plänen dieses Artikels,
+        die Nutzungen messen. Das ist absichtlich grob: wenn Ihr Maschinensteuerung ohnehin
+        weiß, wie viele Injektionen die Maschine gemacht hat, sollte die Zahl von
+        dort kommen — und die App hat genau dafür einen Eingang.
+      </p>
+
+      <h3>Als erledigt markieren</h3>
+      <p>
+        <em>Erledigt</em> schreibt die Wartung in ein Protokoll, das nur wächst,
+        und startet <strong>beide</strong> Zähler neu — Tage und Nutzungen —
+        denn die Wartung deckte ab, was fällig war. Das Protokoll hält den
+        Nutzungszähler fest, wie er in diesem Moment stand, damit
+        <em>„gewartet bei 480 Läufen“</em> auch Jahre später noch etwas bedeutet.
+      </p>
+      <p>
+        <em>Wartungshistorie</em> am Plan zeigt jede einzelne, mit wem und wann
+        und der Notiz, die Sie hinterlassen haben (die Zertifikatsnummer ist die,
+        die sich zu tippen lohnt).
+      </p>
+
+      <h3>Auf der Startseite</h3>
+      <p>
+        Alles Überfällige und alles, was in den nächsten vierzehn Tagen fällig
+        wird, erscheint als Band <strong>über Ihrem Bestand</strong>, Überfälliges
+        zuerst. Ein Klick auf eine Zeile, und Sie sind im Bereich dieser Maschine.
+      </p>
+      <p>
+        Es steht mit Absicht über dem Bestand: eine unkalibrierte Maschine legt
+        die Arbeit auf eine Weise still, wie es eine knappe Flasche nicht tut.
+        Ist nichts fällig, ist das Band gar nicht da.
+      </p>
+    </section>
+
+
+      <h3>Geteilte Rechner melden sich selbst ab</h3>
+      <p>
+        Ein Rechner, den niemand beansprucht hat, meldet dich nach
+        <strong>zwanzig Minuten ohne Tastendruck oder Klick</strong> ab, mit einer
+        Minute Vorwarnung. Es geht nicht um Diebstahl, es geht um die
+        Aufzeichnung. Ein angemeldet stehen gelassener Browser lässt jedes
+        Aufbrauchen und jede Korrektur wie die Arbeit derjenigen aussehen, die
+        zuletzt weggegangen ist — und die Historie ist das Einzige hier, das
+        verlässlich sein muss.
+      </p>
+
+      <h3>Den eigenen Rechner beanspruchen</h3>
+      <p>
+        Das Monitorsymbol neben deinem Namen öffnet <strong>Diesen Rechner
+        merken</strong>. Mit dem Passwort bestätigen, und dieser Browser bleibt
+        <em>als du</em> angemeldet — über Herunterfahren, Ruhezustand,
+        Standby und geschlossenen Browser hinweg. Er läuft nie ab.
+      </p>
+      <ul>
+        <li>Der Anspruch gehört <strong>einer Person</strong>. Wer an deinem
+          Platz den eigenen Tastengriff drückt, bekommt eine gewöhnliche Sitzung
+          mit Zeitablauf, und deine kommt bei der nächsten Anmeldung
+          zurück.</li>
+        <li>Er kostet absichtlich ein Passwort: sonst würde ein zwei Minuten
+          unbeaufsichtigter Werkstattrechner genügen, damit jemand ihn dauerhaft zu
+          seinem macht.</li>
+        <li>Von Hand abmelden behält den Anspruch — das ist Tür zumachen, nicht
+          ausziehen. <strong>Rechner vergessen</strong> beendet ihn und meldet
+          dich sofort ab, damit die Änderung auch sofort stimmt.</li>
+      </ul>
+
+      <h3>Alle abmelden</h3>
+      <p>
+        Weil ein beanspruchter Rechner sich nie selbst abmeldet, muss es einen
+        Hebel geben, der sie alle erreicht. Auf der Seite <strong>Benutzer</strong>
+        beendet <em>Alle überall abmelden</em> jede Sitzung im Haus auf einmal —
+        beanspruchte Rechner eingeschlossen, und die eigene Sitzung des Admins
+        dazu. Für einen verschwundenen Laptop oder ein über die Schulter
+        abgelesenes Passwort ist das die ehrliche Antwort.
+      </p>
+
+      <h3>Schauen ohne Konto</h3>
+      <p>
+        Wer die Adresse ohne Anmeldung öffnet, sieht eine <strong>Bestandstafel
+        zum Lesen</strong>: Konzeptnamen, Mengen, was knapp oder leer ist, und den
+        Ortsbaum. Mehr nicht — keine Artikelzeilen, also keine Seriennummern,
+        keine Chargennummern, keine Preise, keine Notizen und keine Namen von
+        Personen. Ein Klick fragt nach der Anmeldung.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Bewusst entscheiden</span>
+        <p>
+          Diese Tafel sieht <strong>jeder, der den Server erreichen kann</strong>,
+          in einem Werkstattnetz also alle im Haus. Sie ist als schwarzes Brett
+          gedacht — „ist noch Holzleim da?“, beantwortet ohne geliehenes Konto. Wenn
+          deine Bestandsliste nichts fürs schwarze Brett ist, gehört der Server
+          nicht ins gemeinsame Netz.
+        </p>
+      </div>
+    <!-- ============================================================== 27 -->
+    <section id="s27">
+      <h2><span class="n"></span>Nach Ort stöbern</h2>
+
+      <p>
+        Der Ortsbaum beschreibt, wo die Dinge leben. Er ist zugleich, wie
+        Sie sich <strong>umsehen</strong>: Sie wählen einen Ort, und der Bereich
+        daneben listet, was dort ist.
+      </p>
+      <p>
+        Das beantwortet die Frage, die jemand vor einem Schrank tatsächlich
+        hat — <em>was ist in diesem Schrank?</em> —, die der Baum allein nie
+        beantworten konnte.
+      </p>
+      <ul>
+        <li><strong>Unterorte einbeziehen</strong> — an, zeigt der Raum alles auf
+          jedem Regal darunter; aus, nur das, was am Raum selbst abgelegt ist.
+          Die rechte Spalte nennt das genaue Regal, sobald die Liste mehr als
+          eines umfasst.</li>
+        <li><strong>Typ</strong> und <strong>Suche</strong> engen weiter ein:
+          <em>die Verbrauchsstoffe im Schrank für Brennbares</em>.</li>
+        <li><strong>Aufgebrauchte und inaktive zeigen</strong> ist standardmäßig
+          aus. Ein Regal voll leerer Flaschen ist nicht das, was auf dem Regal
+          steht.</li>
+      </ul>
+      <p>
+        Jede Zeile öffnet den vollen Artikelbereich, eine Bestandsprüfung ist
+        also: Regal wählen, Liste durchgehen, anbrechen, verbrauchen, umlagern.
+        Ohne nach Namen zu suchen.
+      </p>
+    </section>
+
+    <!-- ============================================================== 25 -->
+    <!-- ============================================================== 27 -->
+    <section id="s28">
+      <h2><span class="n"></span>Anmelden mit einem Tastengriff</h2>
+
+      <p>
+        Ein Rechner, mehrere Personen, und bei jeder halben Minute Arbeit, die
+        erfasst werden will, ein Wechsel. Name und Passwort dafür einzutippen
+        ist genug Reibung, dass die Arbeit unter dem läuft, wer gerade
+        angemeldet war — und genau das ruiniert das Einzige, wofür es die
+        Historie gibt. Also kann jede Person einen <strong>Tastengriff</strong>
+        bekommen: knapp eine Sekunde, und sie ist drin.
+      </p>
+
+      <h3>Was ein Tastengriff ist</h3>
+      <p>
+        Zwei Tastengruppen, jede einen Moment zusammen gehalten.
+        <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd> drücken und halten; loslassen;
+        <kbd>U</kbd><kbd>I</kbd><kbd>L</kbd> drücken und halten. Fertig,
+        angemeldet. Die Reihenfolge <em>innerhalb</em> einer Gruppe ist egal,
+        die Reihenfolge der beiden Gruppen nicht.
+      </p>
+      <p>
+        Den Tastengriff wählst du nicht selbst, die App erzeugt ihn. Das ist
+        keine Schikane. Zwei Personen können nicht denselben haben — der Sinn
+        ist ja gerade, dass er sagt, wer du bist — und wenn alle selbst wählten,
+        stieße die Hälfte zusammen und müsste noch einmal wählen. Die App wählt
+        außerdem Tasten, die sich wirklich drücken lassen: drei Tasten einer
+        Hand, in benachbarten Spalten, nie mehr als eine Reihe auseinander.
+        Deshalb bekommst du <kbd>Z</kbd><kbd>X</kbd><kbd>D</kbd> und nie
+        <kbd>A</kbd><kbd>Y</kbd><kbd>P</kbd>. Wenn dir deiner nicht gefällt,
+        verlangst du einen anderen.
+      </p>
+
+      <h3>Wie du einen bekommst</h3>
+      <p>
+        Das Schlüsselsymbol neben deinem Namen in der Seitenleiste öffnet
+        <strong>Schnellanmeldung</strong>. Dort kannst du einen erstellen, einen
+        anderen verlangen oder ihn wegwerfen. Die Tasten werden so gezeichnet,
+        wie sie auf der Tastatur liegen, von links nach rechts — auf dem
+        Bildschirm steht also die Form, die deine Hand macht.
+      </p>
+      <p>
+        <strong>Du kannst ihn dort üben.</strong> Solange dieses Fenster offen
+        ist, tut der Tastengriff nichts, außer dir zu sagen, ob er saß —
+        andernfalls würde dich das Einüben der eigenen Geste jedes Mal abmelden,
+        wenn sie gelingt.
+      </p>
+      <p>
+        Unter dem Tastengriff steht ein Regler für die
+        <strong>Haltezeit</strong>, vom Antippen bis zum bewussten Drücken. Er
+        wird auf diesem Rechner gespeichert und nicht im Konto, und zwar mit
+        Absicht: auf der Anmeldeseite weiß die App noch nicht, wessen
+        Einstellung sie anwenden soll. Sie gehört zu dieser Tastatur.
+      </p>
+
+      <h3>Derselbe Tastengriff macht alle drei Dinge</h3>
+      <ul>
+        <li>Abgemeldet → er meldet dich an.</li>
+        <li>Jemand anderes ist angemeldet → er wechselt zu dir und schließt
+          deren Sitzung auf diesem Rechner.</li>
+        <li>Du bist angemeldet → er meldet dich ab.</li>
+      </ul>
+      <p>
+        Eine Geste mit der Bedeutung <em>jetzt bin ich das</em> — deshalb gibt
+        es keinen zweiten Tastengriff fürs Abmelden zu merken. Er funktioniert
+        von jedem Bildschirm aus — der Anmeldeseite, der öffentlichen
+        Bestandstafel oder mitten in der Artikeltabelle während der Arbeit.
+      </p>
+      <p>
+        Zwei Bildschirme lesen ihn auch mit dem Cursor in einem Textfeld: das
+        Anmeldeformular und die öffentliche Tafel, denn das sind die beiden
+        Stellen, an denen jemand in ein Feld klickt und dann seinen Tastengriff
+        drückt. Überall sonst schluckt ein Textfeld ihn, und das soll es auch:
+        drei Buchstaben auf einmal in einem Suchfeld sind einfach drei
+        Buchstaben.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Vorsicht</span>
+        <p>
+          <strong>Ein Tastengriff ist eine Identifikation, kein Passwort.</strong>
+          Wer beim Drücken zusieht, kann sich als du anmelden — genau wie bei
+          einem Code an einer Tür. Das ist der Handel, den du für die
+          Geschwindigkeit eingehst: der richtige für eine Werkbank im
+          abgeschlossenen Werkstatt, der falsche für einen Rechner, an dem Fremde
+          vorbeigehen. Dein Passwort gilt in beiden Fällen weiter, und eine
+          Administratorin kann jeden Tastengriff unter
+          <strong>Benutzer</strong> → <em>Sperren</em> aufheben. Falsche
+          Tastengriffe sind begrenzt, Raten ist also kein praktikabler Weg
+          hinein.
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="lbl">Später</span>
+        <p>
+          QR-Ausweise und NFC-Karten sind dieselbe Idee mit anderer Hardware und
+          stehen auf der Liste. Der Tastengriff kam zuerst, weil er nichts
+          voraussetzt, was gekauft werden muss.
+        </p>
+      </div>
+    </section>
+
+    <section id="s25">
+      <h2><span class="n"></span>Was noch fehlt</h2>
+
+      <p>
+        Damit Sie nicht danach suchen, hier die ehrliche Liste dessen, was der
+        heutigen Version fehlt.
+      </p>
+
+      <h4>Wissenswerte Verhaltensweisen</h4>
+      <ul>
+        <li>Der Schlüssel eines <em>Typs</em> lässt sich nach dem Speichern nicht
+          mehr ändern. Der eines <em>eigenen Feldes</em> schon: beim Speichern
+          werden vorhandene Werte in derselben Transaktion auf den neuen
+          Schlüssel migriert.</li>
+        <li>Ein Feld aus einem Typ zu entfernen zerstört nichts: die alten Daten
+          bleiben gespeichert und werden nur nicht mehr angezeigt.</li>
+        <li>Preise werden beim Anlegen des Artikels eingefroren. Das ist
+          Absicht.</li>
+        <li>Einen Ort zu löschen löscht nie die Artikel darauf.</li>
+        <li>Eine Tätigkeit zu erfassen bewegt den Bestand <strong>sehr
+          wohl</strong> — das ist das Einzige, was sich seit der
+          ersten Fassung geändert hat. Was nie von selbst passiert, ist, dass ein
+          Gebinde für leer erklärt wird.</li>
+        <li>Ein Handbuch an eine Maschine zu hängen bewegt oder ändert es nicht.
+          Eine Verknüpfung ist eine Verknüpfung; der Artikel behält Ort und
+          Status.</li>
+      </ul>
+
+      <h4>Gibt es noch nicht</h4>
+      <ul>
+        <li>Nativer Excel-Export (exportiert wird CSV, das Excel ohnehin öffnet)
+          und der Import von etwas anderem als Artikeln.</li>
+        <li>Passwort-Wiederherstellung per E-Mail: ohne Mailserver setzt eine
+          Administratorin es zurück.</li>
+        <li>Freigabe von Bedarfen vor dem Kauf. Heute sieht der Einkauf alles
+          Angeforderte und entscheidet; einen Genehmigungsschritt gibt es nicht.</li>
+        <li>Automatisches Überwachen der Log-Datei: Sie drücken <em>neue Zeilen
+          lesen</em> oder fügen Inhalt ein. Alles Vorhandene ist der
+          schwierige Teil — das Lesen von selbst fehlt noch.</li>
+        <li>Ein Log-Ereignis, das Maschinenläufe zählt. Der App lässt sich
+          sagen <em>diese Maschine hat 40 Injektionen gemacht</em>, aber das
+          Log-Wörterbuch kann noch nicht darauf zeigen — heute drückt also
+          jemand <em>+1 Nutzung</em>.</li>
+        <li>Eine Desktop-Anwendung (Tauri).</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Handbuch, Stand August 2026. Wie die Anwendung gebaut ist, Datei für
+    Datei, steht im <a href="code.de.html">Code-Handbuch</a>.
+  </footer>
+
+</div>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory — connect</title>
+    <style>
+      /* The app's own three colours, hard-coded here because
+         this screen is shown before we have a server to ask for a theme. */
+      :root {
+        --bg: #0d0e12;
+        --surface: #14161c;
+        --line: #262a35;
+        --text: #e7e9ee;
+        --muted: #8b91a1;
+        --primary: #2dd4bf;
+        --danger: #f87171;
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1.75rem;
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { width: 100%; max-width: 24rem; }
+      .mark {
+        width: 44px; height: 44px; margin: 0 auto 1.25rem;
+        display: block;
+      }
+      h1 { font-size: 1.2rem; font-weight: 600; margin: 0 0 0.35rem; text-align: center; }
+      p.lede { margin: 0 0 1.75rem; color: var(--muted); text-align: center; font-size: 0.9rem; }
+      label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.4rem; }
+      input {
+        width: 100%;
+        padding: 0.6rem 0.7rem;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font: inherit;
+        font-family: ui-monospace, "IBM Plex Mono", monospace;
+      }
+      input:focus { outline: 2px solid var(--primary); outline-offset: 1px; border-color: transparent; }
+      button {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.6rem;
+        background: var(--primary);
+        color: #05100e;
+        border: 0;
+        border-radius: 6px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button[disabled] { opacity: 0.55; cursor: default; }
+      .hint { margin-top: 1.5rem; font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+      .hint code {
+        font-family: ui-monospace, monospace;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 0.05em 0.3em;
+      }
+      .error {
+        margin-top: 0.9rem;
+        padding: 0.6rem 0.7rem;
+        border-radius: 6px;
+        background: color-mix(in oklab, var(--danger), transparent 88%);
+        color: var(--danger);
+        font-size: 0.85rem;
+      }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="1.6"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19.15V15l-4.5-2.7-4.53 0.62Z"/>
+        <path d="m7 16.5-4.74-2.85"/><path d="m7 16.5 5-3"/><path d="M7 16.5v5.17"/>
+        <path d="M12 13.5V19.15l3.97 2.23a2 2 0 0 0 2.06 0l3-1.8A2 2 0 0 0 22 17.87v-3.24a2 2 0 0 0-.97-1.71L16.5 12.8 12 13.5Z"/>
+        <path d="m17 16.5-5-3"/><path d="m17 16.5 4.74-2.85"/><path d="M17 16.5v5.17"/>
+        <path d="M7.5 8.5v-3.4a2 2 0 0 1 .97-1.71l3-1.8a2 2 0 0 1 2.06 0l3 1.8a2 2 0 0 1 .97 1.71V8.5l-4.5 2.7-5.5-2.7Z"/>
+        <path d="m12 11.2 4.74-2.85"/><path d="m12 11.2-4.5-2.7"/><path d="M12 11.2V6"/>
+      </svg>
+
+      <h1>Which inventory?</h1>
+      <p class="lede">The address of the server your workshop shares.</p>
+
+      <form id="form">
+        <label for="address">Server address</label>
+        <input id="address" name="address" spellcheck="false" autocomplete="off"
+               placeholder="workshop-pc:3000" autofocus />
+        <button id="submit" type="submit">Connect</button>
+      </form>
+
+      <p class="error" id="error" hidden></p>
+
+      <p class="hint">
+        Whatever the server prints when it starts — a name like
+        <code>workshop-pc:3000</code> or an address like <code>192.168.1.20:3000</code>.
+        <code>http://</code> is added for you.
+        <br /><br />
+        Running the server on this same computer? <code>localhost:3000</code>.
+      </p>
+    </main>
+
+    <script>
+      // withGlobalTauri, so this page needs no bundler and no dependencies —
+      // it is one file, and the app it introduces lives on the server.
+      const invoke = window.__TAURI__.core.invoke;
+      const form = document.getElementById('form');
+      const address = document.getElementById('address');
+      const submit = document.getElementById('submit');
+      const error = document.getElementById('error');
+
+      // Prefill whatever was tried last, so a server that has moved is an edit
+      // rather than a retype.
+      invoke('saved_server').then((saved) => {
+        if (saved) address.value = saved;
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        error.hidden = true;
+        submit.disabled = true;
+        submit.textContent = 'Looking…';
+        try {
+          await invoke('connect', { address: address.value });
+          // On success this window closes itself — the app window is already up.
+        } catch (message) {
+          error.textContent = String(message);
+          error.hidden = false;
+          submit.disabled = false;
+          submit.textContent = 'Connect';
+        }
+      });
+    </script>
+  </body>
+</html>

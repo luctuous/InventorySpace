@@ -1,0 +1,2043 @@
+<div class="shell">
+
+  <header class="masthead">
+    <span class="eyebrow">User manual · v0.2 · August 2026</span>
+    <h1>Inventory</h1>
+    <p>
+      Everything the app can do today, in the order you'll need it: from
+      clearing out the demo data to building your own inventory from scratch,
+      the daily routine, and the limits it still has.
+    </p>
+  </header>
+
+  <div class="rail">
+    <nav aria-label="Contents">
+      <p>Contents</p>
+      <ol>
+        <li><a href="#s1"><span class="n">01</span> How the app thinks</a></li>
+        <li><a href="#s2"><span class="n">02</span> Starting up and signing in</a></li>
+        <li><a href="#s3"><span class="n">03</span> Clearing the demo data</a></li>
+        <li><a href="#s4"><span class="n">04</span> Tutorial from scratch</a></li>
+        <li><a href="#s5"><span class="n">05</span> Quick Add</a></li>
+        <li><a href="#s6"><span class="n">06</span> The life of an item</a></li>
+        <li><a href="#s7"><span class="n">07</span> The Home screen</a></li>
+        <li><a href="#s8"><span class="n">08</span> Searching your items</a></li>
+        <li><a href="#s9"><span class="n">09</span> The three upper levels</a></li>
+        <li><a href="#s10"><span class="n">10</span> History</a></li>
+        <li><a href="#s11"><span class="n">11</span> Users and permissions</a></li>
+        <li><a href="#s12"><span class="n">12</span> Language and colours</a></li>
+        <li><a href="#s13"><span class="n">13</span> Deleting and restoring</a></li>
+        <li><a href="#s14"><span class="n">14</span> Backups</a></li>
+        <li><a href="#s15"><span class="n">15</span> The API</a></li>
+        <li><a href="#s17"><span class="n">16</span> Bulk in and out</a></li>
+        <li><a href="#s18"><span class="n">17</span> How closely to track each thing</a></li>
+        <li><a href="#s19"><span class="n">18</span> Requests</a></li>
+        <li><a href="#s20"><span class="n">19</span> Lots: buying and receiving</a></li>
+        <li><a href="#s21"><span class="n">20</span> Forecast</a></li>
+        <li><a href="#s22"><span class="n">21</span> Activities and real cost</a></li>
+        <li><a href="#s23"><span class="n">22</span> Reusables and the recount</a></li>
+        <li><a href="#s24"><span class="n">23</span> The log bridge</a></li>
+        <li><a href="#s26"><span class="n">24</span> Instruments and maintenance</a></li>
+        <li><a href="#s27"><span class="n">25</span> Browsing by place</a></li>
+        <li><a href="#s28"><span class="n">26</span> Signing in with a key chord</a></li>
+        <li><a href="#s25"><span class="n">27</span> What it doesn't do yet</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ============================================================== 01 -->
+    <section id="s1">
+      <h2><span class="n"></span>How the app thinks</h2>
+
+      <p>
+        Before you touch anything, one idea is worth understanding, because
+        everything else follows from it: <strong>every physical thing you own is
+        an Item</strong>, and items are seen from four different heights.
+      </p>
+
+      <div class="levels">
+        <div class="lv"><span class="name">Concept</span><span class="ex">What I need · <em>“Black PLA filament”</em></span></div>
+        <div class="lv"><span class="name">Analogous</span><span class="ex">Which options serve me interchangeably · <em>“Black PLA filament 1.75 mm”</em></span></div>
+        <div class="lv"><span class="name">Variant</span><span class="ex">What I actually buy · <em>“Prusament PLA Black, 1 kg spool”</em></span></div>
+        <div class="lv"><span class="name">Item</span><span class="ex">Which physical unit I hold · <em>spool <span class="hid">filamentAA007</span></em></span></div>
+      </div>
+
+      <p>
+        The top three levels are <em>catalogue</em>: they describe things. Only
+        the last level is <em>reality</em>: each Item is a concrete object you
+        can pick up, with its own location, remaining quantity and price.
+      </p>
+
+      <h3>The golden rule: stock is never typed in</h3>
+      <p>
+        Nowhere in the app is there a box where you write “I have 4 kg of
+        filament”. Stock is <strong>calculated</strong> by summing the remaining
+        quantity of items that are in stock or open. If the number on Home
+        doesn't match reality, the answer is always in the items: either one
+        wasn't depleted, or one was never entered.
+      </p>
+
+      <h3>The hierarchy can be ignored</h3>
+      <p>
+        The four levels exist for when you need them, not to force you through
+        them. With <a href="#s5">Quick Add</a> you type a name, pick a type and a
+        quantity, and the system quietly creates the Concept, the Analogous group
+        and the Variant for you. You can run your whole inventory without ever
+        opening those pages, and refine later if it ever matters.
+      </p>
+
+      <h3>Types are what make the app yours</h3>
+      <p>
+        A <strong>Type</strong> defines which custom fields its items carry,
+        which statuses they may have, and whether they track a quantity. A model
+        railway collector defines “scale” and “era”; a 3D-printing workshop
+        defines “material” and “diameter”. Same app, no code changes.
+      </p>
+
+      <div class="note tip">
+        <span class="lbl">If you would rather be shown than read</span>
+        <p>
+          The <strong>?</strong> at the bottom of the sidebar holds this manual
+          and a set of <strong>guided tours</strong>. They point at the real
+          screen, step by step, and take about two minutes each. Everything they
+          show is written up here too — start with whichever suits you.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 02 -->
+    <section id="s2">
+      <h2><span class="n"></span>Starting up and signing in</h2>
+
+      <h3>In development</h3>
+      <pre><code>npm run dev</code></pre>
+      <p>
+        Starts both halves at once: the API on port 3001 and the web app on
+        5173. Open <code>http://localhost:5173</code>. Stop with
+        <code>Ctrl+C</code>.
+      </p>
+
+      <h3>With Docker</h3>
+      <pre><code>docker build -t inventoryspace .
+docker run -d -p 3000:3000 \
+  -v ./inventory-data:/data \
+  -e BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
+  inventoryspace</code></pre>
+      <p>
+        Here everything runs on one port: <code>http://localhost:3000</code>
+        serves the web app, the API and the docs. Database migrations apply
+        themselves at startup, so an empty volume works first time.
+      </p>
+
+      <h3>The first account</h3>
+      <p>
+        The sign-in screen has a link: <em>“First run? Create the admin
+        account”</em>. <strong>The first account you register becomes the
+        administrator, and public registration closes immediately
+        afterwards.</strong> From then on, the administrator creates accounts
+        from the Users page.
+      </p>
+      <p>
+        <strong>You sign in with a username, not an email.</strong> It is
+        free-form: <code>anna</code>, <code>Anna Müller</code>,
+        <code>torn-nit</code>, <code>jm</code> are all fine — letters, spaces
+        and accents included. Capitals don't matter, so <code>Anna</code> and
+        <code>anna</code> are the same person. The only things it cannot
+        contain are an <code>@</code>, a double space, or spaces at the ends.
+        An email address is <em>optional</em> and exists only so an account can
+        be tied to a mailbox one day; nothing is ever sent to it.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Careful</span>
+        <p>
+          If you don't set <code>BETTER_AUTH_SECRET</code>, the server generates
+          a new one on every boot and everyone is signed out each time you
+          restart. In development that's harmless; in production, set it.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 03 -->
+    <section id="s3">
+      <h2><span class="n"></span>Clearing the demo data</h2>
+
+      <p>
+        The development database ships with example data from a workshop: 5 types, a location tree, 6 concepts and 9 items, arranged so
+        the Home screen shows all three alert states (fine, low stock, out of
+        stock). To start on <em>your</em> inventory you have two routes.
+      </p>
+
+      <h3>Fast route: wipe everything at once</h3>
+      <pre><code><span class="c"># stop the server first</span>
+rm packages/api/data/inventory.db*
+npm run dev</code></pre>
+      <p>
+        Startup recreates the empty schema. Don't run
+        <code>npm run db:seed</code> and you get a genuinely clean database: no
+        types, no locations, no items. The first account you register becomes the
+        administrator again.
+      </p>
+      <div class="note stop">
+        <span class="lbl">Irreversible</span>
+        <p>
+          This also deletes the user accounts and the entire history. Under
+          Docker, the equivalent is emptying the <code>./inventory-data</code> volume.
+        </p>
+      </div>
+
+      <h3>Manual route: delete from inside the app</h3>
+      <p>
+        If you'd rather do it by hand to see how it works, you have to go
+        <strong>bottom-up</strong>. The app blocks any deletion that would leave
+        things orphaned, and tells you exactly why:
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>To delete a…</th><th>You must first…</th><th>Otherwise</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Concept</th><td>delete its Analogous groups</td><td>“N analogous group(s) still reference this concept”</td></tr>
+            <tr><th>Analogous</th><td>delete its Variants</td><td>“N variant(s) still reference this analogous group”</td></tr>
+            <tr><th>Variant</th><td>delete its Items</td><td>“N item(s) still reference this variant”</td></tr>
+            <tr><th>Type</th><td>delete the items of that type</td><td>“N item(s) use this type”</td></tr>
+            <tr><th>Location</th><td>empty it and delete its children</td><td>“N item(s) in this location or its sub-locations”</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        So the real order is: <strong>Items → Variants → Analogous →
+        Concepts</strong>, then Locations (leaf to root) and Types.
+      </p>
+      <p>
+        No deletion is truly destructive: everything is a <em>soft delete</em>.
+        The row stays in the database with a deletion timestamp and disappears
+        from the lists. History is never deleted. Read <a href="#s13"></a>
+        before relying on this too much, because getting things back from the
+        interface isn't easy yet.
+      </p>
+    </section>
+
+    <!-- ============================================================== 04 -->
+    <section id="s4">
+      <h2><span class="n"></span>Tutorial: building your inventory</h2>
+
+      <p>
+        Let's set up the inventory of a <strong>3D-printing workshop</strong>
+        from an empty database. It works just the same for a collection, a
+        cosmetics workshop or a spare-parts store: only the names change.
+      </p>
+
+      <ol class="steps">
+        <li>
+          <h4>Define your Types</h4>
+          <p>
+            This comes first because everything else depends on it. Go to
+            <strong>Types</strong> (admin only) and press <em>New type</em>. Our
+            workshop needs two deliberately different ones.
+          </p>
+          <p><strong>Filament</strong> — something that gets consumed:</p>
+          <ul>
+            <li><strong>Name</strong>: “Filament”. The field has
+              <span class="pill role">EN</span> <span class="pill role">DE</span>
+              <span class="pill role">CA</span> tabs: English is required, the
+              others optional.</li>
+            <li><strong>Key</strong>: <code>filament</code>. This is the internal
+              identifier and <strong>can never be changed</strong>.</li>
+            <li><strong>ID prefix</strong>: <code>filament</code>. Items will be
+              named <span class="hid">filamentAA001</span>,
+              <span class="hid">filamentAA002</span>…</li>
+            <li><strong>Tracks a quantity</strong>: yes (a spool is used up
+              gradually).</li>
+            <li><strong>Valid statuses</strong>: <code>in_stock</code>,
+              <code>open</code>, <code>depleted</code>, <code>discarded</code>.</li>
+            <li><strong>Custom fields</strong>: press <em>Add field</em> three
+              times: <code>material</code> (select, options <em>PLA, PETG, ABS,
+              TPU</em>), <code>color</code> (text), <code>diameter</code>
+              (number, unit <em>mm</em>).</li>
+          </ul>
+          <p>
+            On the right, the <strong>Add-item form preview</strong> panel shows
+            you live what the item form for this type will look like. It's how
+            you check you've understood what you're defining before you save.
+          </p>
+          <p><strong>Printer</strong> — a machine, which isn't consumed:</p>
+          <ul>
+            <li>Key <code>printer</code>, prefix <code>printer</code>.</li>
+            <li><strong>Tracks a quantity</strong>: no.</li>
+            <li><strong>Valid statuses</strong>: <code>in_service</code>,
+              <code>maintenance</code>, <code>out_of_service</code>,
+              <code>retired</code>.</li>
+            <li>Custom fields: <code>manufacturer</code> (text),
+              <code>nextService</code> (date).</li>
+          </ul>
+          <div class="note tip">
+            <span class="lbl">Its own statuses</span>
+            <p>
+              Items of this type are never «open» or «depleted» — their lifecycle
+              is a different one. Their detail view carries a <em>Set status</em>
+              dropdown holding exactly the statuses you defined.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h4>Map where things live</h4>
+          <p>
+            Go to <strong>Locations</strong>. The tree has four fixed levels
+            —<em>workshop → room → zone → surface</em>— but you choose the names; for
+            a workshop, read them as <em>building → room → cabinet → shelf</em>.
+          </p>
+          <p>
+            Press <em>New workshop</em>: the code <code>L01</code> is already
+            suggested, name it “Workshop”. Now hover over the row and a
+            <em>+</em> appears to add a child: the next code is calculated for
+            you too (<code>L01R01</code>). Build something like:
+          </p>
+          <pre><code>L01            Workshop
+  L01R01       Print room
+    L01R01Z01  Material cabinet
+      ...S01   Shelf A
+    L01R01Z02  Printer bench</code></pre>
+          <p>
+            The number on the right of each row is <strong>how many items are in
+            that node and everything below it</strong>. This tree isn't just
+            labelling: on Home it doubles as a filter.
+          </p>
+        </li>
+
+        <li>
+          <h4>Enter your first things</h4>
+          <p>
+            Two paths from here. For the overwhelming majority of cases the right
+            one is <a href="#s5">Quick Add</a>: press the <code>q</code> key or
+            the <em>Quick Add</em> button on Home, type “Prusament PLA Black”,
+            pick the Filament type, a location, quantity <code>1</code>, unit
+            <code>kg</code>, and save. You now have the item, and the Concept,
+            Analogous group and Variant were created for you.
+          </p>
+          <p>
+            Do it a few times in a row: the dialog stays open with the name
+            cleared and remembers the last type and location, because entering
+            ten things back to back is the normal case.
+          </p>
+        </li>
+
+        <li>
+          <h4>Refine the catalogue only if you need to</h4>
+          <p>
+            Say you now buy black PLA from a second brand and you want the app to
+            understand that <em>either one will do</em>. This — and only this — is
+            the moment to open the catalogue pages:
+          </p>
+          <ul>
+            <li>Go to <strong>Variants</strong> and rename the one Quick Add
+              created so it says the real commercial product: “Prusament PLA
+              Black, 1 kg spool”. While you're there, fill in brand, supplier,
+              catalogue ref, pack size and unit.</li>
+            <li>Press <em>New variant</em>, hang it off the <strong>same
+              Analogous group</strong>, and put the other brand in.</li>
+          </ul>
+          <p>
+            From now on the Concept's stock adds up both brands, and on Home
+            you'll see them grouped under the same concept but on separate
+            lines.
+          </p>
+        </li>
+
+        <li>
+          <h4>Get warned before you run out</h4>
+          <p>
+            Go to <strong>Concepts</strong>, edit “Black PLA filament” and set
+            <strong>Min. stock</strong> to 2. From now on, when the total drops
+            below 2 kg the Home card turns amber and expands itself. At zero, red.
+            Without a threshold, a concept never warns you.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============================================================== 05 -->
+    <section id="s5">
+      <h2><span class="n"></span>Quick Add, in detail</h2>
+
+      <p>
+        This is the path designed for when you're standing in the storeroom
+        holding the thing. It opens with the <code>q</code> key (when you're not
+        typing in a field) or the <em>Quick Add</em> button, present on both Home
+        and Items.
+      </p>
+
+      <h3>The name field is a search box</h3>
+      <p>
+        As you type, matches appear underneath — <strong>across all languages at
+        once</strong> — and what happens depends on what you pick:
+      </p>
+      <ul>
+        <li><strong>You pick a Variant</strong> (they're listed first, they're the
+          shortest path): the item hangs directly off that product. The type
+          selector disappears, because the variant already knows its type.</li>
+        <li><strong>You pick a Concept</strong>: it's noted as the reference for
+          your search.</li>
+        <li><strong>You pick nothing</strong>: on save, the system creates the
+          Concept → Analogous → Variant chain using the name you typed, and hangs
+          the item off it. <strong>It all happens in a single transaction</strong>:
+          either everything is created, or nothing is.</li>
+      </ul>
+      <div class="note tip">
+        <span class="lbl">Why it matters</span>
+        <p>
+          This search box is the only thing standing between you and a database
+          full of duplicates. It's worth typing three letters and glancing at the
+          list before creating anything new.
+        </p>
+      </div>
+
+      <h3>The rest of the form</h3>
+      <ul>
+        <li><strong>Type</strong> — remembers the last one you used.</li>
+        <li><strong>Location</strong> — also remembered; opens the tree.</li>
+        <li><strong>Quantity and unit</strong> — only take effect if the type
+          tracks a quantity.</li>
+        <li><strong>Price</strong> — write it however feels natural
+          (<code>22.40</code> or <code>22,40</code>).</li>
+        <li><strong>Copies</strong> — 1 to 100. If three identical spools arrive,
+          put 3: you get three items with consecutive identifiers.</li>
+        <li>If the type has <strong>required</strong> custom fields, they appear
+          here. Optional ones only show up in the full form.</li>
+      </ul>
+      <p>
+        On save, a toast confirms the identifiers created. If a new chain was
+        created, the toast offers a <em>Refine →</em> link to Variants in case you
+        want to add brand and supplier right away. If you don't, nothing breaks:
+        refining is optional forever.
+      </p>
+    </section>
+
+    <!-- ============================================================== 06 -->
+    <section id="s6">
+      <h2><span class="n"></span>The life of an item</h2>
+
+      <p>
+        Click any row in <strong>Items</strong> and the detail drawer slides in
+        from the right, with two tabs: <em>Details</em> and <em>History</em>. The
+        actions sit at the top.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Action</th><th>What it actually does</th><th>Minimum role</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Open</th>
+              <td>Goes from <span class="pill ok">in stock</span> to <span class="pill warn">open</span> and records the opening date.</td>
+              <td><span class="pill role">operator</span></td>
+            </tr>
+            <tr>
+              <th>Deplete</th>
+              <td>Goes to <span class="pill bad">depleted</span>, records the date and <strong>sets the remaining quantity to zero</strong>.</td>
+              <td><span class="pill role">operator</span></td>
+            </tr>
+            <tr>
+              <th>Move</th>
+              <td>Opens the location tree; from-where and to-where are recorded.</td>
+              <td><span class="pill role">operator</span></td>
+            </tr>
+            <tr>
+              <th>Adjust qty</th>
+              <td>Corrects the remaining quantity. <strong>Requires a written reason</strong>, which goes into the history.</td>
+              <td><span class="pill role">operator</span></td>
+            </tr>
+            <tr>
+              <th>Edit</th>
+              <td>Location, unit, serial, batch, notes and custom fields.</td>
+              <td><span class="pill role">operator</span></td>
+            </tr>
+            <tr>
+              <th>Delete</th>
+              <td>Soft delete: disappears from the lists, the history stays.</td>
+              <td><span class="pill role">manager</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The statuses that aren't open or deplete</h3>
+      <p>
+        <em>Open</em> and <em>Deplete</em> only appear when they make sense. For
+        every other status the Type allows there is the <strong>Set status</strong>
+        dropdown: it is how you take a printer from <code>in_service</code> to
+        <code>maintenance</code>, or a document from <code>active</code> to
+        <code>archived</code>. Only that Type's valid statuses are ever offered.
+      </p>
+
+      <h3>Why status can't be edited by hand</h3>
+      <p>
+        On purpose. Status changes only go through the action buttons, and each
+        one validates that the destination status is one the Type allows. That's
+        why you can't “reopen” a depleted item: it will tell you <em>“cannot go
+        from depleted to open”</em>. Quantity is an estimate; the fact that you
+        opened it or finished it is a fact, and facts get recorded.
+      </p>
+
+      <h3>Prices are frozen</h3>
+      <p>
+        If you enter an item with a price, that price is <strong>locked
+        forever</strong> and the field is disabled when editing. Price changes are
+        never retroactive: what you paid for that spool last month is still what
+        you paid. If you left it blank, you can fill it in later.
+      </p>
+      <p>
+        Internally, prices are whole numbers of cents, never decimals, to keep
+        rounding errors out.
+      </p>
+    </section>
+
+    <!-- ============================================================== 07 -->
+    <section id="s7">
+      <h2><span class="n"></span>The Home screen</h2>
+
+      <p>
+        Home speaks in <strong>Concepts</strong>, not items. It answers three
+        questions: what do I have, is anything running low, and let me act fast.
+      </p>
+
+      <h3>The strip along the top</h3>
+      <p>
+        Four numbers: active concepts, active items, open items, and how many
+        concepts are below their minimum. The last one turns red if any concept
+        is at zero.
+      </p>
+
+      <h3>The tree on the left is a filter</h3>
+      <p>
+        Click a zone and <strong>everything</strong> — the numbers on top, each
+        card's stock and its item list — narrows to that branch and everything
+        under it. A chip appears with the active code; click it to clear. This is
+        how you do a physical stock-take of one cabinet.
+      </p>
+
+      <h3>Concept cards</h3>
+      <ul>
+        <li>Name, identifier, and the stock large in mono type, with the minimum
+          beside it if you set one.</li>
+        <li>Left edge amber when low, red when at zero — and in that case
+          <strong>the card opens itself</strong>.</li>
+        <li>Opening it shows the hierarchy: grouped by Variant, and under each
+          variant, the items with their identifier, status, location and
+          quantity.</li>
+        <li>If an item has a date field that looks like an expiry and fewer than
+          90 days remain, you get a <span class="pill warn">exp 34d</span> badge.</li>
+        <li>To the right of each item, the button that makes sense now:
+          <em>Open</em> if it's in stock, <em>Deplete</em> if it's open.</li>
+      </ul>
+
+      <div class="note tip">
+        <span class="lbl">Undo</span>
+        <p>
+          After every quick action a toast appears bottom-right with an
+          <strong>Undo</strong> button. It returns the item to its previous
+          status — and that return is recorded in the history too, because
+          history is never edited, only appended to.
+        </p>
+      </div>
+
+      <h3>Items with no concept</h3>
+      <p>
+        An item created without a variant belongs to no concept, so it cannot
+        appear on any card. Those are grouped at the bottom in a
+        <strong>Standalone items</strong> card, which only shows up when there
+        are some.
+      </p>
+
+      <p>
+        Depleted items are hidden by default; there's a <em>Show depleted</em>
+        checkbox at the top right.
+      </p>
+
+      <h3>The layout: a grid, and a tree you can drag</h3>
+      <p>
+        The cards are laid out as a <strong>grid that refills itself</strong>: on
+        a wide monitor you get three or four columns, on a laptop two, on a
+        phone one. Nothing is configured — the browser fits as many columns as
+        the window allows and rearranges them as you resize it.
+      </p>
+      <p>
+        The location tree has a <strong>drag handle</strong> on its right edge.
+        Pull it to whatever width your location names need and it stays there,
+        on this computer, from now on. Double-click the handle to put it back;
+        with the keyboard, focus it and use the arrow keys.
+      </p>
+      <p>
+        An open card scrolls inside itself once it gets past about ten items, so
+        one very full concept can't stretch its whole row of the grid.
+      </p>
+    </section>
+
+    <!-- ============================================================== 08 -->
+    <section id="s8">
+      <h2><span class="n"></span>Searching your items</h2>
+
+      <p>
+        The <strong>Items</strong> page is the full listing, with a filter bar
+        whose filters combine with each other:
+      </p>
+      <ul>
+        <li><strong>Statuses</strong>: pills you switch on and off. By default
+          <span class="pill ok">in stock</span> and
+          <span class="pill warn">open</span> are on; to see everything, switch
+          them all on.</li>
+        <li><strong>Type</strong> and <strong>Concept</strong>: dropdowns.</li>
+        <li><strong>Location</strong>: always includes sub-locations.</li>
+        <li><strong>Free text</strong>: searches the identifier, serial number,
+          batch number and notes.</li>
+      </ul>
+      <p>
+        The table shows identifier, type, concept, status, location, remaining,
+        received date and price. Any row opens the detail drawer.
+      </p>
+
+      <h3>The full add form</h3>
+      <p>
+        The <em>Add item</em> button opens the long form, for when you want full
+        control. The clever bit is the first field: <strong>picking the Type
+        rebuilds the form</strong> and the fields you defined for that type
+        appear. You can also pick a Variant (and then it inherits unit and pack
+        size), or leave it blank to create a standalone item with no catalogue
+        behind it.
+      </p>
+    </section>
+
+
+      <h3>Filters you can type into</h3>
+      <p>
+        The type, concept and variant filters are search boxes, not just
+        dropdowns: start typing and the list narrows as you go. It ignores
+        accents and capitals, so <code>hepta</code> finds <em>Heptà</em>, and
+        the arrow keys plus Enter pick without touching the mouse.
+      </p>
+      <p>
+        They also narrow each other. Choose a concept and the variant list only
+        offers that concept's products; change the type and the variant filter
+        clears itself, because a variant belongs to exactly one type and leaving
+        the old one would show you an empty table for no visible reason.
+      </p>
+
+      <h3>Sorting by a column</h3>
+      <p>
+        Click any heading to sort by it, click again to reverse, and a third
+        time to go back to the table's own order (newest first). The arrow in
+        the heading tells you which way it is.
+      </p>
+      <ul>
+        <li>Names and places sort <strong>alphabetically, in the language you
+          are reading</strong> — a Catalan reader gets Catalan order, not
+          whatever language happens to be first in the record.</li>
+        <li>Quantities, dates and prices sort as <strong>numbers and dates</strong>,
+          smallest or oldest first.</li>
+        <li>Rows with nothing in that column always sink to the bottom, whichever
+          direction you sort.</li>
+      </ul>
+      <p>
+        Sorting happens on the server, over <strong>every item that matches your
+        filters</strong> — not just the page in front of you. "The cheapest
+        isopropyl alcohol we have" is one click, wherever it is in the list.
+      </p>
+    <!-- ============================================================== 09 -->
+    <section id="s9">
+      <h2><span class="n"></span>The three upper levels</h2>
+
+      <p>
+        These three pages are the catalogue. If you only ever use Quick Add, you
+        may never open them.
+      </p>
+
+      <h3>Concepts</h3>
+      <p>
+        A table with the calculated stock, the minimum, how many analogous groups
+        it has and a coloured dot for its state. You edit the name
+        (multilingual), the functional unit, the minimum-stock threshold and
+        notes.
+      </p>
+
+      <h3>Analogous</h3>
+      <p>
+        An Analogous group is <strong>a set of things that serve you
+        interchangeably</strong>. Its reason to exist appears when one Concept has
+        more than one: “Sanding discs” with one group per size, or “PLA
+        filament” with one per diameter. Within a group you swap brands without
+        thinking; across groups, you don't.
+      </p>
+
+      <h3>Variants</h3>
+      <p>
+        A Variant is <strong>one concrete commercial product</strong>: the thing
+        you actually buy. This is where brand, supplier, catalogue reference,
+        format, pack size and unit, purity and concentration live.
+      </p>
+
+      <h3>Moving things around the tree</h3>
+      <p>
+        You can reassign an Analogous group to a different Concept, or a Variant
+        to a different Analogous group. When you do, the form warns you first:
+      </p>
+      <div class="note warn">
+        <span class="lbl">Re-link warning</span>
+        <p>This will re-link 2 variant(s) and 7 item(s) to the new concept.</p>
+      </div>
+      <p>
+        And when you save, updating all the descendants happens in a single
+        transaction: either everything moves, or nothing does. You never end up
+        with items pointing one way and their product pointing another.
+      </p>
+    </section>
+
+    <!-- ============================================================== 10 -->
+    <section id="s10">
+      <h2><span class="n"></span>History</h2>
+
+      <p>
+        Everything that happens leaves a trace, and the trace is written
+        <strong>inside the same transaction</strong> as the change: if the change
+        is saved, so is the record; if it fails, neither is.
+      </p>
+      <p>These actions are recorded:</p>
+      <ul>
+        <li><code>created</code>, <code>updated</code> (one entry per changed
+          field, with the before and after values)</li>
+        <li><code>status_changed</code>, <code>moved</code>,
+          <code>quantity_adjusted</code></li>
+        <li><code>soft_deleted</code>, <code>restored</code></li>
+      </ul>
+      <p>
+        On the <strong>History</strong> page you can filter by entity type, by action, by user (if you are an administrator) and by identifier. Each row says who did it and when.
+      </p>
+      <p>
+        On top of that, every item's detail drawer has its own history tab, which
+        is the same information filtered to that item: useful for answering “and
+        this spool — where did it come from and who's touched it?”.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Append-only</span>
+        <p>
+          History entries are never edited or deleted, not even when you delete
+          the entity they refer to.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 -->
+    <section id="s11">
+      <h2><span class="n"></span>Users and permissions</h2>
+
+      <p>
+        There are four roles, cumulative: each can do everything the previous one
+        can, plus a little more.
+      </p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Can</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th><span class="pill role">viewer</span></th>
+              <td>Sees absolutely everything. Changes nothing.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">operator</span></th>
+              <td>+ create items, open, deplete, move, adjust quantities, edit items.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">manager</span></th>
+              <td>+ create and edit Concepts, Analogous groups, Variants and Locations; delete items.</td>
+            </tr>
+            <tr>
+              <th><span class="pill role">admin</span></th>
+              <td>+ Types and Users.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The philosophy is <em>everything visible, not everything editable</em>:
+        even a viewer can open every data page; they simply don't get the
+        buttons. And that isn't only cosmetic — the server re-checks the
+        permission on every request, so hiding the button isn't the security,
+        it's just good manners.
+      </p>
+
+      <h3>Creating accounts</h3>
+      <p>
+        Since public registration closes after the first account, the rest are
+        created by the administrator from <strong>Users</strong> → <em>New
+        user</em>: name, username, optional email, temporary password and
+        role.
+        The role can be changed afterwards from the dropdown in the table, with
+        one exception: <strong>you can't change your own role</strong>, because
+        that would be the easiest way to lock yourself out of the admin area.
+      </p>
+      <h3>Passwords</h3>
+      <p>
+        The key icon next to your name in the sidebar opens <strong>Change
+        password</strong>. You have to type the current one, and saving signs out
+        your other devices but not this one.
+      </p>
+      <p>
+        If somebody has lost theirs, an administrator resets it from
+        <strong>Users</strong> → the <em>Password</em> button on their row. No
+        need to know the old one; that person is signed out everywhere and must
+        use the new password.
+      </p>
+
+      <p>You can also do it from the terminal:</p>
+      <pre><code>cd packages/api
+npx tsx --env-file-if-exists=.env scripts/create-user.mts \
+  theirusername "their-password" "Their Name" operator</code></pre>
+    </section>
+
+    <!-- ============================================================== 12 -->
+    <section id="s12">
+      <h2><span class="n"></span>Language and colours</h2>
+
+      <h3>Three languages, two layers</h3>
+      <p>
+        At the bottom of the sidebar there's <strong>EN / DE / CA</strong>. It
+        switches the interface text instantly and is remembered.
+      </p>
+      <p>
+        But there's a second layer: <strong>your own data names are multilingual
+        too</strong>. Every name field (concepts, analogous groups, variants,
+        locations, types, custom-field labels) has the three tabs. English is
+        required and acts as the fallback: if you view the app in German and
+        something has no German name, you see the English instead of a blank.
+      </p>
+
+      <h3>The colours</h3>
+      <p>
+        The palette icon, next to the languages, opens the picker. The whole look
+        of the app comes from <strong>three colours</strong>:
+      </p>
+      <ul>
+        <li><strong>Primary</strong> — buttons, links, active navigation and the
+          overall tone of the backgrounds.</li>
+        <li><strong>Secondary</strong> — accents and chips.</li>
+        <li><strong>Accent</strong> — warm details.</li>
+      </ul>
+      <p>
+        The dark surfaces are tinted with the primary, so changing it doesn't
+        just change your buttons: it transforms the whole app. There are four
+        ready-made palettes and a button to go back to the original. The text on
+        buttons is recalculated automatically so it stays readable whether you
+        pick a light colour or a dark one.
+      </p>
+      <p>
+        The status colours — red for out of stock, amber for warning, green for
+        fine — <strong>never change</strong>. A warning has to look like a warning
+        even if you go for a pink theme.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Worth knowing</span>
+        <p>
+          Both the language and the colours are stored in the browser, not in
+          your account. Sign in from another computer and you're back to the
+          defaults.
+        </p>
+      </div>
+
+      <h3>The workshop's logo</h3>
+      <p>
+        An <strong>admin</strong> can put the workshop's own logo in the same dialog.
+        Pick an image — PNG, JPEG, WebP or SVG — and it appears in the sidebar,
+        on the sign-in screen and on the public stock board. Large images are
+        shrunk automatically before they are stored; an SVG is left alone,
+        because it already scales.
+      </p>
+      <p>
+        The logo goes <strong>inside the database file</strong>, not in a folder
+        beside it. That is deliberate: a backup of this product is one file, and
+        a logo living somewhere else would be the first thing to go missing when
+        somebody copies the database to a stick.
+      </p>
+
+      <h3>Colours read out of the logo</h3>
+      <p>
+        As soon as an image is loaded, the app reads the colours out of it and
+        offers <strong>three schemes</strong> — <em>Calm</em>, <em>Bright</em>
+        and <em>Deep</em>. They are the same colours from your logo, lit three
+        different ways; hover one to see the whole app in it, click to keep it.
+      </p>
+      <p>
+        What it takes from the image is the <strong>hue</strong> — the thing
+        people recognise as "our colour" — and then adjusts how strong and how
+        bright it is, because the app's surfaces are dark and a brand navy taken
+        raw would disappear into the background. Grey, black, white and
+        transparent pixels are ignored: they are the paper, not the mark.
+      </p>
+
+      <h3>The workshop's, or just yours</h3>
+      <p>
+        The dialog has two halves and they answer different questions.
+      </p>
+      <ul>
+        <li><strong>Save for the whole workshop</strong> (admins only) stores the
+          logo, the name and the colours in the database. Every computer in the
+          building picks them up, including ones nobody will ever open this
+          dialog on.</li>
+        <li><strong>Only on this computer</strong> is the old behaviour: your
+          own three colours, kept in this browser, and they win over the workshop's.
+          The reset button goes back to the workshop's look rather than to the
+          factory one.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================== 13 -->
+    <section id="s13">
+      <h2><span class="n"></span>Deleting and restoring</h2>
+
+      <p>
+        Nothing you delete from the interface is actually removed. The row is
+        marked with a deletion timestamp and every query skips it. Which means a
+        deletion by mistake is not a loss of data.
+      </p>
+      <h3>The Bin</h3>
+      <p>
+        In the sidebar, for managers and admins, there is a <strong>Bin</strong>:
+        everything that has ever been deleted, of any kind, with the date and a
+        <em>Restore</em> button. Everything means everything — items, concepts
+        and locations, but also requests, lots, suppliers, activities and pools.
+      </p>
+
+      <h3>Deleting for good</h3>
+      <p>
+        Sometimes you want the row gone: a supplier you invented by typo, a
+        duplicated type, a test lot. In the Bin, managers and admins have
+        <strong>Delete permanently</strong>, which asks you to type the
+        human id before it does anything.
+      </p>
+      <div class="note stop">
+        <span class="lbl">This one really is final</span>
+        <p>
+          There is no undo, and the app refuses if anything still points at the
+          row — it will tell you what. What survives is the
+          <strong>History</strong>: the record that the thing existed, and that
+          somebody destroyed it, is never removed.
+        </p>
+      </div>
+      <p>
+        The one rule is that <strong>parents come back before children</strong>.
+        A variant cannot return into an analogous group that is itself still
+        deleted, and the list tells you before you try: instead of the button you
+        see <em>“restore its analogous first”</em>. Work top-down and everything
+        lands back where it was, with the stock recalculated automatically.
+      </p>
+
+      <h3>Cascade delete</h3>
+      <p>
+        If you delete something with things hanging off it, the app doesn't just
+        refuse: it shows you exactly what is in the way and offers to
+        <strong>take it all down at once</strong>.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Example</span>
+        <p>Deleting it will also delete: <strong>1 × Analogous · 2 × Variants · 3 × Items</strong></p>
+      </div>
+      <p>
+        The cascade happens in a single transaction and all of it lands in the
+        Bin, restorable in order. The one deliberate exception is locations:
+        deleting a shelf <strong>never</strong> deletes what is standing on it. A
+        location cascade only takes empty sub-locations; if there are items, move
+        them first.
+      </p>
+    </section>
+
+    <!-- ============================================================== 14 -->
+    <section id="s14">
+      <h2><span class="n"></span>Backups</h2>
+
+      <p>
+        The entire database is <strong>a single file</strong>. That's the great
+        convenience of this design: making a backup means copying a file.
+      </p>
+      <ul>
+        <li>In development: <code>packages/api/data/inventory.db</code></li>
+        <li>Under Docker: <code>inventory-data/inventory.db</code> inside the volume</li>
+      </ul>
+      <p>
+        Next to it you'll find <code>inventory.db-wal</code> and
+        <code>inventory.db-shm</code>. Those are SQLite's working files. The safest
+        approach is to <strong>stop the server before copying</strong>; that folds
+        pending changes into the main file and copying <code>inventory.db</code> is
+        enough. If you copy while it's running, take all three.
+      </p>
+      <p>
+        Restoring is the same in reverse: stop, replace the file, start again.
+      </p>
+    </section>
+
+    <!-- ============================================================== 15 -->
+    <section id="s15">
+      <h2><span class="n"></span>The API</h2>
+
+      <p>
+        Everything the interface does, it does by calling an ordinary REST API —
+        and that API documents itself. Open <code>/api/docs</code> —
+        <code>http://localhost:3001/api/docs</code> in development, or
+        <code>:3000</code> under Docker — and you get the complete list of
+        operations with their parameters, and you can try them right there.
+      </p>
+      <p>
+        It's good for three things: automating bulk loads (entering a hundred
+        items from a spreadsheet, say), connecting another tool, or handing the
+        project to someone who has to carry it on. Errors always have the same
+        shape:
+      </p>
+      <pre><code>{ "error": { "code": "concept_in_use",
+             "message": "Cannot delete: 1 analogous group(s)…" } }</code></pre>
+    </section>
+
+    <!-- ============================================================== 16 -->
+    <section id="s17">
+      <h2><span class="n"></span>Bulk in and out</h2>
+
+      <p>
+        Two tools on the <strong>Items</strong> page, for when doing things one
+        at a time makes no sense.
+      </p>
+
+      <h3>CSV export and import</h3>
+      <p>
+        <em>Export</em> downloads every item as a CSV with status, location,
+        quantities, price and custom fields. It opens in Excel, LibreOffice or
+        whatever you use.
+      </p>
+      <p>
+        <em>Import</em> (manager role) goes the other way, in two beats: when you
+        pick the file, the server reads it <strong>without writing
+        anything</strong> and tells you how many rows it understood and which
+        would fail and why. Only when you press <em>Import</em> is anything
+        written, and it is written <strong>all or nothing</strong>: a spreadsheet
+        with one bad row imports none of itself.
+      </p>
+      <div class="note tip">
+        <span class="lbl">The trick</span>
+        <p>
+          Export first even when you have nothing, to see the exact columns
+          expected. The minimum is <code>type</code>, plus <code>variant</code> if
+          you want it linked into the catalogue. Locations are given by their code
+          (<code>L01R01Z02</code>).
+        </p>
+      </div>
+
+      <h3>QR code labels</h3>
+      <p>
+        Every row in the items table has a checkbox. Tick a few and a bar appears
+        with <em>Print labels</em>.
+      </p>
+      <p>
+        Each label carries the identifier, the name, the location and a
+        <strong>QR code pointing at that item inside your app</strong>. Scanning
+        it with a phone camera opens its page: it is how you know what is in a box
+        without opening it. When printing, the whole interface disappears and only
+        the label sheet reaches the paper, in black and white, with no label split
+        across pages.
+      </p>
+    </section>
+
+    
+
+
+    <!-- ============================================================== 18 -->
+    <section id="s18">
+      <h2><span class="n"></span>How closely to track each thing</h2>
+
+      <p>
+        Not everything in the workshop deserves the same attention. So every
+        <strong>Concept</strong> carries its own tracking level, and one workshop
+        happily runs all three at once.
+      </p>
+
+      <h3>Level 1 — manual</h3>
+      <p>
+        You record opens and depletions, and that is all. You set your own
+        threshold (<em>tell me when 5 boxes are left</em>). <strong>This is a
+        complete way to use the app</strong>, not a stepping stone to something
+        else.
+      </p>
+
+      <h3>Level 2 — estimated rate</h3>
+      <p>
+        You type what you think you use per month. It exists so that on day one,
+        with no history at all, the app can answer <em>how long will what I have
+        last</em>.
+      </p>
+      <p>
+        Once there are real depletions, measurement takes over — but
+        <strong>your estimate is never erased</strong>. It stays beside the
+        measured one:
+      </p>
+      <blockquote>
+        You said <s>800</s>/month. Measured: 500/month (3 boxes depleted over
+        2 months). Using 500.
+      </blockquote>
+      <p>
+        That moment is deliberate. Seeing your own estimate corrected by reality
+        is what makes the number believable.
+      </p>
+
+      <h3>Level 3 — activities consume it</h3>
+      <p>
+        You declare what each activity consumes and, when you record it,
+        <strong>the app takes that much out of the open container</strong>.
+ explains it.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">The rule that never bends</span>
+        <p>
+          An activity moves the quantity. <strong>Only a person declares a
+          container finished.</strong> The app will tell you a bottle ought to be
+          empty; it will never say so on your behalf — because the difference
+          between what the recipe predicted and what the bottle really held is
+          the most valuable number the app produces.
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="lbl">This changed in August 2026</span>
+        <p>
+          Earlier versions of this manual said no estimate ever moves stock. That
+          was wrong, and wrong in a way that made you do the work twice.
+          Recording <em>“I ran seven pH tests”</em> is not a guess: it is a person
+          saying what happened. The guess is the <em>recipe</em> — 5 mL a test —
+          and the app keeps the two apart, which is precisely what the
+          reconciliation in measures.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================== 19 -->
+    <section id="s19">
+      <h2><span class="n"></span>Requests</h2>
+
+      <p>
+        A request is <em>“we need wood glue”</em>. Nothing more. There is no
+        purchasing decision inside it: the person who needs wood glue should not
+        have to know which brand, which is why a request is made against the
+        <strong>Concept</strong>.
+      </p>
+
+      <h3>Where it is born</h3>
+      <p>
+        The best place to ask for something is not the Requests page: it is the
+        second you realise it has run out, with the empty bottle in your hand.
+        So <strong>when you deplete the last item of a concept, the app opens
+        the request form for you</strong>, with the concept already filled in.
+      </p>
+      <p>
+        You can also ask from <em>Requests → Request something</em>, or from the
+        Forecast with one button for a whole list.
+      </p>
+
+      <h3>What you fill in</h3>
+      <ul>
+        <li><strong>What</strong> and <strong>how much</strong>. Required.</li>
+        <li><strong>Urgency</strong>: normal or blocking. Two levels on purpose —
+          with five, everything is urgent within a month.</li>
+        <li>A <strong>note</strong>, if you want to tell the buyer something.</li>
+      </ul>
+
+      <h3>If somebody already asked</h3>
+      <p>
+        When you pick the concept, if an open request already exists the app says
+        so and offers <em>Add me too</em> instead of writing a second row.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Why</span>
+        <p>
+          Three identical requests are not information; one request with three
+          people behind it is. It tells you the <strong>intensity</strong> of the
+          demand, not just that it exists.
+        </p>
+      </div>
+
+      <h3>What happens next</h3>
+      <p>
+        The request moves from <em>Open</em> to <em>In a lot</em>,
+        <em>Ordered</em> and <em>Arrived</em>, and whoever made it sees that in
+        their own list without having to ask anyone. With no mail server, this is
+        the feedback loop.
+      </p>
+    </section>
+
+
+      <h3>Choosing what to actually order</h3>
+      <p>
+        When you turn requests into a line, the form opens on the answer it can
+        already work out:
+      </p>
+      <ul>
+        <li>If the person who asked named a preferred product, <strong>that one
+          is selected</strong> and marked as their suggestion. Their note was
+          already in the request; there is no reason to make you ask them
+          again.</li>
+        <li>Otherwise the one you <strong>bought last time</strong> is selected,
+          at last time's price.</li>
+        <li>Products already bought are listed first; ones that merely exist are
+          grouped under <em>Never ordered</em>, so "the usual" and "we have this
+          on file" are never confused.</li>
+      </ul>
+
+      <h3>Naming a product on the spot</h3>
+      <p>
+        A concept nobody has ever ordered has no products under it at all — and
+        that is exactly the concept somebody has just asked for. <strong>New
+        product</strong> lets you name it here: what the supplier calls it, the
+        brand, the pack size. It is created as a real variant under that
+        concept, so next time it is one click, and the price you type today
+        becomes the "last time" price of tomorrow.
+      </p>
+
+      <h3>The quantity, and when it can't be worked out</h3>
+      <p>
+        Picking a product proposes a quantity: the amount requested, divided by
+        the pack size, rounded up. The arithmetic is shown, not hidden — "you
+        need 500 mL, the pack is 1 L, so 1".
+      </p>
+      <div class="note warn">
+        <span class="lbl">Different units</span>
+        <p>
+          If the request is in <strong>mL</strong> and the pack is in
+          <strong>L</strong>, the app will not do that division. It says so and
+          leaves the quantity alone, because dividing 500 by 1 and ordering five
+          hundred bottles is a much worse answer than asking you to look.
+        </p>
+      </div>
+    <!-- ============================================================== 20 -->
+    <section id="s20">
+      <h2><span class="n"></span>Lots: buying and receiving</h2>
+
+      <div class="note tip">
+        <span class="lbl">Where the two halves meet</span>
+        <p>
+          A request names a <strong>concept</strong> — "wood glue, 500 mL" — because
+          the person who needs it should not have to know which brand. An order
+          names a <strong>product</strong>, because that is what a supplier can
+          actually send. The lot line is where somebody crosses that gap, and
+          the form is built so it is crossed once and remembered.
+        </p>
+      </div>
+
+      <p>
+        A <strong>lot</strong> is one order to one supplier. It happens in three
+        stages: build it, order it, receive it.
+      </p>
+
+      <h3>Building it</h3>
+      <p>
+        <em>Lots → New lot</em>, pick the supplier, then add lines. Each line is
+        the step from <strong>Concept to Variant</strong>: it arrives as
+        <em>“wood glue, 500 mL”</em> and must leave as <em>“1 × 1 L bottle of
+        brand X, €41.80”</em>.
+      </p>
+      <div class="note tip">
+        <span class="lbl">The order reference comes later</span>
+        <p>
+          You are not asked for it here, because it does not exist yet: the shop
+          gives it to you <em>after</em> you place the order. It is asked for at
+          the <em>mark as ordered</em> step, where you actually have it.
+        </p>
+      </div>
+      <p>
+        <strong>Suppliers are remembered.</strong> Start typing and the app
+        offers the ones you already use, with how many lots and what you last
+        paid. Typing a name that only differs in capitals does not create a
+        second shop — <em>SensLab</em> and <em>SensLAb</em> are one supplier with
+        one price history.
+      </p>
+
+      <h3>Pulling in what people asked for</h3>
+      <p>
+        A draft lot shows the <strong>open requests</strong>, grouped by concept
+        and with the people behind each one. Tick the ones this order covers and
+        they become lines, already carrying the quantity that was asked for.
+      </p>
+      <p>
+        That is the whole point of requests: somebody asked, you are buying, and
+        neither of you had to send an email. Whatever you leave unticked stays
+        open for the next order.
+      </p>
+      <p>
+        The screen makes that nearly automatic, because most reorders are
+        repeats: it shows <strong>what you bought before</strong> with its price
+        and date, and one click fills in both variant and price. If the pack size
+        does not match what you need, it shows the maths —
+        <em>you need 500 mL · the pack is 1 L · quantity 1</em> — so the rounding
+        is visible instead of silent.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Price at the moment of the decision</span>
+        <p>
+          If the price you enter differs from what you last paid, the line says
+          so right there: <em>+12% since last order</em>. The information where
+          the decision is made, not in a report nobody opens.
+        </p>
+      </div>
+
+      <h3>Ordering it</h3>
+      <p>
+        <em>Mark as ordered</em> closes the lot to edits and moves all its
+        requests to <em>Ordered</em>. From here the app counts the days until it
+        arrives.
+      </p>
+
+      <h3>Receiving it — the part that pays for everything</h3>
+      <p>
+        The box arrives, you open the lot and say how many of each line came. On
+        confirm, <strong>the app creates the items for you</strong>: humanId,
+        price, location, expiry. Twelve bottles without typing twelve items.
+      </p>
+      <ul>
+        <li><strong>Fewer arrived?</strong> That is normal. The line stays open
+          for the rest, and there is a <em>the rest will never come</em> checkbox
+          to close it when you give up.</li>
+        <li><strong>They sent something else?</strong> Tick <em>they sent
+          something else</em> and name what arrived. Items are created for the
+          product that <strong>actually arrived</strong>, creating it if it is new.</li>
+        <li><strong>Expiry</strong>: one per line, not twelve date fields.</li>
+      </ul>
+
+      <div class="note warn">
+        <span class="lbl">What is never touched</span>
+        <p>
+          A line has <strong>two sides</strong>: what you ordered and what
+          arrived. The first is never overwritten. Editing <em>5 of A</em> to say
+          <em>4 of B</em> would destroy exactly the interesting data.
+        </p>
+      </div>
+
+      <h3>What falls out by itself</h3>
+      <p>
+        With nothing to configure, the Lots page gradually tells you each
+        <strong>supplier's behaviour</strong>: what share of lines they
+        short-ship and how many days they take on average. That second number is
+        precisely what the Forecast needs.
+      </p>
+    </section>
+
+    <!-- ============================================================== 21 -->
+    <section id="s21">
+      <h2><span class="n"></span>Forecast</h2>
+
+      <p>The page is not a chart. It is a sentence and a button:</p>
+      <blockquote>
+        6 things will run out before you can reorder them. &nbsp; [ Request all ]
+      </blockquote>
+      <p>
+        Tick the ones you want or take the lot, and they become requests.
+        That closes the cycle back on itself.
+      </p>
+
+      <h3>Where the numbers come from</h3>
+      <ul>
+        <li><strong>Consumption</strong> is measured from <em>real depletions</em>,
+          not from activities. So the forecast works even if nobody ever records
+          an activity, and gets better if they do.</li>
+        <li><strong>Lead time</strong> is learned from your own orders: the days
+          between ordering a lot and receiving it. With no history yet it assumes
+          14 days and says so.</li>
+      </ul>
+
+      <h3>Honesty</h3>
+      <p>
+        With three depletions in three months nothing can be forecast, and the
+        app says <em>not enough history yet</em> rather than inventing a figure.
+        When it does have enough, it shows its working:
+      </p>
+      <blockquote>4 bottles in 90 days · 2 left · about 45 days</blockquote>
+    </section>
+
+    <!-- ============================================================== 22 -->
+    <section id="s22">
+      <h2><span class="n"></span>Activities and real cost</h2>
+
+      <p>
+        An <strong>activity</strong> is something you do that uses material: an
+        analysis, a print run, a preparation. You declare what it consumes —
+        <em>panel prep → 3 tubes, 10 tips</em> — and after that you only have to
+        say how many times you did it.
+      </p>
+
+      <h3>Recording it</h3>
+      <p>
+        Three taps: which activity, how many times, save. If it cost more than
+        writing it in the workshop notebook, nobody would do it.
+      </p>
+      <p>
+        Recording <strong>takes the material out of the open container</strong>
+        of every concept in the map. Not a note beside the stock — the stock
+        itself. If a concept has <strong>nothing open</strong>, the app tells you
+        instead of staying quiet: the consumption has nowhere to land.
+      </p>
+      <p>
+        Which container? The oldest one that is open <em>and still has something
+        in it</em>. A container reading zero is passed over whenever another
+        open one can take the charge, so a bottle somebody forgot to close does
+        not swallow a month of consumption while another open one stands beside
+        it.
+      </p>
+      <div class="note">
+        <span class="lbl">When the empty one is the only one open</span>
+        <p>
+          It still takes the charge — the app cannot open the next bottle for
+          you — but not quietly: it says <em>the map thinks this is empty</em>
+          every single time, until you confirm it. Stock stops at zero, the
+          overdraw keeps counting underneath, and the difference is recorded
+          the moment you close it.
+        </p>
+      </div>
+
+      <h3>Two numbers per container</h3>
+      <p>
+        Each open container carries two figures, and keeping them apart is what
+        makes the rest work:
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Figure</th><th>What it is</th><th>Floor</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Remaining</strong></td>
+              <td>What the app believes is in the bottle. This is what stock counts.</td>
+              <td>Never goes below zero</td>
+            </tr>
+            <tr>
+              <td><strong>Charged</strong></td>
+              <td>Everything the recipes ever took out of it.</td>
+              <td>Keeps counting past empty</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>When the map says it should be empty</h3>
+      <p>
+        When the charged figure reaches what the container held, the app
+        <strong>raises its hand</strong>: <em>the map says supplyAA002 should be
+        empty — is it?</em> It never depletes anything by itself. You decide,
+        with the bottle in your hand.
+      </p>
+      <p>
+        And it does not stop counting while you decide. If you keep working and
+        the recipes charge past empty, that is not an error to be argued with —
+        it is the bottle lasting <strong>less</strong> than the recipe said. The
+        moment you mark it finished, the app writes down the gap, with its sign:
+      </p>
+      <blockquote>
+        Recipes said 500 mL · the bottle held 500 mL · closed after 540 →
+        <strong>40 mL short</strong><br>
+        Recipes said 500 mL · closed with 60 left →
+        <strong>60 mL over</strong>
+      </blockquote>
+      <div class="note tip">
+        <span class="lbl">Why nobody is asked for a number</span>
+        <p>
+          Because you do not know it. Nobody measures the last centimetre of a
+          bottle before binning it. What you do know is <em>it is empty now</em>,
+          and that single click is enough for the app to work out the rest.
+        </p>
+      </div>
+
+      <h3>Unassigned consumption</h3>
+      <p>
+        This is where it stops being an ordinary inventory. Picture a box of 400
+        tips, a map that says 10 per analysis, and 30 analyses recorded: the
+        activities account for 300, but the box is empty. The remaining
+        <strong>100</strong> are unassigned consumption.
+      </p>
+      <div class="note tip">
+        <span class="lbl">Why we do not call it “waste”</span>
+        <p>
+          Because it does not claim they were lost: only that no activity claimed
+          them. Frequently it means <em>a map is missing</em>, which is useful
+          information rather than blame.
+        </p>
+      </div>
+      <p>
+        The remainder is also counted <strong>per day the container was
+        open</strong>. A box open for 40 days that lost 100 tips beyond its
+        recipes was losing two and a half a day to hands that recorded nothing.
+        That rate is shown beside the forecast as a measured burn rate.
+      </p>
+      <div class="note">
+        <span class="lbl">What it does not do</span>
+        <p>
+          It does not drive <em>“days of stock left”</em>. That number comes
+          from real depletions — bottles actually finished — because the
+          forecast has to work for a workshop that never records a single activity
+. The burn rate sits next to it as a second opinion, and it is
+          what turns theoretical cost into real cost below.
+        </p>
+      </div>
+      <div class="note tip">
+        <span class="lbl">Why per day and not per activity</span>
+        <p>
+          Because splitting it between the activities assumes they caused it,
+          which is the one thing you know they did not: they already declared
+          what they took. A rate per day open assumes only that time passed,
+          which is true.
+        </p>
+      </div>
+      <p>
+        For <strong>cost</strong>, the same remainder is attributed to the
+        activities that use that concept, weighted by how much each one uses —
+        because a cost has to land on something. From that come <strong>two costs
+        per activity</strong>, always shown together:
+      </p>
+      <ul>
+        <li><strong>Theoretical</strong> — the map times the price.</li>
+        <li><strong>Real</strong> — theoretical plus its share of the unassigned.</li>
+      </ul>
+      <p>
+        The ratio between them (<em>runs at 1.33× theoretical</em>) is a real
+        measure of how the process is going. Over months it is worth more than
+        the inventory itself.
+      </p>
+
+      <h3>Changing a map</h3>
+      <p>
+        If you change a map, the app <strong>does not rewrite the past</strong>:
+        it closes the version in force and opens a new dated one. March keeps
+        being costed with March's recipe. <em>Map history</em> shows every
+        version — which incidentally documents when your procedures changed,
+        written by nobody.
+      </p>
+    </section>
+
+    <!-- ============================================================== 23 -->
+    <section id="s23">
+      <h2><span class="n"></span>Reusables and the recount</h2>
+
+      <p>
+        Mixing cups, paint pots and trays are neither consumables
+        nor equipment: <strong>they are lent out and come back</strong>. The only
+        thing truly consumed is what breaks.
+      </p>
+      <p>
+        So they are not items. A mixing cup carries no number and nobody will
+        ever track one individually. What you need to know is <strong>how many
+        are clean</strong> and <strong>how many you lose a month</strong>, and
+        neither question requires individual identity.
+      </p>
+
+      <h3>Two granularities</h3>
+      <ul>
+        <li><strong>Counted only</strong> — the cups. You know how many are
+          available, in use and dirty. Never which one.</li>
+        <li><strong>Identified</strong> — the trays, which carry a number. Each
+          has its own state and location.</li>
+      </ul>
+
+      <h3>The recount is the measuring instrument</h3>
+      <p>
+        Nobody will ever record <em>“I dropped a cup”</em>. So the number
+        always drifts upward. The correction is to open the drawer and count:
+      </p>
+      <blockquote>
+        The app expected 260 · you counted 248 → <strong>12 lost since the last
+        count</strong>
+      </blockquote>
+      <p>
+        That difference <strong>is</strong> your breakage, measured. Two recounts
+        give you a monthly rate, and it is the only thing a reusable contributes
+        to purchasing: you buy them at the rate you break them,
+        <strong>without anyone ever reporting a breakage</strong>.
+      </p>
+
+      <h3>Filling the pool from the cupboard</h3>
+      <p>
+        The cups in rotation are not the only ones you own. There is also the
+        box of 250 in the cupboard, unopened — and <strong>that box is an
+        ordinary item</strong>. You buy it, receive it in a lot, and it shows up
+        in the forecast like anything else.
+      </p>
+      <p>
+        When the rotation runs thin, open the pool and use <em>Into
+        rotation</em>: say how many, and the app takes them out of the box and
+        puts them into the pool.
+      </p>
+      <blockquote>
+        60 into rotation · <strong>440 left in the cupboard</strong>
+      </blockquote>
+      <p>
+        That is what closes the circle. Cups break, the pool drops, the
+        cupboard refills it, the cupboard runs low, and purchasing sees it —
+        without the pool needing any idea of what buying is.
+      </p>
+
+      <h3>Where a kit is</h3>
+      <p>
+        If a tray has numbered slots you can put kits in it. And here is an
+        important decision: <strong>a kit has no location of its own</strong>.
+        Its position is the tray's. Move the tray and forty kits follow with
+        nothing updated, and it can never happen that the tray is on the shelf
+        while the kits think they are in the workshop.
+      </p>
+    </section>
+
+    <!-- ============================================================== 24 -->
+    <section id="s24">
+      <h2><span class="n"></span>The log bridge</h2>
+
+      <p>
+        If your workshop has a system that already knows what is happening (a machine controller,
+        say) and writes a line-by-line record, the app can read it and turn it
+        into inventory movements.
+      </p>
+      <p>
+        The channel is <strong>one-way</strong>: the machine controller says what happened, the
+        inventory decides what it means. The inventory never answers back.
+      </p>
+
+      <h3>1. The line shape — configured once</h3>
+      <p>
+        <em>Log bridge → Connect a log</em>. You paste <strong>one real
+        line</strong> and say what each part is:
+      </p>
+      <pre><code>12:40:32  Mostra_DMK3-21099-2621703602  RegistreFeinaK
+   time          object and identifier            event</code></pre>
+      <p>
+        The app derives the pattern and shows it applied to whatever lines you
+        pasted. <strong>You never write a regular expression.</strong> Once done,
+        this is never touched again.
+      </p>
+
+      <h3>2. The event dictionary — the living configuration</h3>
+      <p>
+        Here you say what each name does. <em>RegistreFeinaK</em> → <em>take one
+        cup from the pool</em>. Since you author the names yourself, there
+        will be thirty or forty in the whole workshop.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Quantities live here, never in the log</span>
+        <p>
+          An event that takes three cups is a <strong>different event with its
+          own name</strong>, not a number inside the line. That is what lets you,
+          the day you find a map was wrong, correct it and
+          <strong>re-read the entire history</strong>. Had the quantity been
+          written into the lines, the past would be frozen with the error in it
+          forever.
+        </p>
+      </div>
+      <p>
+        For the same reason, changing the effects opens a <strong>new dated
+        version</strong>: replaying the past applies the recipe that was in force
+        on the day.
+      </p>
+
+      <h3>3. Shadow mode</h3>
+      <p>
+        Every rule is born <strong>in shadow</strong>: it records what it
+        <em>would</em> do without doing it. You review, then enable. The source
+        has its own switch too: <strong>if either gate is shut, nothing is
+        applied</strong>.
+      </p>
+
+      <h3>4. Unexplained events</h3>
+      <p>
+        Names the log used that nothing explains yet are not an error list:
+        <strong>they are the screen where you build the rules</strong>. You see
+        one that appears 200 times, you say what it does from right there, and it
+        never appears again.
+      </p>
+
+      <h3>Things worth knowing</h3>
+      <ul>
+        <li><strong>Each line takes effect exactly once.</strong> Re-read the
+          same file as often as you like without fear.</li>
+        <li><strong>You can replay old logs.</strong> Point the app at last
+          year's record and get real consumption history from day one.</li>
+        <li><strong>Unknown objects are treated differently</strong>: a tray that
+          does not exist gets parked and queried — auto-creating assets is how
+          you end up with 400 phantom trays from one typo. A new kit, by
+          contrast, is always created.</li>
+        <li><strong>Silence warns.</strong> If the log stops writing, nothing
+          breaks: the numbers just quietly stop being true. So the app tells you
+          when no line has arrived for too long.</li>
+      </ul>
+
+      <div class="note tip">
+        <span class="lbl">What the log is really for</span>
+        <p>
+          Not for “counting consumption”: stock still moves only when a person
+          says a container is empty. What it does is turn the theoretical figure
+          from <em>whatever somebody remembered to record</em> into something
+          nearly exact — and once the theoretical is exact, what is left over is
+          no longer “the part we failed to log”, it is genuine loss.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== 26 -->
+    <section id="s26">
+      <h2><span class="n"></span>Instruments: manuals, spares and maintenance</h2>
+
+      <p>
+        A caliper is an item like a bottle of wood glue is an item. But it is the
+        only kind of thing that <strong>other items belong with</strong>, and the
+        only kind whose upkeep runs on a schedule. Both live in the
+        <em>Equipment</em> tab of any item's panel.
+      </p>
+      <div class="note tip">
+        <span class="lbl">There is no “instrument” feature</span>
+        <p>
+          Neither of these is reserved for a type called instrument. A cupboard has
+          a service interval; a torque wrench has a calibration certificate; a printer
+          has a spare nozzle. Which things a workshop hangs off a machine is not
+          knowable in advance, so the tab is on everything and you use it where
+          it makes sense.
+        </p>
+      </div>
+
+      <h3>Attaching things</h3>
+      <p>
+        <em>Attach</em>, say what it is, find the item. Four relations:
+      </p>
+      <ul>
+        <li><strong>Document</strong> — the instruction sheet, the manual, the calibration
+          certificate.</li>
+        <li><strong>Spare</strong> — the torch, the lamp, the column in the
+          drawer.</li>
+        <li><strong>Accessory</strong> — the weight set, the sampler.</li>
+        <li><strong>Consumable</strong> — what it eats while it runs.</li>
+      </ul>
+      <p>
+        The link reads from both ends. The caliper lists its instruction sheet; open the instruction sheet
+        and it tells you which caliper it describes. That matters because the instruction sheet
+        is filed in the assembly area and the caliper is on a bench — and
+        whichever one you have in front of you is the one you started from.
+      </p>
+
+      <h3>Maintenance plans</h3>
+      <p>
+        A plan is <em>what has to be done</em> and <em>how often</em>. How often
+        can be counted two ways, and you can use either or both:
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Counted in</th><th>Suits</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Days</strong></td>
+              <td>Things that age on the calendar</td>
+              <td>External calibration, every 365 days</td>
+            </tr>
+            <tr>
+              <td><strong>Uses</strong></td>
+              <td>Things that age by working</td>
+              <td>Internal check, every 500 runs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn">
+        <span class="lbl">With both, whichever comes first</span>
+        <p>
+          <em>Every 6 months or 500 jobs</em> means the plan falls due the
+          moment <strong>either</strong> counter runs out. A plan that could only
+          count one of the two would be wrong for half the equipment in any workshop.
+        </p>
+      </div>
+      <p>
+        Fill in <strong>last done</strong> when you create the plan. If you leave
+        it empty the clock starts today, which quietly hides a machine that has
+        already been out of calibration for a year.
+      </p>
+
+      <h3>Counting uses</h3>
+      <p>
+        <em>+1 use</em> counts one run against every plan on that item that
+        measures uses. It is deliberately blunt: if your machine controller already knows how
+        many jobs the machine did, the number should come from there, and
+        the app has an entry point for exactly that.
+      </p>
+
+      <h3>Marking it done</h3>
+      <p>
+        <em>Done</em> writes the service into a record that is only ever added
+        to, and starts <strong>both</strong> counters again — the days and the
+        uses — because the service covered whatever was due. The record keeps the
+        use counter as it stood at the time, so <em>“serviced at 480 runs”</em>
+        stays meaningful years later.
+      </p>
+      <p>
+        <em>Service history</em> on the plan shows every one of them, with who
+        and when and whatever note you left (the certificate number is the one
+        worth typing).
+      </p>
+
+      <h3>On the Home screen</h3>
+      <p>
+        Anything overdue, or due within a fortnight, appears in a band
+        <strong>above your stock</strong>, overdue first. Click a row and you are
+        in that machine's panel.
+      </p>
+      <p>
+        It sits above the stock on purpose: a machine out of calibration stops
+        work in a way a low bottle does not. When nothing is due, the band is not
+        there at all.
+      </p>
+    </section>
+
+
+      <h3>Shared computers sign themselves out</h3>
+      <p>
+        A computer nobody has claimed signs you out after <strong>twenty minutes
+        without a keystroke or a click</strong>, with a one-minute warning first.
+        This is not about theft; it is about the record. A browser left signed in
+        makes every depletion and every adjustment look like the work of whoever
+        walked away last, and the history is the one thing here that has to be
+        trustworthy.
+      </p>
+
+      <h3>Claiming your own computer</h3>
+      <p>
+        The monitor icon beside your name opens <strong>Remember this
+        computer</strong>. Confirm with your password and this browser stays
+        signed in <em>as you</em> — through shutdown, hibernation, suspend and
+        closing the browser. It never times out.
+      </p>
+      <ul>
+        <li>The claim belongs to <strong>one person</strong>. A colleague who
+          presses their own chord on your desk gets an ordinary session that
+          times out, and yours comes back the next time you sign in.</li>
+        <li>It costs a password on purpose: without that, a bench machine left
+          unlocked for two minutes would be enough for somebody to make it
+          permanently theirs.</li>
+        <li>Signing out by hand keeps the claim — it is closing the door, not
+          moving out. <strong>Forget this computer</strong> ends it, and signs
+          you out immediately so the change is true straight away.</li>
+      </ul>
+
+      <h3>Signing everyone out</h3>
+      <p>
+        Because a claimed computer never signs itself out, there has to be one
+        lever that reaches all of them. On the <strong>Users</strong> page,
+        <em>Sign everyone out, everywhere</em> ends every session in the
+        building at once — claimed computers included, and the admin's own
+        session with them. For a laptop that has gone missing or a password that
+        was watched over a shoulder, it is the honest answer.
+      </p>
+
+      <h3>Looking without an account</h3>
+      <p>
+        Opening the address without signing in shows a <strong>read-only stock
+        board</strong>: concept names, quantities, what is low or empty, and the
+        location tree. Nothing else — no item rows, so no serial numbers, no
+        batch numbers, no prices, no notes and no names of people. Clicking
+        anything asks you to sign in.
+      </p>
+      <div class="note warn">
+        <span class="lbl">Decide this on purpose</span>
+        <p>
+          That board is visible to <strong>anybody who can reach the server</strong>,
+          which on a workshop network means everyone in the building. It is meant as a
+          noticeboard — "is there any wood glue left?" answered without borrowing
+          an account. If your stock list is not something you want on a
+          noticeboard, keep the server off the shared network.
+        </p>
+      </div>
+    <!-- ============================================================== 27 -->
+    <section id="s27">
+      <h2><span class="n"></span>Browsing by place</h2>
+
+      <p>
+        The location tree is how you describe where things live. It is also
+        how you <strong>look around</strong>: pick a place and the panel beside
+        it lists what is there.
+      </p>
+      <p>
+        This answers the question somebody standing in front of a cupboard actually
+        has — <em>what is in this cupboard?</em> — which the tree on its own never
+        could.
+      </p>
+      <ul>
+        <li><strong>Include sub-locations</strong> — on, the room shows
+          everything in every shelf under it; off, only what is filed on the room
+          itself. The far-right column shows the exact shelf whenever the list
+          spans more than one.</li>
+        <li><strong>Type</strong> and <strong>search</strong> narrow it further:
+          <em>supplies in the solvent cabinet</em>.</li>
+        <li><strong>Show depleted and inactive</strong> is off by default. A
+          shelf full of empty bottles is not what the shelf holds.</li>
+      </ul>
+      <p>
+        Every row opens the full item panel, so a stock check is: pick the shelf,
+        read down the list, open, deplete, move. No searching by name.
+      </p>
+    </section>
+
+    <!-- ============================================================== 25 -->
+    <!-- ============================================================== 27 -->
+    <section id="s28">
+      <h2><span class="n"></span>Signing in with a key chord</h2>
+
+      <p>
+        One computer, several people, and a handover every time somebody needs
+        to record thirty seconds of work. Typing a name and a password for that
+        is enough friction that the work gets recorded under whoever happened to
+        be signed in already — which quietly ruins the one thing History exists
+        for. So each person can have a <strong>key chord</strong>: about a
+        second of typing that signs them in.
+      </p>
+
+      <h3>What a chord is</h3>
+      <p>
+        Two clusters of keys, each held down together for a moment. Press
+        <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd> and hold; let go; press
+        <kbd>U</kbd><kbd>I</kbd><kbd>L</kbd> and hold. That's it — you're in.
+        The order of keys <em>within</em> a cluster doesn't matter; the order of
+        the two clusters does.
+      </p>
+      <p>
+        You don't choose your chord: the app generates it. That is not the app
+        being precious. Two people cannot share a chord — the whole point is
+        that it says who you are — and if everyone picked their own, half of
+        them would collide and have to pick again. The app also picks keys that
+        can actually be pressed: three keys of one hand, in neighbouring
+        columns, never more than one row apart. That is why you get
+        <kbd>Z</kbd><kbd>X</kbd><kbd>D</kbd> and never
+        <kbd>A</kbd><kbd>Y</kbd><kbd>P</kbd>. If you don't like the one you got,
+        ask for another.
+      </p>
+
+      <h3>Getting one</h3>
+      <p>
+        The key-shaped icon next to your name in the sidebar opens
+        <strong>Fast login key</strong>. There you can create one, ask for a
+        different one, or throw it away. The keys are drawn as they sit on the
+        keyboard, left to right, so what's on screen is the shape your hand
+        makes.
+      </p>
+      <p>
+        <strong>You can practise it right there.</strong> While that panel is
+        open the chord does nothing except tell you whether you got it right —
+        otherwise learning your own gesture would sign you out every time you
+        succeeded.
+      </p>
+      <p>
+        Under the chord there's a <strong>hold time</strong> slider, from a
+        twitch to a deliberate press. It's stored on that computer rather than
+        on your account, and deliberately so: at the sign-in screen the app
+        doesn't know yet whose setting to apply. It belongs to that keyboard.
+      </p>
+
+      <h3>The same chord does all three things</h3>
+      <ul>
+        <li>Signed out → it signs you in.</li>
+        <li>Signed in as somebody else → it switches to you, and closes their
+          session on that machine.</li>
+        <li>Signed in as you → it signs you out.</li>
+      </ul>
+      <p>
+        One gesture meaning <em>make it me</em>, which is why there is no second
+        chord to remember for logging out. It works from any screen — the
+        sign-in page, the public stock board, or the middle of the Items table
+        while you are working.
+      </p>
+      <p>
+        Two screens read it even with the cursor in a text box: the sign-in form
+        and the public board, because those are the two places somebody clicks
+        into a field and then presses their chord. Everywhere else a text field
+        swallows it, and it should: three letters at once, inside a search box,
+        is just three letters.
+      </p>
+
+      <div class="note warn">
+        <span class="lbl">Careful</span>
+        <p>
+          <strong>A chord is an identification, not a password.</strong> Anyone
+          who watches you press it can sign in as you, exactly like a code on a
+          door. That is the trade you are making for the speed, and it is the
+          right trade for a bench in a locked workshop and the wrong one for a
+          machine strangers walk past. Your password keeps working either way,
+          and an administrator can revoke anybody's chord from
+          <strong>Users</strong> → <em>Revoke</em>. Wrong chords are rate
+          limited, so guessing is not a practical way in.
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="lbl">Later</span>
+        <p>
+          QR badges and NFC cards are the same idea with different hardware, and
+          they are on the list. The chord came first because it needs nothing
+          bought.
+        </p>
+      </div>
+    </section>
+
+    <section id="s25">
+      <h2><span class="n"></span>What it doesn't do yet</h2>
+
+      <p>
+        So you don't waste time looking for them, here is the honest list of what
+        today's version is missing.
+      </p>
+
+      <h4>Behaviours worth knowing</h4>
+      <ul>
+        <li>A <em>Type</em>'s key cannot be changed once saved. A <em>custom
+          field</em>'s key can: on save, values already stored on items are
+          migrated to the new key in the same transaction.</li>
+        <li>Removing a field from a Type destroys nothing: the old data stays
+          stored and simply stops being shown.</li>
+        <li>Prices are frozen when the item is created. That is deliberate.</li>
+        <li>Deleting a location never deletes the items standing on it.</li>
+        <li>Recording an activity <strong>does</strong> move stock —
+          this is the one thing that changed since the first release. What never
+          happens on its own is a container being declared finished.</li>
+        <li>Attaching a manual to a machine does not move it or change it. A link
+          is a link; the item keeps its own location and status.</li>
+      </ul>
+
+      <h4>Doesn't exist yet</h4>
+      <ul>
+        <li>Native Excel export (the export is CSV, which Excel opens anyway) and
+          importing anything other than items.</li>
+        <li>Password recovery by email: with no mail server, an administrator
+          resets it.</li>
+        <li>Approval of requests before purchasing. Today the buyer sees
+          everything asked for and decides; there is no sign-off step.</li>
+        <li>Automatic watching of the log file: you press <em>read new lines</em>
+          or paste content. Everything already there is the hard part —
+          reading on its own is what is left.</li>
+        <li>A log event that counts machine runs. The app can be told
+          <em>this machine did 40 jobs</em>, but the log dictionary cannot
+          be pointed at it yet, so today somebody presses <em>+1 use</em>.</li>
+        <li>A desktop application (Tauri).</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Manual as of August 2026. How the app is built, file by file, is in the
+    <a href="code.en.html">code manual</a>.
+  </footer>
+
+</div>

@@ -1,0 +1,502 @@
+:root {
+  --teal: #0d9488;
+  --violet: #7c5cf0;
+  --amber: #c2610a;
+  --danger: #c2413f;
+  --success: #197a45;
+
+  --bg: #f5f8f7;
+  --surface: #ffffff;
+  --surface-2: #eef3f2;
+  --line: #dde5e3;
+  --line-strong: #c6d2cf;
+  --ink: #0f1418;
+  --muted: #5c6873;
+
+  --tint-teal: #dff2ef;
+  --tint-violet: #eae4fd;
+  --tint-amber: #fbeadb;
+  --tint-danger: #fae3e2;
+
+  --measure: 66ch;
+  --rail: 16rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --teal: #2dd4bf;
+    --violet: #a78bfa;
+    --amber: #fb923c;
+    --danger: #f87171;
+    --success: #4ade80;
+
+    --bg: #0d1013;
+    --surface: #151a1e;
+    --surface-2: #1c2328;
+    --line: #232b31;
+    --line-strong: #33403f;
+    --ink: #e2e6f0;
+    --muted: #8892a4;
+
+    --tint-teal: #10302e;
+    --tint-violet: #241f3d;
+    --tint-amber: #331f10;
+    --tint-danger: #331717;
+  }
+}
+
+:root[data-theme="light"] {
+  --teal: #0d9488; --violet: #7c5cf0; --amber: #c2610a;
+  --danger: #c2413f; --success: #197a45;
+  --bg: #f5f8f7; --surface: #ffffff; --surface-2: #eef3f2;
+  --line: #dde5e3; --line-strong: #c6d2cf;
+  --ink: #0f1418; --muted: #5c6873;
+  --tint-teal: #dff2ef; --tint-violet: #eae4fd;
+  --tint-amber: #fbeadb; --tint-danger: #fae3e2;
+}
+
+:root[data-theme="dark"] {
+  --teal: #2dd4bf; --violet: #a78bfa; --amber: #fb923c;
+  --danger: #f87171; --success: #4ade80;
+  --bg: #0d1013; --surface: #151a1e; --surface-2: #1c2328;
+  --line: #232b31; --line-strong: #33403f;
+  --ink: #e2e6f0; --muted: #8892a4;
+  --tint-teal: #10302e; --tint-violet: #241f3d;
+  --tint-amber: #331f10; --tint-danger: #331717;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Language switcher + theme toggle, pinned out of the reading column. */
+.chrome {
+  position: fixed;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.chrome a, .chrome .on, .chrome button {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0.32rem 0.42rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.chrome a { color: var(--muted); }
+.chrome a:hover { color: var(--ink); background: var(--surface-2); }
+.chrome .on { color: var(--teal); background: var(--tint-teal); font-weight: 500; }
+.chrome button {
+  font-size: 0.8rem;
+  border: 0;
+  border-left: 1px solid var(--line);
+  margin-left: 0.15rem;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.chrome button:hover { color: var(--ink); }
+.chrome :focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  gap: 3.5rem;
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 0 1.5rem 6rem;
+}
+
+/* ---------------------------------------------------------------- masthead */
+
+.masthead {
+  grid-column: 1 / -1;
+  padding: 4.5rem 0 2.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 3rem;
+}
+.masthead .eyebrow {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.masthead h1 {
+  font-size: clamp(2.1rem, 4.5vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
+  text-wrap: balance;
+  margin: 0.75rem 0 0;
+}
+.masthead p {
+  max-width: var(--measure);
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 1rem 0 0;
+}
+
+/* -------------------------------------------------------------------- rail */
+
+.rail { position: relative; }
+.rail nav {
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+.rail p {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.85rem;
+}
+.rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+.rail a {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.28rem 0;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  border-radius: 3px;
+}
+.rail a:hover { color: var(--ink); }
+.rail a .n {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--line-strong);
+  padding-top: 0.12rem;
+}
+.rail a:hover .n { color: var(--teal); }
+
+/* ----------------------------------------------------------------- content */
+
+main { min-width: 0; max-width: var(--measure); display: flex; flex-direction: column; gap: 3.25rem; }
+
+section { scroll-margin-top: 2rem; }
+
+section > h2 {
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0 0 1.1rem;
+}
+section > h2 .n {
+  display: block;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--teal);
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.075rem;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  margin: 2rem 0 0.6rem;
+  text-wrap: balance;
+}
+h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.4rem;
+}
+
+p { margin: 0 0 1rem; }
+main :is(h2, h3, h4) + p { margin-top: 0; }
+
+ul, ol.steps, ol.plain { margin: 0 0 1rem; padding-left: 1.25rem; }
+li { margin-bottom: 0.4rem; }
+li > ul { margin-top: 0.4rem; }
+
+a { color: var(--teal); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, .rail a:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+strong { font-weight: 600; }
+
+/* ------------------------------------------------------------------ tokens */
+
+code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.855em;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.08em 0.32em;
+  white-space: nowrap;
+}
+
+/* Key caps. Same family as code, but raised — a chord is a thing you
+   press, and it should look pressable next to the prose describing it. */
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-right: 0.15em;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8em;
+  font-weight: 600;
+  text-align: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0.15em 0.35em;
+  line-height: 1.2;
+}
+
+/* Entity IDs get the app's own .human-id chip treatment */
+.hid {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.pill {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.4rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.pill.ok { background: var(--tint-teal); color: var(--teal); }
+.pill.warn { background: var(--tint-amber); color: var(--amber); }
+.pill.bad { background: var(--tint-danger); color: var(--danger); }
+.pill.role { background: var(--tint-violet); color: var(--violet); }
+
+pre {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  margin: 0 0 1rem;
+  /* Code is not prose. The 66ch measure that makes paragraphs readable cuts
+     code lines that are meant to be taken in whole, so blocks bleed past it —
+     but never past the viewport, and `overflow-x` still catches the rest. */
+  width: min(46rem, 100%);
+  max-width: none;
+}
+@media (min-width: 60rem) {
+  pre { width: min(46rem, calc(100vw - var(--rail) - 6rem)); }
+}
+pre code { background: none; border: 0; padding: 0; white-space: pre; font-size: inherit; }
+pre .c { color: var(--muted); }
+
+/* ------------------------------------------------------------------ tables */
+
+.tw { overflow-x: auto; margin: 0 0 1.25rem; border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+thead th {
+  text-align: left;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface);
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+tbody td { padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  vertical-align: top;
+}
+tbody tr:last-child th { border-bottom: 0; }
+
+/* ---------------------------------------------------------------- callouts */
+
+.note {
+  border-left: 3px solid var(--line-strong);
+  background: var(--surface);
+  border-radius: 0 5px 5px 0;
+  padding: 0.85rem 1.1rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.925rem;
+}
+.note > :last-child { margin-bottom: 0; }
+.note .lbl {
+  display: block;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.63rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+.note.tip { border-left-color: var(--teal); }
+.note.tip .lbl { color: var(--teal); }
+.note.warn { border-left-color: var(--amber); }
+.note.warn .lbl { color: var(--amber); }
+.note.stop { border-left-color: var(--danger); }
+.note.stop .lbl { color: var(--danger); }
+
+/* ------------------------------------------------- file cards (code manual)
+   The spine of the architecture document: a path, what it weighs, and what it
+   is for. It repeats about a hundred times, so it has to be quiet. */
+
+.file {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--violet);
+  border-radius: 0 5px 5px 0;
+  background: var(--surface);
+  padding: 0.85rem 1rem;
+  margin: 0 0 1.1rem;
+}
+.file > :last-child { margin-bottom: 0; }
+.file .path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.45rem;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.file .path .n {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.file p { font-size: 0.92rem; }
+/* A group of small files that share one idea — the border runs down the set. */
+.file.group { border-left-color: var(--teal); }
+
+/* An exported signature quoted inline, when the shape *is* the explanation. */
+.sig {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: var(--violet);
+  background: var(--tint-violet);
+  border-radius: 3px;
+  padding: 0.05em 0.35em;
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------------------------------- tutorial ladders */
+
+ol.steps { list-style: none; padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: 1.4rem; }
+ol.steps > li { counter-increment: step; position: relative; padding-left: 2.6rem; margin: 0; }
+ol.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--teal);
+}
+ol.steps > li > :last-child { margin-bottom: 0; }
+
+/* The four-level model, drawn as a ladder */
+.levels { display: flex; flex-direction: column; gap: 0.5rem; margin: 0 0 1.25rem; }
+.levels .lv {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: baseline;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 5px 5px 0;
+  padding: 0.7rem 0.95rem;
+  font-size: 0.9rem;
+}
+.levels .lv:nth-child(2) { border-left-color: var(--violet); margin-left: 1rem; }
+.levels .lv:nth-child(3) { border-left-color: var(--amber); margin-left: 2rem; }
+.levels .lv:nth-child(4) { border-left-color: var(--success); margin-left: 3rem; }
+.levels .name { font-weight: 600; }
+.levels .ex { color: var(--muted); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+.footer {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line);
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .rail { margin-bottom: 3rem; }
+  .rail nav { position: static; max-height: none; }
+  .levels .lv { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+  .levels .lv:nth-child(2), .levels .lv:nth-child(3), .levels .lv:nth-child(4) { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+html { scroll-behavior: smooth; }

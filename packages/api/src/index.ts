@@ -6,6 +6,7 @@ import { serve } from '@hono/node-server';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { app } from './app';
 import { db } from './db/client';
+import { seedDemoData } from './db/seed';
 
 // Apply pending migrations on boot — "download → run one command → open your
 // browser" means the server owns its own schema upgrades.
@@ -13,6 +14,23 @@ import { db } from './db/client';
 migrate(db, {
   migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)),
 });
+
+/**
+ * A brand-new installation opens on a small demo inventory instead of on
+ * nothing.
+ *
+ * An empty inventory app is unusable as a first impression: there is no way to
+ * tell what a Concept is for, the tour has nothing to point at, and the first
+ * thing a person must do is invent data before they can judge whether the
+ * thing suits them. So the first boot of an empty database fills it with a
+ * home workshop — a handful of rows, all of them ordinary things, all of them
+ * deletable from the Bin in a minute.
+ *
+ * It runs ONCE, because `seedDemoData` returns immediately if there is a
+ * single concept in the database. No upgrade can overwrite anyone's data.
+ * Set `SEED_DEMO=0` for an installation that should start truly empty.
+ */
+if (process.env.SEED_DEMO !== '0') seedDemoData();
 
 // The session secret used to be a warning here and nothing else, which meant a
 // production container started, printed the warning, and then died on its first

@@ -867,7 +867,7 @@
       "title": "Instruments and places",
       "intro": {
         "title": "Not everything is stock",
-        "body": "A balance is an item too, but “0 balances in stock” was never a warning worth showing. Instruments and documents stay off this screen — except for one thing."
+        "body": "A caliper is an item too, but “0 calipers in stock” was never a warning worth showing. Tools and documents stay off this screen — except for one thing."
       },
       "due": {
         "title": "Except when something is due",
@@ -879,7 +879,7 @@
       },
       "plans": {
         "title": "Every N days, or every N uses",
-        "body": "Or both, and then it falls due whichever runs out first — which is what “every 6 months or 500 injections” actually means. Marking it done restarts both counters and writes a line into the service history."
+        "body": "Or both, and then it falls due whichever runs out first — which is what “every 6 months or 500 holes” actually means. Marking it done restarts both counters and writes a line into the service history."
       },
       "places": {
         "title": "And where everything is",

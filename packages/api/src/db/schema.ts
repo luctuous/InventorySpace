@@ -628,7 +628,7 @@ export const itemLinks = sqliteTable(
 );
 
 /**
- * "Service this every 6 months" or "every 500 injections", whichever comes
+ * "Service this every 6 months" or "every 500 holes", whichever comes
  * first. Both, because a caliper ages by the calendar and a pillar drill
  * ages by use — and the use counter can come from the machine controller log, which already
  * knows how many runs the machine did.

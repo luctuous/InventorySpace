@@ -173,20 +173,27 @@ docker run -d -p 3000:3000 \
       <h2><span class="n"></span>Demodaten entfernen</h2>
 
       <p>
-        Die Entwicklungsdatenbank kommt mit Beispieldaten aus einem Werkstatt: 5 Typen, ein Standortbaum, 6 Konzepte und 9 Artikel — so angelegt,
-        dass die Startseite alle drei Warnzustände zeigt (in Ordnung, niedriger
-        Bestand, nicht vorrätig). Für <em>dein</em> Inventar hast du zwei Wege.
+        Die Anwendung startet mit Beispieldaten aus einer Heimwerkstatt:
+        5 Typen, ein Standortbaum, 7 Konzepte und 11 Artikel — so angelegt, dass
+        die Startseite alle drei Warnzustände zeigt (in Ordnung, niedriger
+        Bestand, nicht vorrätig) und die Führung etwas zum Zeigen hat. Sie
+        werden <strong>einmal</strong> geschrieben, beim allerersten Start einer
+        leeren Datenbank, und nie wieder — kein Update kann anrühren, was du
+        selbst eingetragen hast. Für <em>dein</em> Inventar hast du zwei Wege.
       </p>
 
       <h3>Schneller Weg: alles auf einmal löschen</h3>
       <pre><code><span class="c"># vorher den Server beenden</span>
 rm packages/api/data/inventory.db*
-npm run dev</code></pre>
+SEED_DEMO=0 npm run dev</code></pre>
       <p>
-        Beim Start wird das leere Schema neu angelegt. Führe
-        <code>npm run db:seed</code> <em>nicht</em> aus, und du hast eine wirklich
-        leere Datenbank: keine Typen, keine Standorte, keine Artikel. Das erste
-        registrierte Konto wird wieder Administrator.
+        Beim Start wird das leere Schema neu angelegt, und
+        <code>SEED_DEMO=0</code> sorgt dafür, dass die Demodaten nicht wieder
+        hineingeschrieben werden: eine wirklich leere Datenbank, keine Typen,
+        keine Standorte, keine Artikel. Das erste registrierte Konto wird wieder
+        Administrator. Lässt du die Variable weg, bekommst du die
+        Beispielwerkstatt zurück — genau das Richtige, wenn du nur ein
+        Durcheinander rückgängig machen wolltest.
       </p>
       <div class="note stop">
         <span class="lbl">Unwiderruflich</span>
@@ -911,7 +918,7 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
         Marke.
       </p>
 
-      <h3>Für das Werkstatt, oder nur für dich</h3>
+      <h3>Für die Werkstatt, oder nur für dich</h3>
       <p>
         Der Dialog hat zwei Hälften, und sie beantworten verschiedene Fragen.
       </p>
@@ -1533,8 +1540,8 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
         <p>
           Sie steuert nicht die <em>„verbleibenden Bestandstage“</em>. Diese
           Zahl stammt aus echten Verbräuchen — tatsächlich geleerten Flaschen —,
-          denn die Vorhersage muss auch in einem Werkstatt funktionieren, das nie
-          eine Tätigkeit erfasst. Die Rate steht als zweite Meinung
+          denn die Vorhersage muss auch in einer Werkstatt funktionieren, die
+          nie eine Tätigkeit erfasst. Die Rate steht als zweite Meinung
           daneben, und sie macht aus theoretischen Kosten die realen weiter
           unten.
         </p>
@@ -1761,10 +1768,11 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
         <span class="lbl">Es gibt keine „Geräte“-Funktion</span>
         <p>
           Keines von beidem ist einem Typ namens Gerät vorbehalten. Ein
-          Schrank hat ein Wartungsintervall; eine Drehmomentschlüssel hat ein
-          Kalibrierzertifikat; ein Drucker hat eine Ersatzdüse. Was ein Werkstatt an
-          eine Maschine hängt, lässt sich nicht im Voraus wissen — also ist der
-          Reiter überall da, und Sie nutzen ihn, wo er Sinn ergibt.
+          Schrank hat ein Wartungsintervall; ein Drehmomentschlüssel hat ein
+          Kalibrierzertifikat; ein Drucker hat eine Ersatzdüse. Was eine
+          Werkstatt an eine Maschine hängt, lässt sich nicht im Voraus wissen —
+          also ist der Reiter überall da, und Sie nutzen ihn, wo er Sinn
+          ergibt.
         </p>
       </div>
 
@@ -1776,9 +1784,9 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <ul>
         <li><strong>Dokument</strong> — die Anleitung, das Handbuch, das
           Kalibrierzertifikat.</li>
-        <li><strong>Ersatzteil</strong> — der Brenner, die Lampe, die Säule in
+        <li><strong>Ersatzteil</strong> — der Bohrer, die Lampe, der Riemen in
           der Schublade.</li>
-        <li><strong>Zubehör</strong> — der Gewichtssatz, der Probengeber.</li>
+        <li><strong>Zubehör</strong> — der Parallelanschlag, der Ständer.</li>
         <li><strong>Verbrauchsmaterial</strong> — was sie im Betrieb frisst.</li>
       </ul>
       <p>
@@ -1815,7 +1823,7 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <div class="note warn">
         <span class="lbl">Bei beidem: was zuerst eintritt</span>
         <p>
-          <em>Alle 6 Monate oder 500 Injektionen</em> heißt, der Plan wird in dem
+          <em>Alle 6 Monate oder 500 Bohrungen</em> heißt, der Plan wird in dem
           Moment fällig, in dem <strong>einer</strong> der beiden Zähler
           ausläuft. Ein Plan, der nur eines von beiden zählen könnte, wäre für
           die Hälfte der Ausrüstung jedes der Werkstatt falsch.
@@ -1832,7 +1840,7 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <p>
         <em>+1 Nutzung</em> zählt einen Lauf auf allen Plänen dieses Artikels,
         die Nutzungen messen. Das ist absichtlich grob: wenn Ihr Maschinensteuerung ohnehin
-        weiß, wie viele Injektionen die Maschine gemacht hat, sollte die Zahl von
+        weiß, wie viele Arbeitsgänge die Maschine gemacht hat, sollte die Zahl von
         dort kommen — und die App hat genau dafür einen Eingang.
       </p>
 
@@ -2099,7 +2107,7 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
           lesen</em> oder fügen Inhalt ein. Alles Vorhandene ist der
           schwierige Teil — das Lesen von selbst fehlt noch.</li>
         <li>Ein Log-Ereignis, das Maschinenläufe zählt. Der App lässt sich
-          sagen <em>diese Maschine hat 40 Injektionen gemacht</em>, aber das
+          sagen <em>diese Maschine hat 40 Arbeitsgänge gemacht</em>, aber das
           Log-Wörterbuch kann noch nicht darauf zeigen — heute drückt also
           jemand <em>+1 Nutzung</em>.</li>
         <li>Eine Desktop-Anwendung (Tauri).</li>

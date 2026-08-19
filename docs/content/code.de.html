@@ -372,15 +372,31 @@ docs/                       die Handbücher und ihre Generatoren
       </div>
 
       <div class="file">
-        <p class="path">api/src/db/seed.ts <span class="n">584 Zeilen</span></p>
+        <p class="path">api/src/db/seed.ts <span class="n">590 Zeilen</span></p>
         <p>
-          Demodaten, und sie sind entworfen, nicht hingekippt. Bewusst dabei:
-          ein Konzept mit wenig Bestand und eines bei null, damit die Warnungen
-          des Startbildschirms sofort etwas zu warnen haben; ein Gerät und ein
-          Dokument, damit die nicht verbrauchbaren Lebenszyklen überhaupt
-          vorführbar sind; und ein Gebindepool mit echter Geschichte, damit die
-          Nachzählung etwas bedeutet. Auf einer nicht leeren Datenbank weigert
-          es sich zu laufen.
+          Eine Heimwerkstatt, und sie ist entworfen, nicht hingekippt. Bewusst
+          dabei: ein Konzept mit wenig Bestand und eines bei null, damit die
+          Warnungen des Startbildschirms sofort etwas zu warnen haben; ein Gerät
+          und ein Dokument, damit die nicht verbrauchbaren Lebenszyklen
+          überhaupt vorführbar sind; und ein Gebindepool mit echter Geschichte,
+          damit die Nachzählung etwas bedeutet. Sie exportiert eine einzige
+          Funktion, <code>seedDemoData()</code>, die sofort zurückkehrt, wenn
+          bereits ein einziges Konzept existiert — diese Prüfung ist die ganze
+          Absicherung, und deshalb darf der Server sie bei jedem Start aufrufen.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/seed-cli.ts <span class="n">~20 Zeilen</span></p>
+        <p>
+          Das, was <code>npm run db:seed</code> ausführt: migrieren, dann
+          <code>seedDemoData()</code>. Eine eigene Datei statt einer Prüfung
+          „wurde ich direkt gestartet?“ in <code>seed.ts</code> — und das ist
+          kein Stil. Der Produktionsbuild zieht <code>seed.ts</code> in
+          <code>dist/index.js</code> hinein, aus beiden wird eine Datei, und
+          jede solche Prüfung trifft dann auch auf den Server zu — der Server
+          hätte den CLI-Code bei jedem Start mit ausgeführt. Zwei
+          Einstiegspunkte, zwei Dateien.
         </p>
       </div>
 
@@ -506,8 +522,8 @@ pools ──(events)──→ pool_units          commissioned FROM an item
 
       <p>
         Die Anmeldung ist better-auth auf derselben SQLite-Datei. Vier Dateien
-        sorgen dafür, dass sie sich so verhält, wie ein Werkstatt es braucht, und
-        nicht wie ein Abodienst.
+        sorgen dafür, dass sie sich so verhält, wie eine Werkstatt es braucht,
+        und nicht wie ein Abodienst.
       </p>
 
       <div class="file">
@@ -631,7 +647,7 @@ pools ──(events)──→ pool_units          commissioned FROM an item
       <h2><span class="n"></span>Das HTTP-Skelett</h2>
 
       <div class="file">
-        <p class="path">api/src/index.ts <span class="n">~45 Zeilen</span></p>
+        <p class="path">api/src/index.ts <span class="n">~80 Zeilen</span></p>
         <p>
           Der Einstieg: Migrationen anwenden, dann lauschen. Es druckt neben
           <code>localhost</code> auch die Adressen im lokalen Netz — eine
@@ -980,8 +996,8 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
           „Was geht aus, bevor ich es nachbestellen kann.“ Der Verbrauch wird
           aus <strong>echten Leer-Ereignissen</strong> gemessen, nicht aus
           erfassten Tätigkeiten, und das ist Absicht: die Vorhersage
-          funktioniert für ein Werkstatt, das nie eine Tätigkeit erfasst, und wird
-          besser, wenn doch. Die Lieferzeit wird je Lieferant gelernt, von
+          funktioniert für eine Werkstatt, die nie eine Tätigkeit erfasst, und
+          wird besser, wenn doch. Die Lieferzeit wird je Lieferant gelernt, von
           Bestell- bis Empfangsdatum.
         </p>
         <div class="note warn">
@@ -1035,7 +1051,7 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
         <p>
           Pläne zählen Tage, Nutzungen oder beides, und <strong>fällig heißt,
           was zuerst abläuft</strong> — was „alle 6 Monate oder 500
-          Injektionen“ tatsächlich bedeutet. <code>nextDueAt</code> wird bei
+          Bohrungen“ tatsächlich bedeutet. <code>nextDueAt</code> wird bei
           jeder Änderung neu berechnet, damit „was ist fällig“ eine einzige
           indizierte Abfrage ist. Nie gewartet lässt die Uhr bei der Anlage des
           Plans beginnen: die einzige ehrliche Schätzung, und sichtbar falsch auf
@@ -1572,9 +1588,9 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
           Verknüpfte Artikel und Wartungspläne, beides generisch und nicht
           hinter einem Typ namens „Gerät“ eingesperrt — dasselbe Argument, das
           die Typen benutzerdefiniert gemacht hat. Ein Schrank hat ein
-          Wartungsintervall; eine Drehmomentschlüssel hat ein Kalibrierzertifikat; die Liste
-          dessen, was ein Werkstatt an eine Maschine hängt, ist nicht im Voraus
-          bekannt.
+          Wartungsintervall; ein Drehmomentschlüssel hat ein
+          Kalibrierzertifikat; die Liste dessen, was eine Werkstatt an eine
+          Maschine hängt, ist nicht im Voraus bekannt.
         </p>
       </div>
 
@@ -1721,7 +1737,7 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
 
       <h3>Die Schleife</h3>
 <pre><code>npm install
-npm run db:seed                  <span class="c"># demo data; refuses on a non-empty database</span>
+npm run db:seed                  <span class="c"># Demodaten von Hand; der Server macht es beim ersten Start selbst</span>
 npm run dev                      <span class="c"># API :3001, web :5173</span>
 npm run typecheck                <span class="c"># every workspace, including the Rust no-op</span></code></pre>
       <p>
@@ -1930,7 +1946,7 @@ sqlite3 packages/api/data/inventory.db 'select * from history order by created_a
           <code>POST /items/:id/uses</code> gibt es; der Wörterbucheintrag, mit
           dem eine Steuerungszeile den Zähler erhöhen könnte, nicht.</li>
         <li><strong>Freigabe vor dem Einkauf.</strong> Zurückgestellt, weil es
-          davon abhängt, ob das Werkstatt überhaupt einen Freigabeschritt will.</li>
+          davon abhängt, ob die Werkstatt überhaupt einen Freigabeschritt will.</li>
         <li><strong>Eine Desktop-Anwendung mit eigenem Server.</strong> Die
           Client-Hälfte ist gebaut; die Sidecar-Hälfte braucht ein
           <code>node</code> und ein <code>better-sqlite3</code> je Plattform und

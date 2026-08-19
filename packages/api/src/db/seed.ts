@@ -1,7 +1,5 @@
-import { fileURLToPath } from 'node:url';
 import { count, eq } from 'drizzle-orm';
 import type { SQLiteTable } from 'drizzle-orm/sqlite-core';
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import type { TranslatedText } from '@inventory/shared';
 import { db } from './client';
 import {
@@ -48,16 +46,18 @@ function tt(en: string, de: string, ca: string): TranslatedText {
   return { en, de, ca };
 }
 
-function main() {
-  migrate(db, {
-    migrationsFolder: fileURLToPath(new URL('../../drizzle', import.meta.url)),
-  });
-
+/**
+ * Fill an empty database with the demo inventory. Returns false and touches
+ * nothing if there is already a single concept in there.
+ *
+ * The emptiness check is what makes this safe to call on every boot: it runs
+ * once, on the first start of a new installation, and never again. An upgrade
+ * can therefore never overwrite somebody's inventory — the worst it can do is
+ * nothing.
+ */
+export function seedDemoData(): boolean {
   const existing = db.select({ n: count() }).from(concepts).get();
-  if ((existing?.n ?? 0) > 0) {
-    console.log('Database is not empty — seed skipped.');
-    return;
-  }
+  if ((existing?.n ?? 0) > 0) return false;
 
   db.transaction(() => {
     // ------------------------------------------------------------------ Types
@@ -580,12 +580,11 @@ function main() {
   // adds a row above it, and then reports numbers that were never true.
   const tally = (table: SQLiteTable) => db.select({ n: count() }).from(table).get()?.n ?? 0;
   console.log(
-    `Seed complete: ${tally(types)} types, ${tally(locations)} locations, ` +
+    `Demo inventory prepared: ${tally(types)} types, ${tally(locations)} locations, ` +
       `${tally(concepts)} concepts, ${tally(analogous)} analogous, ${tally(variants)} variants, ` +
       `${tally(items)} items, ${tally(actions)} activities, ` +
       `${tally(pools)} pools (${tally(poolUnits)} units), ${tally(lots)} lot, ` +
       `${tally(logEventDefs)} log event.`,
   );
+  return true;
 }
-
-main();

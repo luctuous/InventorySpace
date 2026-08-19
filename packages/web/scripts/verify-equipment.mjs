@@ -12,7 +12,7 @@
 //   python3 -c "import sqlite3; s=sqlite3.connect('file:packages/api/data/inventory.db?mode=ro',uri=True); d=sqlite3.connect('/tmp/scratch.db'); s.backup(d)"
 //   # in packages/api, serving the built SPA on one port:
 //   SERVE_WEB=1 WEB_DIST=../web/dist DATABASE_PATH=/tmp/scratch.db PORT=3003 npx tsx src/index.ts
-//   node scripts/verify-equipment.mjs /tmp/shots mailuk the-password http://localhost:3003
+//   node scripts/verify-equipment.mjs /tmp/shots demoadmin the-password http://localhost:3003
 //
 // (Copy the file with sqlite's own backup, not `cp` — the database runs in WAL
 // mode, so a plain copy of the .db alone can be torn.)

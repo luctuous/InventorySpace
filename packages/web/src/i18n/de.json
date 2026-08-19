@@ -867,7 +867,7 @@
       "title": "Geräte und Orte",
       "intro": {
         "title": "Nicht alles ist Bestand",
-        "body": "Eine Waage ist auch ein Artikel, aber „0 Waagen auf Lager“ war nie eine Warnung, die sich zu zeigen lohnt. Geräte und Dokumente bleiben von diesem Bildschirm fern — bis auf eine Sache."
+        "body": "Ein Messschieber ist auch ein Artikel, aber „0 Messschieber auf Lager“ war nie eine Warnung, die sich zu zeigen lohnt. Werkzeuge und Dokumente bleiben von diesem Bildschirm fern — bis auf eine Sache."
       },
       "due": {
         "title": "Außer wenn etwas fällig ist",
@@ -879,7 +879,7 @@
       },
       "plans": {
         "title": "Alle N Tage oder alle N Nutzungen",
-        "body": "Oder beides, dann wird fällig, was zuerst ausläuft — genau das heißt „alle 6 Monate oder 500 Injektionen“. Als erledigt markieren startet beide Zähler neu und schreibt eine Zeile in die Wartungshistorie."
+        "body": "Oder beides, dann wird fällig, was zuerst ausläuft — genau das heißt „alle 6 Monate oder 500 Bohrungen“. Als erledigt markieren startet beide Zähler neu und schreibt eine Zeile in die Wartungshistorie."
       },
       "places": {
         "title": "Und wo alles liegt",

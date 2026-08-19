@@ -20,6 +20,13 @@ Open <http://localhost:3000>. The first account you register becomes the
 **admin**; after that, registration closes and the admin creates accounts from
 the Users page.
 
+**It opens on a small demo inventory** — a home workshop with a few supplies, a
+tool with a maintenance schedule, a tree of places and one past order. That is
+so the app has something to show and the guided tour has something to point at.
+It is written **once**, on the first start of an empty database, and never
+again; an upgrade cannot touch data you have entered. Delete it from the Bin
+when you have seen enough, or start with `SEED_DEMO=0` to get nothing at all.
+
 Nothing else to configure. The key that signs session cookies is generated on
 first start and kept in `inventory-data/auth-secret`, next to the database — so
 restarts do not sign everybody out, and backing up the data directory backs up
@@ -127,7 +134,6 @@ Requires Node 20+.
 
 ```bash
 npm install
-npm run db:seed     # optional demo data — only runs on an empty database
 npm run dev         # API on :3001, web on :5173
 ```
 
@@ -139,10 +145,10 @@ Open <http://localhost:5173>.
 | `npm run typecheck` | Typecheck every workspace |
 | `npm run build` | Production build (API bundle + web bundle) |
 | `npm run db:generate` | Generate a migration after changing the schema |
-| `npm run db:seed` | Seed demo data into an empty database |
+| `npm run db:seed` | Write the demo inventory into an empty database by hand |
 
-Migrations run automatically when the API starts, so a fresh database needs no
-setup step.
+Migrations run automatically when the API starts, and so does the demo
+inventory on a database that has none — a fresh checkout needs no setup step.
 
 ### Creating a user from the command line
 

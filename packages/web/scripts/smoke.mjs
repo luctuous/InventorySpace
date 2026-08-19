@@ -1,5 +1,7 @@
 // Headless browser smoke test: drives the real app end to end and writes
-// screenshots. Usage:  node scripts/smoke.mjs <outDir> [username] [password]
+// screenshots. Usage:
+//
+//   node scripts/smoke.mjs <outDir> <username> <password> <baseUrl>
 //
 // THIS SCRIPT WRITES TO THE DATABASE IT IS POINTED AT. It creates lots, opens
 // and empties containers, and records activities — running it against the workshop's
@@ -13,10 +15,18 @@ import { chromium } from 'playwright';
 const outDir = process.argv[2] ?? '.';
 const username = process.argv[3] ?? 'demoadmin';
 const password = process.argv[4] ?? 'test-1234-test';
-// A base URL, like every other suite takes. Without one this script silently
-// drove whatever was on :5173 — which on a developer's machine is the dev
-// server, pointed at real data.
-const baseUrl = process.argv[5] ?? 'http://localhost:5173';
+// The base URL is required, and deliberately has no default. It used to fall
+// back to :5173, which on a developer's machine is the dev server pointed at
+// real data — so forgetting the argument did not fail, it quietly filled the
+// real inventory with test rows and left four login sessions behind. A missing
+// argument must stop the run, not pick a target for you.
+const baseUrl = process.argv[5];
+if (!baseUrl) {
+  console.error('smoke.mjs needs a base URL as its fourth argument.');
+  console.error('  node scripts/smoke.mjs <outDir> <username> <password> <baseUrl>');
+  console.error('Point it at a scratch database, never at your own dev server.');
+  process.exit(2);
+}
 
 const browser = await chromium.launch({ args: ['--no-sandbox'] });
 const page = await (await browser.newContext({ viewport: { width: 1440, height: 950 } })).newPage();

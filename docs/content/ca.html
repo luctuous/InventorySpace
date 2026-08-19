@@ -166,22 +166,26 @@ docker run -d -p 3000:3000 \
       <h2><span class="n"></span>Buidar la demostració</h2>
 
       <p>
-        La base de dades de desenvolupament ve amb dades d'exemple d'un
-        taller: 5 tipus, un arbre d'ubicacions, 4 conceptes i uns quants
-        articles, pensats perquè la pantalla d'Inici mostri els tres estats
-        d'alerta (bé, estoc baix, sense estoc). Per començar amb el <em>teu</em>
-        inventari tens dues vies.
+        L'aplicació s'obre amb dades d'exemple d'un taller de casa: 5 tipus,
+        un arbre d'ubicacions, 7 conceptes i 11 articles, pensats perquè la
+        pantalla d'Inici mostri els tres estats d'alerta (bé, estoc baix, sense
+        estoc) i perquè la visita guiada tingui alguna cosa a assenyalar.
+        S'escriuen <strong>una sola vegada</strong>, a la primera arrencada amb
+        la base buida, i mai més — cap actualització pot tocar el que hi hagis
+        entrat tu. Per començar amb el <em>teu</em> inventari tens dues vies.
       </p>
 
       <h3>Via ràpida: esborrar-ho tot de cop</h3>
       <pre><code><span class="c"># atura el servidor abans</span>
 rm packages/api/data/inventory.db*
-npm run dev</code></pre>
+SEED_DEMO=0 npm run dev</code></pre>
       <p>
-        L'arrencada torna a crear l'esquema buit. No executis
-        <code>npm run db:seed</code> i tindràs una base neta de veritat: cap
-        tipus, cap ubicació, cap article. El primer compte que registris tornarà
-        a ser administrador.
+        L'arrencada torna a crear l'esquema buit, i <code>SEED_DEMO=0</code> li
+        diu que no hi torni a escriure la demostració: així tindràs una base
+        neta de veritat, cap tipus, cap ubicació, cap article. El primer compte
+        que registris tornarà a ser administrador. Si no poses la variable,
+        recuperaràs el taller d'exemple, que és el que vols si només volies
+        desfer un embolic.
       </p>
       <div class="note stop">
         <span class="lbl">Irreversible</span>
@@ -1722,19 +1726,20 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <h2><span class="n"></span>Instruments: manuals, recanvis i manteniment</h2>
 
       <p>
-        Una balança és un article igual que ho és una ampolla d'cola de fusta. Però és
-        l'única mena de cosa que <strong>té altres articles que hi pertanyen</strong>,
-        i l'única que s'ha de cuidar amb un calendari. Totes dues coses viuen a
-        la pestanya <em>Equip</em> del panell de qualsevol article.
+        Un peu de rei és un article igual que ho és una ampolla de cola de
+        fusta. Però és l'única mena de cosa que <strong>té altres articles que
+        hi pertanyen</strong>, i l'única que s'ha de cuidar amb un calendari.
+        Totes dues coses viuen a la pestanya <em>Equip</em> del panell de
+        qualsevol article.
       </p>
       <div class="note tip">
         <span class="lbl">No hi ha cap funció «instrument»</span>
         <p>
-          Cap de les dues està reservada a un tipus que es digui instrument. Una
-          armari té un manteniment; una clau dinamomètrica té un certificat de calibratge;
-          una impressora té un broquet de recanvi. Quines coses penja un
-          taller d'una màquina no es pot saber per endavant, així que la
-          pestanya hi és sempre i la fas servir on tingui sentit.
+          Cap de les dues està reservada a un tipus que es digui instrument.
+          Un armari té un manteniment; una clau dinamomètrica té un certificat
+          de calibratge; una impressora té un broquet de recanvi. Quines coses
+          penja un taller d'una màquina no es pot saber per endavant, així que
+          la pestanya hi és sempre i la fas servir on tingui sentit.
         </p>
       </div>
 
@@ -1745,16 +1750,17 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <ul>
         <li><strong>Document</strong> — el full d’instruccions, el manual, el certificat de
           calibratge.</li>
-        <li><strong>Recanvi</strong> — la torxa, la làmpada, la columna del
+        <li><strong>Recanvi</strong> — la broca, la làmpada, la corretja del
           calaix.</li>
-        <li><strong>Accessori</strong> — el joc de pesos, el mostrejador.</li>
+        <li><strong>Accessori</strong> — la guia d'esquadrar, el suport.</li>
         <li><strong>Consumible</strong> — el que gasta mentre funciona.</li>
       </ul>
       <p>
-        L'enllaç es llegeix pels dos costats. La balança llista el seu full d’instruccions; obre
-        el full d’instruccions i et diu quina balança descriu. Això importa perquè el full d’instruccions és
-        arxivat a la sala d'anàlisi i el peu de rei és en una taula — i la que
-        tinguis al davant és per on has començat.
+        L'enllaç es llegeix pels dos costats. El peu de rei llista el seu full
+        d’instruccions; obre el full d’instruccions i et diu quin peu de rei
+        descriu. Això importa perquè el full és arxivat a la zona de muntatge i
+        el peu de rei és en un banc de treball — i el que tinguis al davant és
+        per on has començat.
       </p>
 
       <h3>Plans de manteniment</h3>
@@ -1784,7 +1790,7 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <div class="note warn">
         <span class="lbl">Amb tots dos, el que arribi abans</span>
         <p>
-          <em>Cada 6 mesos o 500 injeccions</em> vol dir que el pla toca en el
+          <em>Cada 6 mesos o 500 forats</em> vol dir que el pla toca en el
           moment que s'acaba <strong>qualsevol</strong> dels dos comptadors. Un
           pla que només en pogués comptar un aniria malament per a la meitat de
           l'equipament de qualsevol taller.
@@ -1799,9 +1805,9 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <h3>Comptar usos</h3>
       <p>
         <em>+1 ús</em> compta un ús a tots els plans d'aquell article que mesuren
-        usos. És deliberadament tosc: si el teu controlador de la màquina ja sap quantes injeccions ha
-        fet la màquina, el número hauria de venir d'allà, i l'app té una porta
-        d'entrada justament per a això.
+        usos. És deliberadament tosc: si el teu controlador de la màquina ja
+        sap quantes feines ha fet, el número hauria de venir d'allà, i l'app té
+        una porta d'entrada justament per a això.
       </p>
 
       <h3>Marcar-ho com a fet</h3>
@@ -2057,7 +2063,7 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
           línies noves</em> o enganxar contingut. El que ja hi és és tota
           la part difícil — llegir sol és el pas que falta.</li>
         <li>Un esdeveniment de log que compti usos de màquina. A l'app se li
-          pot dir <em>aquesta màquina ha fet 40 injeccions</em>, però el
+          pot dir <em>aquesta màquina ha fet 40 feines</em>, però el
           diccionari del log encara no s'hi pot apuntar, així que avui algú
           prem <em>+1 ús</em>.</li>
         <li>Aplicació d'escriptori (Tauri).</li>

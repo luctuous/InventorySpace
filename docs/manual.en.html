@@ -701,20 +701,26 @@ docker run -d -p 3000:3000 \
       <h2><span class="n"></span>Clearing the demo data</h2>
 
       <p>
-        The development database ships with example data from a workshop: 5 types, a location tree, 6 concepts and 9 items, arranged so
-        the Home screen shows all three alert states (fine, low stock, out of
-        stock). To start on <em>your</em> inventory you have two routes.
+        The app opens on example data from a home workshop: 5 types, a tree
+        of places, 7 concepts and 11 items, arranged so the Home screen shows
+        all three alert states (fine, low stock, out of stock) and the tour has
+        something to point at. It is written <strong>once</strong>, on the very
+        first start of an empty database, and never again — an upgrade cannot
+        touch what you have entered. To start on <em>your</em> inventory you
+        have two routes.
       </p>
 
       <h3>Fast route: wipe everything at once</h3>
       <pre><code><span class="c"># stop the server first</span>
 rm packages/api/data/inventory.db*
-npm run dev</code></pre>
+SEED_DEMO=0 npm run dev</code></pre>
       <p>
-        Startup recreates the empty schema. Don't run
-        <code>npm run db:seed</code> and you get a genuinely clean database: no
-        types, no locations, no items. The first account you register becomes the
-        administrator again.
+        Startup recreates the empty schema, and <code>SEED_DEMO=0</code> tells it
+        not to write the demo back — so you get a genuinely clean database: no
+        types, no places, no items. The first account you register becomes the
+        administrator again. Leave the variable out and you get the demo
+        workshop back, which is the right thing if you only wanted to undo a
+        mess.
       </p>
       <div class="note stop">
         <span class="lbl">Irreversible</span>
@@ -2254,9 +2260,9 @@ npx tsx --env-file-if-exists=.env scripts/create-user.mts \
       <ul>
         <li><strong>Document</strong> — the instruction sheet, the manual, the calibration
           certificate.</li>
-        <li><strong>Spare</strong> — the torch, the lamp, the column in the
+        <li><strong>Spare</strong> — the drill bit, the lamp, the belt in the
           drawer.</li>
-        <li><strong>Accessory</strong> — the weight set, the sampler.</li>
+        <li><strong>Accessory</strong> — the fence, the stand.</li>
         <li><strong>Consumable</strong> — what it eats while it runs.</li>
       </ul>
       <p>

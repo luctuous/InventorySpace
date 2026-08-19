@@ -15,12 +15,16 @@ target/
 auth-secret
 
 # What the verification suites leave behind. They take an output directory as
-# an argument and default to the repository root, so a run started without one
-# drops its screenshots here. Ignored rather than forbidden: the screenshots
-# are genuinely useful while you are looking at them, and worthless afterwards.
+# an argument and default to `.`, so a run started without one drops its
+# screenshots wherever it was launched — the repository root when you use the
+# npm script, packages/web when you call the script by hand. Both are covered.
+# Ignored rather than forbidden: the screenshots are genuinely useful while you
+# are looking at them, and worthless afterwards.
 /*.png
 /exported.csv
 /shots/
+/packages/web/*.png
+/packages/web/exported.csv
 # A run once received a URL where it expected an output directory, and made a
 # folder literally called `http:`. Ignored so the same slip cannot commit one.
 /http:/

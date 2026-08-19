@@ -901,15 +901,31 @@ docs/                       els manuals i els seus constructors
       </div>
 
       <div class="file">
-        <p class="path">api/src/db/seed.ts <span class="n">584 línies</span></p>
+        <p class="path">api/src/db/seed.ts <span class="n">590 línies</span></p>
         <p>
-          Dades de demostració, i estan dissenyades, no abocades. Inclou a
-          posta un concepte baix d'estoc i un a zero, perquè els avisos de la
-          pantalla d'Inici tinguin de què avisar el moment que l'obres; un
-          instrument i un document, perquè els cicles de vida no consumibles es
-          puguin ensenyar en absolut; i un grup amb història real, perquè el
-          recompte vulgui dir alguna cosa. Es nega a executar-se sobre una base
-          de dades que no estigui buida.
+          Un taller de casa, i està dissenyat, no abocat. Inclou a posta un
+          concepte baix d'estoc i un a zero, perquè els avisos de la pantalla
+          d'Inici tinguin de què avisar el moment que l'obres; una eina i un
+          document, perquè els cicles de vida no consumibles es puguin ensenyar
+          en absolut; i un grup amb història real, perquè el recompte vulgui dir
+          alguna cosa. Exporta una sola funció, <code>seedDemoData()</code>, que
+          torna de seguida si ja hi ha un sol concepte — aquesta comprovació és
+          tota la seguretat que cal, i és el que permet que el servidor la
+          cridi a cada arrencada.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/seed-cli.ts <span class="n">~20 línies</span></p>
+        <p>
+          El que executa <code>npm run db:seed</code>: migra i després crida
+          <code>seedDemoData()</code>. És un fitxer a part i no una comprovació
+          de «m'han executat directament?» dins de <code>seed.ts</code>, i no és
+          una qüestió d'estil. La compilació de producció incrusta
+          <code>seed.ts</code> dins de <code>dist/index.js</code>, de manera que
+          els dos passen a ser un sol fitxer i qualsevol comprovació d'aquestes
+          també és certa per al servidor — el servidor hauria executat el codi
+          de la CLI a cada arrencada. Dos punts d'entrada, dos fitxers.
         </p>
       </div>
 
@@ -1152,7 +1168,7 @@ pools ──(events)──→ pool_units          commissioned FROM an item
       <h2><span class="n"></span>L'esquelet HTTP</h2>
 
       <div class="file">
-        <p class="path">api/src/index.ts <span class="n">~45 línies</span></p>
+        <p class="path">api/src/index.ts <span class="n">~80 línies</span></p>
         <p>
           El punt d'entrada: aplica migracions i després escolta. Imprimeix les
           adreces de la xarxa local a més de <code>localhost</code>, que és una
@@ -1548,7 +1564,7 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
         <p>
           Els plans compten dies, usos, o tots dos, i <strong>toca vol dir el
           que s'acabi primer</strong> — que és el que vol dir de debò «cada 6
-          mesos o 500 injeccions». <code>nextDueAt</code> es recalcula a cada
+          mesos o 500 forats». <code>nextDueAt</code> es recalcula a cada
           canvi perquè «què toca» sigui una sola consulta indexada. Si no s'ha
           fet mai, el rellotge comença el dia que es va escriure el pla: l'única
           suposició honesta, i visiblement equivocada d'una manera que algú
@@ -1941,8 +1957,8 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
           cap article» de «res no coincideix amb aquests filtres» i ofereix un
           clic per netejar-los. Aquella distinció era un defecte real — el
           filtre per defecte és <code>in_stock</code>+<code>open</code>, un
-          instrument és <code>in_service</code>, i buscar la teva pròpia balança
-          t'informava amb tota confiança que no existia.
+          instrument és <code>in_service</code>, i buscar el teu propi peu de
+          rei t'informava amb tota confiança que no existia.
         </p>
       </div>
 
@@ -2224,7 +2240,7 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
 
       <h3>El cicle</h3>
 <pre><code>npm install
-npm run db:seed                  <span class="c"># demo data; refuses on a non-empty database</span>
+npm run db:seed                  <span class="c"># la demostració a mà; el servidor ja ho fa sol a la primera arrencada</span>
 npm run dev                      <span class="c"># API :3001, web :5173</span>
 npm run typecheck                <span class="c"># every workspace, including the Rust no-op</span></code></pre>
       <p>

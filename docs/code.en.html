@@ -893,15 +893,30 @@ docs/                       the manuals and their builders
       </div>
 
       <div class="file">
-        <p class="path">api/src/db/seed.ts <span class="n">584 lines</span></p>
+        <p class="path">api/src/db/seed.ts <span class="n">590 lines</span></p>
         <p>
-          Demo data, and it is designed rather than dumped. It deliberately
-          includes a concept that is low on stock and one that is at zero, so
-          the Home screen's warnings have something to warn about the moment
-          you open it; an instrument and a document, so the non-consumable
-          lifecycles are demonstrable at all; and a pool with a real history,
-          so the recount means something. It refuses to run on a non-empty
-          database.
+          A home workshop, and it is designed rather than dumped. It
+          deliberately includes a concept that is low on stock and one that is
+          at zero, so the Home screen's warnings have something to warn about
+          the moment you open it; a tool and a document, so the non-consumable
+          lifecycles are demonstrable at all; and a pool with a real history, so
+          the recount means something. It exports one function,
+          <code>seedDemoData()</code>, which returns immediately if a single
+          concept already exists — that guard is the whole safety story, and it
+          is why the server can call it on every boot.
+        </p>
+      </div>
+
+      <div class="file">
+        <p class="path">api/src/db/seed-cli.ts <span class="n">~20 lines</span></p>
+        <p>
+          What <code>npm run db:seed</code> runs: migrate, then
+          <code>seedDemoData()</code>. It is a separate file rather than a
+          "was I run directly?" check inside <code>seed.ts</code>, and that is
+          not style. The production build inlines <code>seed.ts</code> into
+          <code>dist/index.js</code>, so the two become one file and any such
+          check is true for the server too — the server would have run the CLI's
+          code on every start. Two entry points, two files.
         </p>
       </div>
 
@@ -1137,13 +1152,18 @@ pools ──(events)──→ pool_units          commissioned FROM an item
       <h2><span class="n"></span>The HTTP skeleton</h2>
 
       <div class="file">
-        <p class="path">api/src/index.ts <span class="n">~45 lines</span></p>
+        <p class="path">api/src/index.ts <span class="n">~80 lines</span></p>
         <p>
-          The entry point: apply migrations, then listen. It prints the LAN
-          addresses as well as <code>localhost</code>, which is a small thing
-          that saves a real conversation — the server is meant to be reached
-          from every machine in the workshop, and guessing its address is the first
-          thing that goes wrong.
+          The entry point: apply migrations, write the demo inventory if the
+          database is empty, then listen. The demo is there because an empty
+          inventory app is unusable as a first impression — there is nothing to
+          tell you what a Concept is for and the tour has nothing to point at.
+          <code>SEED_DEMO=0</code> turns it off for an installation that should
+          start truly empty. It prints the LAN addresses as well as
+          <code>localhost</code>, which is a small thing that saves a real
+          conversation — the server is meant to be reached from every machine in
+          the workshop, and guessing its address is the first thing that goes
+          wrong.
         </p>
       </div>
 
@@ -2176,7 +2196,7 @@ export function stockByConcept(locationIds?: string[]): Record&lt;string, number
 
       <h3>The loop</h3>
 <pre><code>npm install
-npm run db:seed                  <span class="c"># demo data; refuses on a non-empty database</span>
+npm run db:seed                  <span class="c"># demo data by hand; the server does it itself on first boot</span>
 npm run dev                      <span class="c"># API :3001, web :5173</span>
 npm run typecheck                <span class="c"># every workspace, including the Rust no-op</span></code></pre>
       <p>
